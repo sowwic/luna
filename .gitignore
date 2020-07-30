@@ -125,5 +125,6 @@ dmypy.json
 .pyre/
 
 # Project
+NOTES.md
 .vscode/
 *.DS_store
