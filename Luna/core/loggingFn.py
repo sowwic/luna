@@ -42,6 +42,12 @@ class Logger:
         lg.setLevel(level)
 
     @classmethod
+    def get_level(cls, name=False):
+        if name:
+            return logging.getLevelName(cls.logger_obj().level)
+        return cls.logger_obj().level
+
+    @classmethod
     def call_info(cls, message):
         caller = inspect.getframeinfo(inspect.stack()[1][0])
         message = "file: {0} function {1}() lineno:{2}-{3}".format(caller.filename, caller.function, caller.lineno, message)
@@ -82,13 +88,13 @@ class Logger:
         lg.exception(msg, *args, **kwargs)
 
     @classmethod
-    def write_to_rotating_file(cls, path, level=logging.WARNING):
+    def write_to_rotating_file(cls, path, level=logging.WARNING, mode="w", max_bytes=1024):
         lg = cls.logger_obj()
         if any([isinstance(handler, logging.handlers.RotatingFileHandler) for handler in lg.handlers]):
             lg.warning("Rotating file hander already exists")
             return
 
-        rfile_hander = logging.handlers.RotatingFileHandler(path, mode="a", maxBytes=1024, backupCount=0, delay=0)
+        rfile_hander = logging.handlers.RotatingFileHandler(path, mode=mode, maxBytes=max_bytes, backupCount=0, delay=0)
         rfile_hander.setLevel(level)
         fmt = logging.Formatter("[%(asctime)s][%(levelname)s] %(message)s")
         rfile_hander.setFormatter(fmt)
