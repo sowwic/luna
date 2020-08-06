@@ -1,0 +1,17 @@
+{
+  "done": [],
+  "in-progress": [],
+  "testing": [],
+  "todo": [
+    {
+      "assignedTo": {
+        "name": "Dmitrii"
+      },
+      "category": "Base",
+      "creation_time": "2020-08-01T17:06:18.351Z",
+      "id": "1",
+      "references": [],
+      "title": "Rigging workspace"
+    }
+  ]
+}

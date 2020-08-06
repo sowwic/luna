@@ -5,6 +5,7 @@ Module containing callbacks related functions
 import os
 from maya.api import OpenMaya as om2
 from maya import cmds as mc
+from Luna.core.loggingFn import Logger
 
 
 def removeLicence():

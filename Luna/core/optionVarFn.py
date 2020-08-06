@@ -1,9 +1,7 @@
-import logging
 import json
 import pymel.core as pm
 from Luna.utils.enumFn import Enum
-
-LOGGER = logging.getLogger(__name__)
+from Luna.core.loggingFn import Logger
 
 
 class OptionVars(Enum):

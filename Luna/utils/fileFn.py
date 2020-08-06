@@ -4,8 +4,7 @@ import logging
 import json
 import os
 import pickle
-
-LOGGER = logging.getLogger(__name__)
+from Luna.core.loggingFn import Logger
 
 
 # Json
@@ -18,11 +17,11 @@ def write_json(path, data={}, as_string=False, sort_keys=True):
                 json.dump(data, json_file, indent=4)
 
     except IOError as e:
-        LOGGER.exception("{0} is not a valid file path".format(path), exc_info=e)
+        Logger.exception("{0} is not a valid file path".format(path), exc_info=e)
         return None
 
     except BaseException:
-        LOGGER.exception("Failed to write file {0}".format(path), exc_info=1)
+        Logger.exception("Failed to write file {0}".format(path), exc_info=1)
         return None
 
     return path
@@ -37,10 +36,10 @@ def load_json(path, as_string=False):
                 data = json.load(json_file)
 
     except IOError as e:
-        LOGGER.exception("{0} is not a valid file path".format(path), exc_info=e)
+        Logger.exception("{0} is not a valid file path".format(path), exc_info=e)
         return None
     except BaseException:
-        LOGGER.exception("Failed to load file {0}".format(path), exc_info=e)
+        Logger.exception("Failed to load file {0}".format(path), exc_info=e)
         return None
 
     return data
@@ -61,9 +60,9 @@ def write_pickle(path, data):
         with open(path, "w") as newFile:
             pickle.dump(data, newFile)
     except BaseException:
-        LOGGER.error("Failed to saved file: {0}".format(path), exc_info=1)
+        Logger.error("Failed to saved file: {0}".format(path), exc_info=1)
         pickle.dump(backupData, newFile)
-        LOGGER.warning("Reverted backup data for {0}".format(0))
+        Logger.warning("Reverted backup data for {0}".format(0))
         status = 0
 
     return path, status
@@ -74,7 +73,7 @@ def load_pickle(path):
         with open(path, "r") as readFile:
             data = pickle.load(readFile)
     except IOError as e:
-        LOGGER.exception("Failed to load file {0}".format(path), exc_info=e)
+        Logger.exception("Failed to load file {0}".format(path), exc_info=e)
         return None
 
     return data
@@ -88,7 +87,7 @@ def create_file(directory, name, data="", extension="txt"):
         with open(filePath, "w") as f:
             f.write(data)
     except IOError:
-        LOGGER.exception("Failed to create file {0}".format(filePath))
+        Logger.exception("Failed to create file {0}".format(filePath))
         return None
 
     return (filePath, fileName)
@@ -103,7 +102,7 @@ def delete_oldest(directory, fileLimit):
             os.remove(oldest_file)
             return oldest_file
         except Exception as e:
-            LOGGER.exception("Failed to delete file {0}".format(oldest_file), exc_info=e)
+            Logger.exception("Failed to delete file {0}".format(oldest_file), exc_info=e)
             return None
 
 

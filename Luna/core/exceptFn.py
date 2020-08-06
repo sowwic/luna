@@ -1,4 +1,1 @@
-import logging
-
-
-LOGGER = logging.getLogger(__name__)
+from Luna.core.loggingFn import Logger

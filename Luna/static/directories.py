@@ -1,9 +1,5 @@
-import logging
 import os
 import pymel.core as pm
-
-
-logging.getLogger(__name__)
 
 
 class Directories:
