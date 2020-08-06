@@ -1,6 +1,4 @@
 """Common file operations"""
-
-import logging
 import json
 import os
 import pickle
@@ -80,9 +78,16 @@ def load_pickle(path):
 
 
 # File
-def create_file(directory, name, data="", extension="txt"):
-    fileName = "{0}.{1}".format(name, extension)
-    filePath = os.path.normpath(os.path.join(directory, fileName))
+def create_file(directory="", name="", data="", extension="", path=""):
+    if directory and name:
+        fileName = name
+        if extension:
+            fileName = "{0}.{1}".format(name, extension)
+
+        filePath = os.path.normpath(os.path.join(directory, fileName))
+    elif path:
+        filePath = path
+
     try:
         with open(filePath, "w") as f:
             f.write(data)
@@ -90,7 +95,7 @@ def create_file(directory, name, data="", extension="txt"):
         Logger.exception("Failed to create file {0}".format(filePath))
         return None
 
-    return (filePath, fileName)
+    return (filePath)
 
 
 def delete_oldest(directory, fileLimit):
