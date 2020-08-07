@@ -102,7 +102,10 @@ def create_file(directory="", name="", data="", extension="", path=""):
 
 
 def copy_empty_scene(new_path):
-    source_path = os.path.join(Directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{}.ma".format(pm.about(v=1)))
+    if os.path.isfile(new_path):
+        return
+
+    source_path = os.path.join(Directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{0}.ma".format(pm.about(v=1)))
     Logger.debug("Copying file {0} to {1}".format(source_path, new_path))
     if not os.path.isfile(source_path):
         raise IOError

@@ -5,6 +5,7 @@ from Luna.utils import environFn
 from Luna.utils import fileFn
 from Luna.interface.hud import LunaHud
 from PySide2 import QtWidgets
+reload(fileFn)
 
 
 class Asset:
@@ -24,7 +25,7 @@ class Asset:
         # Meta updates
         self.meta = self.get_meta()
 
-        # # Create directories
+        #  Create directories
         fileFn.create_missing_dir(self.path)
         self.save_meta()
         self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))
@@ -34,10 +35,13 @@ class Asset:
         self.weights = _weightsDirectorySctruct(self.path)
         self.data = _dataDirectoryStruct(self.path)
 
+        # Copy empty scenes
+        fileFn.copy_empty_scene(os.path.join(self.components, "{0}.components.0000.ma".format(self.name)))
+        fileFn.copy_empty_scene(os.path.join(self.rig, "{0}.rig.0000.ma".format(self.name)))
+
         # Set env variables and update hud
         environFn.set_asset_var(self)
         LunaHud.refresh()
-        # Logger.debug("TODO: Update HUD")
 
     def get_meta(self):
         meta_dict = {}
