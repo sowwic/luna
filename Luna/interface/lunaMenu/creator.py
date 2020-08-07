@@ -2,7 +2,7 @@ import pymel.core as pm
 from functools import partial
 from Luna import Logger
 from Luna import external
-from Luna.core import optionVarFn
+from Luna.core.configFn import LunaConfig
 from Luna.static import Directories
 from Luna.interface.lunaMenu import functions
 
@@ -36,7 +36,7 @@ class LunaMenu:
                     option_box=False,
                     check_box=False,
                     use_maya_icons=False,
-                    optionVar_name=None,
+                    var_name=None,
                     default_value=False):
 
         if icon and not use_maya_icons:
@@ -49,12 +49,12 @@ class LunaMenu:
             return pm.menuItem(p=parent, l=label, i=icon, ob=option_box, c=command)
 
         elif check_box:
-            if not optionVar_name:
-                Logger.error("Menuitem: {0}::{1} is not connected to optionVar!".format(parent, label))
+            if not var_name:
+                Logger.error("Menuitem: {0}::{1} is not connected to config!".format(parent, label))
                 return
 
-            checkBox_value = optionVarFn.getOptionVar(optionVar_name, default=default_value)
-            checkBox = pm.menuItem(p=parent, l=label, i=icon, cb=checkBox_value, c=partial(optionVarFn.toggleOptionVar, optionVar_name))
+            checkBox_value = LunaConfig.get(var_name, default_value)
+            checkBox = pm.menuItem(p=parent, l=label, i=icon, cb=checkBox_value, c=partial(LunaConfig.set, var_name))
             return checkBox
 
         else:
@@ -82,7 +82,7 @@ class LunaMenu:
 
         # Prefs
         self.addMenuItem(self.menu, divider=1)
-        self.addMenuItem(self.menu, label="Preferences", command=functions.mainMenu.prefs_manager)
+        self.addMenuItem(self.menu, label="Configuration", command=functions.mainMenu.prefs_manager)
 
         Logger.info("Successfully added menu: {0}".format(self.MENU_LABEL))
 

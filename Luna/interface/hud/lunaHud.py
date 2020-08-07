@@ -1,13 +1,15 @@
 import pymel.core as pm
 from Luna import Logger
+from Luna.core.configFn import LunaConfig
+from Luna.core.configFn import HudVars
 from Luna.utils import environFn
 
 
 class LunaHud:
     HUD_NAME = "LunaHud"
     UPDATE_EVENT = "SceneOpened"
-    SECTION = 7
-    BLOCK = 5
+    SECTION = LunaConfig.get(HudVars.section, default=7)
+    BLOCK = LunaConfig.get(HudVars.block, default=5)
     BLOCK_SIZE = "medium"
     FONT_SIZE = "large"
 

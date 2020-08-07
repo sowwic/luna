@@ -1,0 +1,6 @@
+{
+    "logging.level": 10,
+    "hud.block": 5,
+    "hud.section": 7,
+    "general.commandPort": 7221
+}

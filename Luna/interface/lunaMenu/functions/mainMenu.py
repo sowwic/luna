@@ -2,7 +2,7 @@ import pymel.core as pm
 from Luna import Logger
 try:
     from Luna.interface import buildManager
-    from Luna.interface import prefsManager
+    from Luna.interface import configManager
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
 
@@ -12,5 +12,5 @@ def build_manager(*args):
 
 
 def prefs_manager(*args):
-    Logger.info("TODO: Preferences window")
+    Logger.info("TODO: Configuration window")
     # prefsManager.Dialog.display()

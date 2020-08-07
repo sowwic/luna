@@ -28,10 +28,10 @@ def write_json(path, data={}, as_string=False, sort_keys=True):
     return path
 
 
-def load_json(path, as_string=False):
+def load_json(path, string_data=False):
     try:
         with open(path, "r") as json_file:
-            if as_string:
+            if string_data:
                 data = json.loads(json_file)
             else:
                 data = json.load(json_file)
