@@ -13,7 +13,7 @@ def get_workspace_var():
     :return: Current workspace
     :rtype: Luna.core.workspace.Workspace
     """
-    return environ.get("LUNA_WORKSPACE", d=None)
+    return environ.get("LUNA_WORKSPACE")
 
 
 def set_asset_var(value):
@@ -22,4 +22,4 @@ def set_asset_var(value):
 
 
 def get_asset_var():
-    return environ.get("LUNA_ASSET", d=None)
+    return environ.get("LUNA_ASSET")

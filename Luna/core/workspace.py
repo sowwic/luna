@@ -8,7 +8,7 @@ try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
     from Luna.core import optionVarFn
-    reload(environFn)
+    from Luna.interface.hud import LunaHud
 except Exception:
     Logger.exception("Failed to import modules")
 
@@ -58,8 +58,11 @@ class Workspace:
         creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         meta_data["created"] = creation_date
         fileFn.write_json(new_workspace.meta_path, data=meta_data)
+
+        # Set enviroment variables and refresh HUD
         environFn.set_workspace_var(new_workspace)
         pm.optionVar[optionVarFn.LunaVars.previous_workspace.value] = new_workspace.path
+        LunaHud.refresh()
 
         Logger.debug("New workspace path: {0}".format(new_workspace.path))
         Logger.debug("New workspace name: {0}".format(new_workspace.name))
@@ -75,11 +78,14 @@ class Workspace:
         workspace_instance = Workspace(path)
         meta_data = workspace_instance.get_meta()
         fileFn.write_json(workspace_instance.meta_path, data=meta_data)
+
+        # Set enviroment variables and refresh HUD
         environFn.set_workspace_var(workspace_instance)
         pm.optionVar[optionVarFn.LunaVars.previous_workspace.value] = workspace_instance.path
+        LunaHud.refresh()
 
         Logger.debug("New workspace path: {0}".format(workspace_instance.path))
         Logger.debug("New workspace name: {0}".format(workspace_instance.name))
-        Logger.debug("Workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
+        Logger.debug("Set workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
 
         return workspace_instance

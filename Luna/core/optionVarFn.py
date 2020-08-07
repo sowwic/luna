@@ -19,7 +19,7 @@ def getOptionVar(var, default="", as_dict=False):
         default = json.dumps(default)
 
     value = pm.optionVar.get(var, default)
-    Logger.debug("Var: {0} Value: {1}".format(var, value))
+    Logger.debug("Read Var: {0} Value: {1}".format(var, value))
     if as_dict:
         value = json.loads(value)
 

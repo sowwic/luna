@@ -2,7 +2,10 @@
 import json
 import os
 import pickle
+import shutil
+import pymel.core as pm
 from Luna.core.loggingFn import Logger
+from Luna.static import Directories
 
 
 # Json
@@ -98,6 +101,17 @@ def create_file(directory="", name="", data="", extension="", path=""):
     return (filePath)
 
 
+def copy_empty_scene(new_path):
+    source_path = os.path.join(Directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{}.ma".format(pm.about(v=1)))
+    Logger.debug("Copying file {0} to {1}".format(source_path, new_path))
+    if not os.path.isfile(source_path):
+        raise IOError
+    try:
+        shutil.copy2(source_path, new_path)
+    except Exception:
+        Logger.exception("Failed to copy scene {0}".format(source_path))
+
+
 def delete_oldest(directory, fileLimit):
     allFilePaths = ["{0}/{1}".format(directory, child) for child in os.listdir(directory)]
 
@@ -111,10 +125,23 @@ def delete_oldest(directory, fileLimit):
             return None
 
 
+# Get files
+def getIcon(name):
+    return os.path.join(Directories.ICONS_PATH, name)
+
+
 # Directory
 def create_missing_dir(path):
+    """Creates specified directory if one doesn't exist
+
+    :param path: Directory path
+    :type path: str
+    :return: Path to directory
+    :rtype: str
+    """
     if not os.path.isdir(path):
-        os.mkdir(path)
+        os.makedirs(path)
+    return path
 
 
 def get_parent_dir(path):

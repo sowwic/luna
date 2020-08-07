@@ -3,6 +3,7 @@ from Luna import Logger
 try:
     from Luna.static import Directories
     from Luna.interface import lunaMenu
+    from Luna.interface.hud import LunaHud
 except Exception as e:
     Logger.exception("Failed to import modules")
 
@@ -25,6 +26,13 @@ def build_luna_menu():
         Logger.exception("Failed to build Luna menu", exc_info=e)
 
 
+def build_luna_hud():
+    try:
+        LunaHud.create()
+    except Exception:
+        Logger.exception("Failed to create HUD")
+
+
 def run():
     # Logging
     Logger.write_to_rotating_file(Directories.LOG_FILE, level=30)
@@ -34,3 +42,4 @@ def run():
     # Luna initialization
     open_port(port=7221, lang="python")
     build_luna_menu()
+    build_luna_hud()
