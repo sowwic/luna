@@ -10,9 +10,9 @@ from Luna import Logger
 
 class MainDialog(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
-    WINDOW_TITLE = "Luna build manager"
-    UI_NAME = "LunaBuildManager"
-    UI_SCRIPT = "from Luna.interface import buildManager\nbuildManager.MainDialog()"
+    WINDOW_TITLE = "Luna configuaration"
+    UI_NAME = "LunaConfigManager"
+    UI_SCRIPT = "from Luna.interface import configManager\nconfigManager.MainDialog()"
     UI_INSTANCE = None
     MINIMUM_SIZE = [400, 500]
 
@@ -55,15 +55,20 @@ class MainDialog(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.create_connections()
 
     def create_actions(self):
+        self.reset_configs_action = QtWidgets.QAction("Restore default config", self)
         self.documentation_action = QtWidgets.QAction("Documentation", self)
         self.documentation_action.setIcon(QtGui.QIcon(":help.png"))
 
     def create_menu_bar(self):
+        # Edit menu
+        edit_menu = QtWidgets.QMenu("&Edit")
+        edit_menu.addAction(self.reset_configs_action)
         # Help menu
         help_menu = QtWidgets.QMenu("Help")
         help_menu.addAction(self.documentation_action)
         # Menubar
         self.menuBar = QtWidgets.QMenuBar()
+        self.menuBar.addMenu(edit_menu)
         self.menuBar.addMenu(help_menu)
 
     def create_widgets(self):

@@ -8,9 +8,8 @@ except Exception as e:
 
 
 def build_manager(*args):
-    buildManager.Dialog.display()
+    buildManager.MainDialog.display()
 
 
 def prefs_manager(*args):
-    Logger.info("TODO: Configuration window")
-    # prefsManager.Dialog.display()
+    configManager.MainDialog.display()

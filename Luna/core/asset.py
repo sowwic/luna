@@ -5,7 +5,6 @@ from Luna.utils import environFn
 from Luna.utils import fileFn
 from Luna.interface.hud import LunaHud
 from PySide2 import QtWidgets
-reload(fileFn)
 
 
 class Asset:

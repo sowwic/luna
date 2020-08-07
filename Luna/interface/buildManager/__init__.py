@@ -1,1 +1,1 @@
-from Luna.interface.buildManager.mainDialog import Dialog
+from Luna.interface.buildManager.mainDialog import MainDialog
