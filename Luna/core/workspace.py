@@ -4,7 +4,6 @@ from datetime import datetime
 
 from Luna.core.loggingFn import Logger
 try:
-    from Luna.core import exceptions
     from Luna.utils import fileFn
     from Luna.utils import environFn
     from Luna.core import optionVarFn
@@ -66,11 +65,11 @@ class Workspace:
 
         Logger.debug("New workspace path: {0}".format(new_workspace.path))
         Logger.debug("New workspace name: {0}".format(new_workspace.name))
-        Logger.debug("Workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
+        Logger.debug("Prev workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
 
         return new_workspace
 
-    @ staticmethod
+    @staticmethod
     def set(path):
         if not Workspace.is_workspace(path):
             Logger.error("Not a workspace: {0}".format(path))
@@ -84,8 +83,15 @@ class Workspace:
         pm.optionVar[optionVarFn.LunaVars.previous_workspace.value] = workspace_instance.path
         LunaHud.refresh()
 
-        Logger.debug("New workspace path: {0}".format(workspace_instance.path))
-        Logger.debug("New workspace name: {0}".format(workspace_instance.name))
-        Logger.debug("Set workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
+        Logger.debug("Set workspace path: {0}".format(workspace_instance.path))
+        Logger.debug("Set workspace name: {0}".format(workspace_instance.name))
+        Logger.debug("Prev workspace optionVar: {0}".format(pm.optionVar[optionVarFn.LunaVars.previous_workspace.value]))
 
         return workspace_instance
+
+    @staticmethod
+    def exit():
+        environFn.set_asset_var(None)
+        environFn.set_workspace_var(None)
+        environFn.set_character_var(None)
+        LunaHud.refresh()

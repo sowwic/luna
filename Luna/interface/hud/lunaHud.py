@@ -14,7 +14,7 @@ class LunaHud:
     @classmethod
     def create(cls):
         hud_instance = None
-        Logger.info("Building {0}".format(cls.HUD_NAME))
+        Logger.info("Building {0}...".format(cls.HUD_NAME))
 
         # Delete old
         cls.remove()
