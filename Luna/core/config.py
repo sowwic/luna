@@ -21,7 +21,7 @@ class HudVars:
     section = "hud.section"
 
 
-class LunaConfig:
+class Config:
     @classmethod
     def load(cls):
         return fileFn.load_json(cls.get_config_file())
@@ -46,15 +46,11 @@ class LunaConfig:
 
     @classmethod
     def reset(cls):
-        config_dir = LunaConfig.get_config_dir()
+        config_dir = Config.get_config_dir()
         config_file = os.path.join(config_dir, "Luna_config.json")
         if not os.path.isfile(config_file):
             shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)
             Logger.info("Luna config reset to default")
-
-    @classmethod
-    def toggle_var(cls, var, state):
-        cls.set(var, state)
 
     @staticmethod
     def get_config_dir():
@@ -68,7 +64,7 @@ class LunaConfig:
 
     @staticmethod
     def get_config_file():
-        config_dir = LunaConfig.get_config_dir()
+        config_dir = Config.get_config_dir()
         config_file = os.path.join(config_dir, "Luna_config.json")
         if not os.path.isfile(config_file):
             shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)

@@ -1,8 +1,8 @@
 import pymel.core as pm
 from Luna import Logger
-from Luna.core.configFn import LunaConfig
-from Luna.core.configFn import LunaVars
-Logger.set_level(LunaConfig.get(LunaVars.logging_level, default=10))
+from Luna.core.config import Config
+from Luna.core.config import LunaVars
+Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 
 try:
     from Luna.static import Directories
@@ -13,7 +13,7 @@ except Exception as e:
 
 
 def open_port(lang="python"):
-    port = LunaConfig.get(LunaVars.command_port, default=7221)
+    port = Config.get(LunaVars.command_port, default=7221)
     if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
         try:
             pm.commandPort(name="127.0.0.1:{0}".format(port), stp=lang, echoOutput=True)

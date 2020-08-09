@@ -2,7 +2,7 @@ import pymel.core as pm
 from functools import partial
 from Luna import Logger
 from Luna import external
-from Luna.core.configFn import LunaConfig
+from Luna.core.config import Config
 from Luna.static import Directories
 from Luna.interface.menu import functions
 
@@ -53,8 +53,8 @@ class LunaMenu:
                 Logger.error("Menuitem: {0}::{1} is not connected to config!".format(parent, label))
                 return
 
-            checkBox_value = LunaConfig.get(var_name, default_value)
-            checkBox = pm.menuItem(p=parent, l=label, i=icon, cb=checkBox_value, c=partial(LunaConfig.set, var_name))
+            checkBox_value = Config.get(var_name, default_value)
+            checkBox = pm.menuItem(p=parent, l=label, i=icon, cb=checkBox_value, c=partial(Config.set, var_name))
             return checkBox
 
         else:

@@ -1,7 +1,7 @@
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from Luna.core.loggingFn import Logger
+from Luna.core.loggers import Logger
 
 
 def save_pixmap(path, pixmap, quality=-1):

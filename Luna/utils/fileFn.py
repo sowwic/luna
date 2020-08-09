@@ -4,7 +4,7 @@ import os
 import pickle
 import shutil
 import pymel.core as pm
-from Luna.core.loggingFn import Logger
+from Luna.core.loggers import Logger
 from Luna.static import Directories
 
 

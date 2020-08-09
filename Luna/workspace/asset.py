@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from Luna.core.loggingFn import Logger
+from Luna.core.loggers import Logger
 from Luna.core import exceptions
 from Luna.utils import environFn
 from Luna.utils import fileFn

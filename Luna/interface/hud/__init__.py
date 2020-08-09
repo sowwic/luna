@@ -1,1 +1,1 @@
-from Luna.interface.hud.lunaHud import LunaHud
+from Luna.interface.hud.luna_hud import LunaHud

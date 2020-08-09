@@ -2,12 +2,12 @@ import os
 from collections import deque
 from datetime import datetime
 
-from Luna.core.loggingFn import Logger
+from Luna.core.loggers import Logger
 try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
-    from Luna.core.configFn import LunaConfig
-    from Luna.core.configFn import ProjectVars
+    from Luna.core.config import Config
+    from Luna.core.config import ProjectVars
     from Luna.interface.hud import LunaHud
 except Exception:
     Logger.exception("Failed to import modules")
@@ -45,7 +45,7 @@ class Project:
         return meta_dict
 
     def add_to_recent(self):
-        project_queue = LunaConfig.get(ProjectVars.recent_projects, default=deque(maxlen=3))
+        project_queue = Config.get(ProjectVars.recent_projects, default=deque(maxlen=3))
         if not isinstance(project_queue, deque):
             project_queue = deque(project_queue, maxlen=3)
 
@@ -54,7 +54,7 @@ class Project:
             return
 
         project_queue.appendleft(entry)
-        LunaConfig.set(ProjectVars.recent_projects, list(project_queue))
+        Config.set(ProjectVars.recent_projects, list(project_queue))
 
     @ staticmethod
     def create(path):
@@ -73,7 +73,7 @@ class Project:
 
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(new_project)
-        LunaConfig.set(ProjectVars.previous_project, new_project.path)
+        Config.set(ProjectVars.previous_project, new_project.path)
         new_project.add_to_recent()
         LunaHud.refresh()
 
@@ -94,7 +94,7 @@ class Project:
 
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(project_instance)
-        LunaConfig.set(ProjectVars.previous_project, project_instance.path)
+        Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
         LunaHud.refresh()
 
@@ -107,5 +107,4 @@ class Project:
     def exit():
         environFn.set_asset_var(None)
         environFn.set_project_var(None)
-        environFn.set_character_var(None)
         LunaHud.refresh()
