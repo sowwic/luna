@@ -1,0 +1,2 @@
+class RigNode(object):
+    pass
