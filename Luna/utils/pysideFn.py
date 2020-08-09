@@ -4,8 +4,8 @@ from PySide2 import QtWidgets
 from Luna.core.loggingFn import Logger
 
 
-def savePixMap(filePath, pixmap, quality=-1):
-    imgFile = QtCore.QFile(filePath)
-    imgFile.open(QtCore.QIODevice.WriteOnly)
-    pixmap.save(imgFile, "JPG", quality=quality)
-    imgFile.close()
+def save_pixmap(path, pixmap, quality=-1):
+    img_file = QtCore.QFile(path)
+    img_file.open(QtCore.QIODevice.WriteOnly)
+    pixmap.save(img_file, "JPG", quality=quality)
+    img_file.close()

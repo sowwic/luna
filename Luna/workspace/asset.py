@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from Luna.core.loggingFn import Logger
+from Luna.core import exceptions
 from Luna.utils import environFn
 from Luna.utils import fileFn
 from Luna.interface.hud import LunaHud
@@ -14,7 +15,7 @@ class Asset:
 
         current_project = environFn.get_project_var()
         if not current_project:
-            raise Exception("Project is not set")
+            raise exceptions.ProjectNotSet
 
         # Define paths
         self.path = os.path.join(current_project.path, self.type.lower() + "s", self.name)  # type:str

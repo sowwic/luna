@@ -8,7 +8,7 @@ from maya import cmds as mc
 from Luna.core.loggingFn import Logger
 
 
-def removeLicence():
+def remove_licence():
     """
     Adds  callback to remove student licence from saved file.
 
@@ -17,11 +17,11 @@ def removeLicence():
     :return: Info message
     :rtype: str
     """
-    om2.MSceneMessage.addCallback(om2.MSceneMessage.kAfterSave, _removeLicenceLine, None)
+    om2.MSceneMessage.addCallback(om2.MSceneMessage.kAfterSave, _remove_licence_line, None)
     return "Remove licence callback"
 
 
-def _removeLicenceLine(*args):
+def _remove_licence_line(*args):
     """
     Removes student licence from current file if it is MAYA ASCII format.
     """

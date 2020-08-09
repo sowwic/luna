@@ -86,6 +86,7 @@ class Project:
     def set(path):
         if not Project.is_project(path):
             Logger.error("Not a project: {0}".format(path))
+            return
 
         project_instance = Project(path)
         meta_data = project_instance.get_meta()
