@@ -47,7 +47,6 @@ class MainDialog(MayaQWidgetDockableMixin, QtWidgets.QWidget):
             pma.MQtUtil.addWidgetToMayaLayout(widgetPtr, workspaceControlPtr)
 
         # UI setup
-        self.configs = self.load_configs()
         self.create_actions()
         self.create_menu_bar()
         self.create_widgets()
@@ -67,36 +66,15 @@ class MainDialog(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.menuBar.addMenu(help_menu)
 
     def create_widgets(self):
-        self.config_splitter = QtWidgets.QSplitter()
-        self.save_button = QtWidgets.QPushButton("Save")
-        self.save_button.setMinimumWidth(90)
-        self.cancel_button = QtWidgets.QPushButton("Cancel")
-        self.cancel_button.setMinimumWidth(90)
+        self.section_splitter = QtWidgets.QSplitter()
 
     def create_layouts(self):
-        self.buttons_layout = QtWidgets.QHBoxLayout()
-        self.buttons_layout.addStretch()
-        self.buttons_layout.addWidget(self.save_button)
-        self.buttons_layout.addWidget(self.cancel_button)
-
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setMenuBar(self.menuBar)
-        self.main_layout.addWidget(self.config_splitter)
-        self.main_layout.addLayout(self.buttons_layout)
+        self.main_layout.addWidget(self.section_splitter)
 
     def create_connections(self):
-        self.save_button.clicked.connect(self.save_configs)
-        self.cancel_button.clicked.connect(self.hide)
-
-    def load_configs(self):
-        Logger.debug("TODO: load_configs")
-
-    def save_configs(self):
-        Logger.debug("TODO: save_configs")
-        self.hide()
-
-    def update_configs(self):
-        Logger.debug("TODO: update_configs")
+        pass
 
 
 if __name__ == "__main__":
