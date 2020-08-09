@@ -13,7 +13,7 @@ class ProjectVars:
 
 class LunaVars:
     logging_level = "logging.level"
-    command_port = "Luna.commandPort"
+    command_port = "python.commandPort"
 
 
 class HudVars:

@@ -28,14 +28,14 @@ class Asset:
         fileFn.create_missing_dir(self.path)
         self.save_meta()
         self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))
-        self.components = fileFn.create_missing_dir(os.path.join(self.path, "components"))
+        self.guides = fileFn.create_missing_dir(os.path.join(self.path, "guides"))
         self.rig = fileFn.create_missing_dir(os.path.join(self.path, "rig"))
         self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))
         self.weights = _weightsDirectorySctruct(self.path)
         self.data = _dataDirectoryStruct(self.path)
 
         # Copy empty scenes
-        fileFn.copy_empty_scene(os.path.join(self.components, "{0}.components.0000.ma".format(self.name)))
+        fileFn.copy_empty_scene(os.path.join(self.guides, "{0}.guides.0000.ma".format(self.name)))
         fileFn.copy_empty_scene(os.path.join(self.rig, "{0}.rig.0000.ma".format(self.name)))
 
         # Set env variables and update hud
@@ -83,23 +83,23 @@ class _weightsDirectorySctruct:
 
     def __init__(self, root):
         # DEFINE RIGGING DIRECTORIES
-        self.blendShape = fileFn.create_missing_dir(os.path.join(root, "weights", "blendShape"))
-        self.deltaMush = fileFn.create_missing_dir(os.path.join(root, "weights", "deltaMush"))
+        self.blend_shape = fileFn.create_missing_dir(os.path.join(root, "weights", "blend_shape"))
+        self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))
         self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))
-        self.nCloth = fileFn.create_missing_dir(os.path.join(root, "weights", "nCloth"))
-        self.skinCluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skinCluster"))
-        self.nonLinear = fileFn.create_missing_dir(os.path.join(root, "weights", "nonLinear"))
+        self.ncloth = fileFn.create_missing_dir(os.path.join(root, "weights", "ncloth"))
+        self.skin_cluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skin_cluster"))
+        self.non_linear = fileFn.create_missing_dir(os.path.join(root, "weights", "non_linear"))
         self.tension = fileFn.create_missing_dir(os.path.join(root, "weights", "tension"))
-        self.softMod = fileFn.create_missing_dir(os.path.join(root, "weights", "softMod"))
+        self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))
         self.dsAttract = fileFn.create_missing_dir(os.path.join(root, "weights", "dsAttract"))
-        self.ngLayers = fileFn.create_missing_dir(os.path.join(root, "weights", "ngSkinLayers"))
+        self.ng_layers = fileFn.create_missing_dir(os.path.join(root, "weights", "ng_layers"))
 
 
 class _dataDirectoryStruct:
     """Directory struct with folder per data type."""
 
     def __init__(self, root):
-        self.blendShapes = fileFn.create_missing_dir(os.path.join(root, "data", "blendShapes"))
+        self.blend_shapes = fileFn.create_missing_dir(os.path.join(root, "data", "blend_shapes"))
         self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))
         self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))
         self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))
