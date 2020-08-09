@@ -6,7 +6,7 @@ Logger.set_level(LunaConfig.get(LunaVars.logging_level, default=10))
 
 try:
     from Luna.static import Directories
-    from Luna.interface import lunaMenu
+    from Luna.interface.menu import LunaMenu
     from Luna.interface.hud import LunaHud
 except Exception as e:
     Logger.exception("Failed to import modules")
@@ -24,7 +24,7 @@ def open_port(lang="python"):
 
 def build_luna_menu():
     try:
-        lunaMenu.LunaMenu()
+        LunaMenu()
     except Exception as e:
         Logger.exception("Failed to build Luna menu", exc_info=e)
 

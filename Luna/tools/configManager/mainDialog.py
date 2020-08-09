@@ -12,7 +12,7 @@ class MainDialog(MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
     WINDOW_TITLE = "Luna configuaration"
     UI_NAME = "LunaConfigManager"
-    UI_SCRIPT = "from Luna.interface import configManager\nconfigManager.MainDialog()"
+    UI_SCRIPT = "from Luna.tools import configManager\nconfigManager.MainDialog()"
     UI_INSTANCE = None
     MINIMUM_SIZE = [400, 500]
 

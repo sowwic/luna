@@ -4,7 +4,7 @@ from Luna import Logger
 from Luna import external
 from Luna.core.configFn import LunaConfig
 from Luna.static import Directories
-from Luna.interface.lunaMenu import functions
+from Luna.interface.menu import functions
 
 
 def _null_command(*args):
@@ -72,7 +72,7 @@ class LunaMenu:
         self.menu = pm.menu(self.MENU_OBJECT, label=self.MENU_LABEL, parent=self.MAIN_WINDOW, tearOff=1)
 
         # Add items
-        self.addMenuItem(self.menu, label="Build manager", command=functions.mainMenu.build_manager)
+        self.addMenuItem(self.menu, label="Build manager", command=functions.main_menu.build_manager)
 
         # Tools
         self.tools_menu = self.addSubMenu(self.menu, label="Tools", tear_off=1)
@@ -82,10 +82,10 @@ class LunaMenu:
 
         # Prefs
         self.addMenuItem(self.menu, divider=1)
-        self.addMenuItem(self.menu, label="Configuration", command=functions.mainMenu.prefs_manager)
+        self.addMenuItem(self.menu, label="Configuration", command=functions.main_menu.prefs_manager)
 
         Logger.info("Successfully added menu: {0}".format(self.MENU_LABEL))
 
 
 if __name__ == "__main__":
-    luna_menu = LunaMenu()
+    test_menu = LunaMenu()
