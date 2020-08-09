@@ -7,17 +7,17 @@ try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
     from Luna.core.configFn import LunaConfig
-    from Luna.core.configFn import WorkspaceVars
+    from Luna.core.configFn import ProjectVars
     from Luna.interface.hud import LunaHud
 except Exception:
     Logger.exception("Failed to import modules")
 
 
-class Workspace:
+class Project:
     """
-    Base workspace class. Represents rigging workspace/project.
+    Base project class. Represents rigging project
     """
-    TAG_FILE = "workspace.proj"
+    TAG_FILE = "luna.proj"
 
     def __init__(self, path):
         self.path = path  # type: str
@@ -26,7 +26,7 @@ class Workspace:
         self.tag_path = os.path.join(self.path, self.TAG_FILE)  # type:str
 
     @classmethod
-    def is_workspace(cls, path):
+    def is_project(cls, path):
         search_file = os.path.join(path, cls.TAG_FILE)
         Logger.debug("Workpace check ({0}) - {1}".format(os.path.isfile(search_file), path))
         return os.path.isfile(search_file)
@@ -45,66 +45,66 @@ class Workspace:
         return meta_dict
 
     def add_to_recent(self):
-        workspace_queue = LunaConfig.get(WorkspaceVars.recentWorkspace, default=deque(maxlen=3))
-        if not isinstance(workspace_queue, deque):
-            workspace_queue = deque(workspace_queue, maxlen=3)
+        project_queue = LunaConfig.get(ProjectVars.recent_projects, default=deque(maxlen=3))
+        if not isinstance(project_queue, deque):
+            project_queue = deque(project_queue, maxlen=3)
 
         entry = [self.name, self.path]
-        if entry in workspace_queue:
+        if entry in project_queue:
             return
 
-        workspace_queue.appendleft(entry)
-        LunaConfig.set(WorkspaceVars.recentWorkspace, list(workspace_queue))
+        project_queue.appendleft(entry)
+        LunaConfig.set(ProjectVars.recent_projects, list(project_queue))
 
     @ staticmethod
     def create(path):
-        if Workspace.is_workspace(path):
-            Logger.error("Already a workspace: {0}".format(path))
+        if Project.is_project(path):
+            Logger.error("Already a project: {0}".format(path))
             return
 
-        new_workspace = Workspace(path)
+        new_project = Project(path)
         # Create missing meta and tag files
-        fileFn.create_missing_dir(new_workspace.path)
-        fileFn.create_file(path=new_workspace.tag_path)
-        meta_data = new_workspace.get_meta()
+        fileFn.create_missing_dir(new_project.path)
+        fileFn.create_file(path=new_project.tag_path)
+        meta_data = new_project.get_meta()
         creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         meta_data["created"] = creation_date
-        fileFn.write_json(new_workspace.meta_path, data=meta_data)
+        fileFn.write_json(new_project.meta_path, data=meta_data)
 
         # Set enviroment variables and refresh HUD
-        environFn.set_workspace_var(new_workspace)
-        LunaConfig.set(WorkspaceVars.previousWorkspace, new_workspace.path)
-        new_workspace.add_to_recent()
+        environFn.set_project_var(new_project)
+        LunaConfig.set(ProjectVars.previous_project, new_project.path)
+        new_project.add_to_recent()
         LunaHud.refresh()
 
-        Logger.debug("New workspace path: {0}".format(new_workspace.path))
-        Logger.debug("New workspace name: {0}".format(new_workspace.name))
+        Logger.debug("New project path: {0}".format(new_project.path))
+        Logger.debug("New project name: {0}".format(new_project.name))
 
-        return new_workspace
+        return new_project
 
     @ staticmethod
     def set(path):
-        if not Workspace.is_workspace(path):
-            Logger.error("Not a workspace: {0}".format(path))
+        if not Project.is_project(path):
+            Logger.error("Not a project: {0}".format(path))
 
-        workspace_instance = Workspace(path)
-        meta_data = workspace_instance.get_meta()
-        fileFn.write_json(workspace_instance.meta_path, data=meta_data)
+        project_instance = Project(path)
+        meta_data = project_instance.get_meta()
+        fileFn.write_json(project_instance.meta_path, data=meta_data)
 
         # Set enviroment variables and refresh HUD
-        environFn.set_workspace_var(workspace_instance)
-        LunaConfig.set(WorkspaceVars.previousWorkspace, workspace_instance.path)
-        workspace_instance.add_to_recent()
+        environFn.set_project_var(project_instance)
+        LunaConfig.set(ProjectVars.previous_project, project_instance.path)
+        project_instance.add_to_recent()
         LunaHud.refresh()
 
-        Logger.debug("Set workspace path: {0}".format(workspace_instance.path))
-        Logger.debug("Set workspace name: {0}".format(workspace_instance.name))
+        Logger.debug("Set project path: {0}".format(project_instance.path))
+        Logger.debug("Set project name: {0}".format(project_instance.name))
 
-        return workspace_instance
+        return project_instance
 
     @ staticmethod
     def exit():
         environFn.set_asset_var(None)
-        environFn.set_workspace_var(None)
+        environFn.set_project_var(None)
         environFn.set_character_var(None)
         LunaHud.refresh()

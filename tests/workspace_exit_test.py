@@ -1,4 +1,3 @@
-from Luna.core import workspace
-reload(workspace)
+from Luna.workspace import project
 
-workspace.Workspace.exit()
+project.Project.exit()

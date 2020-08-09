@@ -46,10 +46,10 @@ class LunaHud:
     @staticmethod
     def getHudText():
         stringToDraw = ""
-        current_workspace = environFn.get_workspace_var()
+        current_project = environFn.get_project_var()
         current_asset = environFn.get_asset_var()
-        if current_workspace:
-            stringToDraw += current_workspace.name
+        if current_project:
+            stringToDraw += current_project.name
             if current_asset:
                 stringToDraw += " :: {0}".format(current_asset.name)
         else:

@@ -1,5 +1,5 @@
 from Luna import Logger
 from Luna.utils import environFn
 
-current_workspace = environFn.get_workspace_var()
-Logger.debug("Current workspace path: {0}".format(current_workspace.path))
+current_project = environFn.get_project_var()
+Logger.debug("Current project path: {0}".format(current_project.path))

@@ -12,12 +12,12 @@ class Asset:
         self.name = name
         self.type = typ.lower()
 
-        current_workspace = environFn.get_workspace_var()
-        if not current_workspace:
-            raise Exception("Workspace is not set")
+        current_project = environFn.get_project_var()
+        if not current_project:
+            raise Exception("Project is not set")
 
         # Define paths
-        self.path = os.path.join(current_workspace.path, self.type.lower() + "s", self.name)  # type:str
+        self.path = os.path.join(current_project.path, self.type.lower() + "s", self.name)  # type:str
         self.meta_path = os.path.join(self.path, "asset.meta")  # type:str
         Logger.debug("Asset: {0} Type: {1} Path: {2}".format(self.name, self.type, self.path))
 

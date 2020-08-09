@@ -6,9 +6,9 @@ from Luna.utils import fileFn
 from Luna.static import Directories
 
 
-class WorkspaceVars:
-    recentWorkspace = "workspace.recent"
-    previousWorkspace = "workspace.previous"
+class ProjectVars:
+    recent_projects = "project.recent"
+    previous_project = "project.previous"
 
 
 class LunaVars:

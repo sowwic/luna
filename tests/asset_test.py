@@ -1,13 +1,13 @@
-from Luna.core import asset
-from Luna.core import workspace
+from Luna.workspace import asset
+from Luna.workspace import project
 from Luna.core.configFn import LunaConfig
-from Luna.core.configFn import WorkspaceVars
+from Luna.core.configFn import ProjectVars
 from PySide2 import QtWidgets
-reload(workspace)
+reload(project)
 reload(asset)
 
-prevPath = LunaConfig.get(WorkspaceVars.previousWorkspace, "")
-path = QtWidgets.QFileDialog.getExistingDirectory(None, "Set Luna workspace", prevPath)
+prevPath = LunaConfig.get(ProjectVars.previous_project, "")
+path = QtWidgets.QFileDialog.getExistingDirectory(None, "Set Luna project", prevPath)
 if path:
-    test_workspace = workspace.Workspace.set(path)
+    test_project = project.Project.set(path)
     test_asset = asset.Asset(name="testAsset", typ="character")
