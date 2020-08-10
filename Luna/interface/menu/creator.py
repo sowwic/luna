@@ -1,34 +1,23 @@
 import pymel.core as pm
-from functools import partial
 from Luna import Logger
 from Luna import external
-from Luna.core.config import Config
 from Luna.static import Directories
-from Luna.interface.menu import functions
+from functools import partial
+from Luna.core.config import Config
+try:
+    from Luna.interface.menu.commands import main_cmds
+    from Luna.interface.menu.commands import help_cmds
+except Exception as e:
+    Logger.exception("Failed to import modules", exc_info=e)
 
 
 def _null_command(*args):
     pass
 
 
-class LunaMenu:
-    MAIN_WINDOW = pm.melGlobals["gMainWindow"]
-    MENU_OBJECT = "LunaMainMenu"
-    MENU_LABEL = "Luna"
-    ICON_PATH = Directories.ICONS_PATH
-
-    @classmethod
-    def _delete_old(cls):
-        if pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, exists=1, parent=cls.MAIN_WINDOW):
-            pm.deleteUI(pm.menu(cls.MENU_OBJECT, e=1, deleteAllItems=1))
-
-    def __init__(self):
-        self.menu = None  # type : pymel.core.uitypes.Menu
-        self._delete_old()
-        self.build()
-
-    def addMenuItem(self,
-                    parent=None,
+class MenuUtil:
+    @staticmethod
+    def addMenuItem(parent=None,
                     label="",
                     command=_null_command,
                     icon="",
@@ -40,7 +29,7 @@ class LunaMenu:
                     default_value=False):
 
         if icon and not use_maya_icons:
-            icon = self.iconPath + icon
+            icon = Directories.ICONS_PATH + icon
 
         if divider:
             return pm.menuItem(p=parent, dl=label, i=icon, d=divider)
@@ -60,32 +49,50 @@ class LunaMenu:
         else:
             return pm.menuItem(p=parent, l=label, i=icon, c=command)
 
-    def addSubMenu(self, parent, label, tear_off=False, icon=None, use_maya_icons=False):
+    @staticmethod
+    def addSubMenu(parent, label, tear_off=False, icon=None, use_maya_icons=False):
         '''Adds a sub menu item with the specified label and icon to the specified parent popup menu.'''
         if icon and not use_maya_icons:
-            icon = self.ICON_PATH + icon
+            icon = Directories.ICONS_PATH + icon
 
         return pm.menuItem(p=parent, l=label, i=icon, subMenu=True, to=tear_off)
 
-    def build(self):
-        Logger.info("Building {0} menu...".format(self.MENU_LABEL))
-        self.menu = pm.menu(self.MENU_OBJECT, label=self.MENU_LABEL, parent=self.MAIN_WINDOW, tearOff=1)
 
+class LunaMenu:
+    MAIN_WINDOW = pm.melGlobals["gMainWindow"]
+    MENU_OBJECT = "LunaMainMenu"
+    MENU_LABEL = "Luna"
+
+    @classmethod
+    def _delete_old(cls):
+        if pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, exists=1, parent=cls.MAIN_WINDOW):
+            Logger.info("Deleting old {0} menu...".format(cls.MENU_LABEL))
+            pm.deleteUI(pm.menu(cls.MENU_OBJECT, e=1, deleteAllItems=1))
+
+    @classmethod
+    def create(cls):
+        cls._delete_old()
+        Logger.info("Building {0} menu...".format(cls.MENU_LABEL))
+        main_menu = pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, parent=cls.MAIN_WINDOW, tearOff=1)
         # Add items
-        self.addMenuItem(self.menu, label="Build manager", command=functions.main_menu.build_manager)
+        MenuUtil.addMenuItem(main_menu, label="Build manager", command=main_cmds.build_manager)
 
-        # Tools
-        self.tools_menu = self.addSubMenu(self.menu, label="Tools", tear_off=1)
+        # Tools menu
+        tools_menu = MenuUtil.addSubMenu(main_menu, label="Tools", tear_off=1)
+        MenuUtil.addMenuItem(tools_menu, divider=1, label="External")
         if "dsRenamingTool" in pm.moduleInfo(lm=1):
-            self.addMenuItem(self.tools_menu, "Renaming tool", command=external.tools.renaming_tool, icon="rename.png", use_maya_icons=1)
+            MenuUtil.addMenuItem(tools_menu, "Renaming tool", command=external.tools.renaming_tool, icon="rename.png", use_maya_icons=1)
             Logger.info("dsRenamingTool detected. Shortcut was added to Tools menu")
 
-        # Prefs
-        self.addMenuItem(self.menu, divider=1)
-        self.addMenuItem(self.menu, label="Configuration", command=functions.main_menu.prefs_manager)
+        # Help and config section
+        MenuUtil.addMenuItem(main_menu, divider=1)
+        help_menu = MenuUtil.addSubMenu(main_menu, label="Help", tear_off=1)
+        MenuUtil.addMenuItem(help_menu, "About", command=help_cmds.show_about_dialog)
+        MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png", command=help_cmds.open_docs, use_maya_icons=1)
 
-        Logger.info("Successfully added menu: {0}".format(self.MENU_LABEL))
+        MenuUtil.addMenuItem(main_menu, label="Configuration", command=main_cmds.config_manager)
+        Logger.info("Successfully added menu: {0}".format(cls.MENU_LABEL))
 
 
 if __name__ == "__main__":
-    test_menu = LunaMenu()
+    LunaMenu.create()

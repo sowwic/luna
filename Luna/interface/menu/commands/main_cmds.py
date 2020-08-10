@@ -11,5 +11,5 @@ def build_manager(*args):
     buildManager.MainDialog.display()
 
 
-def prefs_manager(*args):
+def config_manager(*args):
     configManager.MainDialog.display()

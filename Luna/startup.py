@@ -16,15 +16,15 @@ def open_port(lang="python"):
     port = Config.get(LunaVars.command_port, default=7221)
     if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
         try:
-            pm.commandPort(name="127.0.0.1:{0}".format(port), stp=lang, echoOutput=True)
-            Logger.info("Command port opened: {0} - {1}".format(lang.title(), port))
+            pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
+            Logger.info("Command port opened: Python - {0}".format(port))
         except Exception as e:
             Logger.exception("Failed to open command port", exc_info=e)
 
 
 def build_luna_menu():
     try:
-        LunaMenu()
+        LunaMenu.create()
     except Exception as e:
         Logger.exception("Failed to build Luna menu", exc_info=e)
 
