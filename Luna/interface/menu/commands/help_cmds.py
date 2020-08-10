@@ -6,7 +6,8 @@ from PySide2 import QtWidgets
 
 
 def show_about_dialog(*args):
-    QtWidgets.QMessageBox.about(None, "Luna", "version: {0}".format(__version__))
+    help_text = "Luna\nVersion: {0}".format(__version__)
+    QtWidgets.QMessageBox.about(None, "Luna", help_text)
 
 
 def open_docs(*args):

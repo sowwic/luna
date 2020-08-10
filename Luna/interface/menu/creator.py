@@ -10,6 +10,14 @@ try:
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
 
+if Logger.get_level() == 10:
+    try:
+        reload(main_cmds)
+        reload(help_cmds)
+        Logger.debug("Reloaded command modules")
+    except ImportError:
+        Logger.exception("Failed to reload command modules")
+
 
 def _null_command(*args):
     pass
@@ -66,8 +74,8 @@ class LunaMenu:
     @classmethod
     def _delete_old(cls):
         if pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, exists=1, parent=cls.MAIN_WINDOW):
-            Logger.info("Deleting old {0} menu...".format(cls.MENU_LABEL))
             pm.deleteUI(pm.menu(cls.MENU_OBJECT, e=1, deleteAllItems=1))
+            Logger.debug("Deleted existing {} object".format(cls.MENU_OBJECT))
 
     @classmethod
     def create(cls):
@@ -82,7 +90,7 @@ class LunaMenu:
         MenuUtil.addMenuItem(tools_menu, divider=1, label="External")
         if "dsRenamingTool" in pm.moduleInfo(lm=1):
             MenuUtil.addMenuItem(tools_menu, "Renaming tool", command=external.tools.renaming_tool, icon="rename.png", use_maya_icons=1)
-            Logger.info("dsRenamingTool detected. Shortcut was added to Tools menu")
+            Logger.info("dsRenamingTool detected. Shortcut was added to Tools section")
 
         # Help and config section
         MenuUtil.addMenuItem(main_menu, divider=1)
