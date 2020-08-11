@@ -2,6 +2,7 @@ import sys
 import inspect
 import logging
 import logging.handlers
+import pymel.core as pm
 
 
 class Logger:
@@ -24,7 +25,7 @@ class Logger:
                 cls._logger_obj = logging.getLogger(cls.LOGGER_NAME)
                 cls._logger_obj.setLevel(cls.LEVEL_DEFAULT)
                 fmt = logging.Formatter("[{0}][%(levelname)s] %(message)s".format(cls.LOGGER_NAME), datefmt="%d-%m-%Y %H:%M:%S")
-                stream_handler = logging.StreamHandler(sys.stderr)
+                stream_handler = MGlobalHandler()
                 stream_handler.setFormatter(fmt)
                 cls._logger_obj.addHandler(stream_handler)
 
@@ -100,3 +101,21 @@ class Logger:
         rfile_hander.setFormatter(fmt)
 
         lg.addHandler(rfile_hander)
+
+
+class MGlobalHandler(logging.Handler):
+    def __init__(self, level="DEBUG"):
+        super(MGlobalHandler, self).__init__(level)
+
+    def emit(self, record):
+        msg = self.format(record)
+        if record.levelname in ["DEBUG", "INFO"]:
+            pm.displayInfo(msg)
+        elif record.levelname == "WARNING":
+            pm.displayWarning(msg)
+        elif record.levelname in ["ERROR", "CRITICAL"]:
+            pm.displayError(msg)
+
+
+if __name__ == "__main__":
+    testLogger = Logger.logger_obj().handlers
