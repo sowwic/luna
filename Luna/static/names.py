@@ -2,25 +2,17 @@ from Luna.utils.enumFn import Enum
 
 
 class OppositeSide(Enum):
-    L = "R"
-    R = "L"
+    l = "r"  # noqa: E741
+    r = "l"
 
 
-class Character:
-    node = "C_characterNode_CTL"
-    masterCtl = "C_masterWalk_CTL"
-    geometry = "geometry_GRP"
-    joints = "joints_GRP"
-    locators = "locators_GRP"
-    worldSpace = "C_worldSpace_LOC"
-
-
-class AssetType(Enum):
-    character = "C"
-    prop = "P"
-    vehicle = "V"
-    enviroment = "E"
-    other = "A"
+class Character(Enum):
+    node = "character_grp"
+    control_rig = "control_rig_grp"
+    geometry = "geometry_grp"
+    deformation_rig = "deformation_rig_grp"
+    locators = "locators_grp"
+    world_space = "c_world_space_loc"
 
 
 class ComponentType(Enum):
@@ -36,14 +28,14 @@ class ComponentDepth(Enum):
 
 
 class JointLabelSide(Enum):
-    C = 0
-    L = 1
-    R = 2
-    NoSide = 3
+    c = 0
+    l = 1  # noqa: E741
+    r = 2
+    no_side = 3
 
 
 class JointLabelType(Enum):
-    NoType = 0
+    no_type = 0
     root = 1
     hip = 2
     knee = 3
@@ -62,18 +54,14 @@ class JointLabelType(Enum):
     propB = 16
     propC = 17
     other = 18
-    indexFinger = 19
-    middleFinger = 20
-    ringFinger = 21
-    pinkyFinger = 22
-    extraFinger = 23
-    bigToe = 24
-    indexToe = 25
-    middleToe = 26
-    ringToe = 27
-    pinkyToe = 28
-    footThumb = 29
-
-
-if __name__ == "__main__":
-    print(Character.geometry)
+    index_finger = 19
+    middle_finger = 20
+    ring_finger = 21
+    pinky_finger = 22
+    extra_finger = 23
+    big_toe = 24
+    index_toe = 25
+    middle_toe = 26
+    ring_toe = 27
+    pinky_toe = 28
+    foot_thumb = 29

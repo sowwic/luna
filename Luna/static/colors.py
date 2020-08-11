@@ -115,7 +115,3 @@ class SideColor(Enum):
     C = ColorIndex.yellow.value
     L = ColorIndex.blue.value
     R = ColorIndex.red.value
-
-
-if __name__ == "__main__":
-    print ColorIndex.index_to_rgb(2)
