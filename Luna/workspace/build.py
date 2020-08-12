@@ -1,1 +1,1 @@
-from Luna.core.loggers import Logger
+from Luna import Logger

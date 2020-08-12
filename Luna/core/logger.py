@@ -2,6 +2,7 @@ import sys
 import inspect
 import logging
 import logging.handlers
+from PySide2 import QtCore
 import pymel.core as pm
 
 
@@ -9,11 +10,14 @@ class Logger:
 
     LOGGER_NAME = "Luna"
     LEVEL_DEFAULT = logging.DEBUG
+    PROPAGATE_DEFAULT = False
+    FORMAT_DEFAULT = "[{0}][%(levelname)s] %(message)s"
     _logger_obj = None  # type: logging.Logger
+    _signal_handler = None  # type: QSignalHandler
 
     @classmethod
     def logger_obj(cls):
-        """Returns logger objec
+        """Returns logger object
 
         :return: Logger object
         :rtype: logging.Logger
@@ -24,12 +28,17 @@ class Logger:
             else:
                 cls._logger_obj = logging.getLogger(cls.LOGGER_NAME)
                 cls._logger_obj.setLevel(cls.LEVEL_DEFAULT)
-                fmt = logging.Formatter("[{0}][%(levelname)s] %(message)s".format(cls.LOGGER_NAME), datefmt="%d-%m-%Y %H:%M:%S")
-                stream_handler = MGlobalHandler()
+                cls.set_propagate(cls.PROPAGATE_DEFAULT)
+                # Formatters
+                fmt = logging.Formatter(cls.FORMAT_DEFAULT.format(cls.LOGGER_NAME), datefmt="%d-%m-%Y %H:%M:%S")
+                qt_fmt = logging.Formatter("[%(levelname)s] %(message)s")
+                # Handlers
+                stream_handler = logging.StreamHandler(sys.stdout)
                 stream_handler.setFormatter(fmt)
+                cls._signal_handler = QSignalHandler()
+                cls._signal_handler.setFormatter(qt_fmt)
                 cls._logger_obj.addHandler(stream_handler)
-
-        cls._logger_obj.propagate = 0
+                cls._logger_obj.addHandler(cls._signal_handler)
 
         return cls._logger_obj
 
@@ -47,6 +56,16 @@ class Logger:
         if name:
             return logging.getLevelName(cls.logger_obj().level)
         return cls.logger_obj().level
+
+    @classmethod
+    def set_propagate(cls, propagate):
+        lg = cls.logger_obj()
+        lg.propagate = propagate
+
+    @classmethod
+    def signal_handler(cls):
+        cls.logger_obj()
+        return cls._signal_handler
 
     @classmethod
     def call_info(cls, message):
@@ -115,6 +134,20 @@ class MGlobalHandler(logging.Handler):
             pm.displayWarning(msg)
         elif record.levelname in ["ERROR", "CRITICAL"]:
             pm.displayError(msg)
+
+
+class QSignaler(QtCore.QObject):
+    message_logged = QtCore.Signal(str)
+
+
+class QSignalHandler(logging.Handler):
+    def __init__(self, *args, **kwargs):
+        super(QSignalHandler, self).__init__(*args, **kwargs)
+        self.emitter = QSignaler()
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.emitter.message_logged.emit(msg)
 
 
 if __name__ == "__main__":

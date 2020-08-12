@@ -1,5 +1,5 @@
 from os import environ
-from Luna.core.loggers import Logger
+from Luna import Logger
 
 
 def set_project_var(value):

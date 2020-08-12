@@ -1,4 +1,4 @@
-from Luna.core.loggers import Logger
+from Luna import Logger
 
 
 Logger.info("Test info")
@@ -7,6 +7,10 @@ Logger.error("Test error")
 Logger.warning("Test warning")
 Logger.critical("Test critical")
 Logger.log(5, "Log message")
+
+
+# Logger.signal_handler().emitter.message_logged.connect()
+
 
 try:
     a = []

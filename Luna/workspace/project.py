@@ -2,7 +2,7 @@ import os
 from collections import deque
 from datetime import datetime
 
-from Luna.core.loggers import Logger
+from Luna import Logger
 try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
