@@ -57,12 +57,12 @@ class Config:
         if platform.system() == "Darwin":
             config_dir = os.path.join(os.path.expanduser("~/Library/Preferences"), "Luna")
         elif platform.system() == "Windows":
-            config_dir = os.path.join(os.getenv(os.path.join(os.getenv("LOCALAPPDATA"), "dsReferencePlayer")))
+            config_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Luna")
         fileFn.create_missing_dir(config_dir)
 
         return config_dir
 
-    @staticmethod
+    @ staticmethod
     def get_config_file():
         config_dir = Config.get_config_dir()
         config_file = os.path.join(config_dir, "Luna_config.json")
