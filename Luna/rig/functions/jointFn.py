@@ -8,7 +8,6 @@ def duplicate_chain(original_chain=[], start_joint=None,
                     add_name="",
                     replace_name="",
                     replace_side="",
-                    replace_type="",
                     replace_suffix=""):
     if not original_chain:
         original_chain = joint_chain(start_joint, end_joint)
@@ -22,12 +21,10 @@ def duplicate_chain(original_chain=[], start_joint=None,
             original_name.name += add_name
         if replace_side:
             original_name.side = replace_side
-        if replace_type:
-            original_name.type = replace_type
         if replace_suffix:
             original_name.suffix = replace_suffix
 
-        new_name = nameFn.generate_name(original_name.name, original_name.side, original_name.type, original_name.suffix)
+        new_name = nameFn.generate_name(original_name.name, original_name.side, original_name.suffix)
         new_jnt.rename(new_name)
 
     return new_chain

@@ -8,28 +8,25 @@ def deconstruct_name(full_name):
     class _nameStruct:
         def __init__(self):
             self.side = name_parts[0]
-            self.name = name_parts[1]
-            self.type = name_parts[2]
+            self.name = name_parts[1:-2]
             self.index = name_parts[-2]
             self.suffix = name_parts[-1]
 
     return _nameStruct()
 
 
-def generate_name(name, side="", sub_type="", suffix=""):
+def generate_name(name, side="", suffix=""):
     if side:
         side += "_"
-    if sub_type:
-        sub_type = "_{0}_".format(sub_type)
     if suffix:
         suffix = "_" + suffix
 
     index = 1
     version = '{0:02}'.format(index)
-    full_name = side + name + sub_type + version + suffix
+    full_name = side + name + version + suffix
     while pm.objExists(full_name):
         index += 1
         version = '{0:02}'.format(index)
-        full_name = side + name + sub_type + version + suffix
+        full_name = side + name + version + suffix
 
     return full_name
