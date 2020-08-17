@@ -48,9 +48,8 @@ class Config:
     def reset(cls):
         config_dir = Config.get_config_dir()
         config_file = os.path.join(config_dir, "Luna_config.json")
-        if not os.path.isfile(config_file):
-            shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)
-            Logger.info("Luna config reset to default")
+        shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)
+        Logger.info("Luna config reset to default")
 
     @staticmethod
     def get_config_dir():
