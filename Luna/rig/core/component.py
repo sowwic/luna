@@ -24,9 +24,8 @@ class Component(meta.MetaRigNode):
         # Store data in a struct
         self.data.side = side
         self.data.name = name
-        self.data.fullname = nameFn.generate_name(name, side, suffix="meta")
 
-        self.pynode.rename(self.data.fullname)
+        self.pynode.rename(nameFn.generate_name(name, side, suffix="meta"))
 
     @ staticmethod
     def create(meta_parent, meta_type, version, side="c", name="component"):
@@ -43,7 +42,7 @@ class Component(meta.MetaRigNode):
         if self.pynode.hasAttr("metaChildren"):
             connections = self.pynode.listConnections()
             if connections:
-                children = [meta.MetaRigNode(connection_node) for connection_node in connections]
+                children = [meta.MetaRigNode(connection_node) for connection_node in connections if pm.hasAttr(connection_node, "metaRigType")]
                 if not of_type:
                     result = children
                 else:
@@ -59,22 +58,60 @@ class Component(meta.MetaRigNode):
         return result
 
     def attach_to_component(self, parent):
-        if not isinstance(parent, meta.MetaRigNode):
+        if not isinstance(parent, Component):
             parent = meta.MetaRigNode(parent)
         self.pynode.metaParent.connect(parent.pynode.metaChildren, na=1)
 
 
 class AnimComponent(Component):
+    class _groupStruct:
+        def __init__(self):
+            self.root = None
+            self.ctls = None
+            self.joints = None
+            self.parts = None
+
+    class _controlStruct:
+        def __init__(self):
+            pass
+
     def __init__(self, node):
         super(AnimComponent, self).__init__(node)
+        self.group = self._groupStruct()
+        self.controls = self._controlStruct()
 
-    def __create__(self):
-        pass
+    def __create__(self, side, name):
+        super(AnimComponent, self).__create__(side, name)
+
+        # Create hierarchy
+        self.group.root = pm.group(n=nameFn.generate_name(self.data.name, self.data.side, suffix="grp"), em=1)
+        self.group.ctls = pm.group(n=nameFn.generate_name(self.data.name, self.data.side, suffix="ctls"), em=1, p=self.group.root)
+        self.group.joints = pm.group(n=nameFn.generate_name(self.data.name, self.data.side, suffix="jnts"), em=1, p=self.group.root)
+        self.group.parts = pm.group(n=nameFn.generate_name(self.data.name, self.data.side, suffix="parts"), em=1, p=self.group.root)
+        for node in [self.group.root, self.group.ctls, self.group.joints, self.group.parts]:
+            node.addAttr("metaParent", at="message")
+
+        # Add message attrs
+        self.pynode.addAttr("rootGroup", at="message")
+        self.pynode.addAttr("ctlsGroup", at="message")
+        self.pynode.addAttr("jointsGroup", at="message")
+        self.pynode.addAttr("partsGroup", at="message")
+
+        # Connect hierarchy to meta
+        self.group.root.metaParent.connect(self.pynode.rootGroup)
+        self.group.ctls.metaParent.connect(self.pynode.ctlsGroup)
+        self.group.joints.metaParent.connect(self.pynode.jointsGroup)
+        self.group.parts.metaParent.connect(self.pynode.partsGroup)
 
     @ staticmethod
-    def create(meta_parent, meta_type, version, side="", name="animComponent"):
+    def create(meta_parent, meta_type, version, side="c", name="animComponent"):
         obj_instance = super(AnimComponent, AnimComponent).create(meta_parent, meta_type, version, side, name)
-        obj_instance.__create__()
+
+        return obj_instance
+
+    def populate_structs(self):
+        # Populate structs from message connections
+        self.group.root = self.pynode.rootGroup.get()
 
     def get_controls(self):
         pass

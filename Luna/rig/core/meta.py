@@ -72,4 +72,4 @@ class MetaRigNode(object):
         return node
 
     def set_meta_parent(self, parent):
-        Logger.debug("{0} parent - {1}".format(str(self.pynode), str(parent)))
+        self.pynode.metaParent.connect(parent.pynode.metaChildren, na=1)
