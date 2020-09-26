@@ -36,7 +36,7 @@ class MetaRigNode(object):
         node = pm.PyNode(node)
         if not node.hasAttr("metaRigType"):
             raise TypeError("{0} is not a valid meta rig node".format(str(node)))
-        self.pynode = node
+        self.pynode = node  # type: pm.PyNode
 
     @staticmethod
     def create(meta_parent, meta_type, version):
@@ -55,12 +55,13 @@ class MetaRigNode(object):
             meta_parent = MetaRigNode(meta_parent)
 
         # Create node
+
         node = pm.createNode("network")  # type: Network
 
         # Add attributes
         node.addAttr("version", at="long")
         node.addAttr("metaRigType", dt="string")
-        node.addAttr("metaChildren", at="message", m=1)
+        node.addAttr("metaChildren", at="message", multi=1, im=0)
         node.addAttr("metaParent", at="message")
         node.version.set(version)
         node.metaRigType.set(meta_type)

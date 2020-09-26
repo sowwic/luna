@@ -15,7 +15,7 @@ def get_existing():
 
 
 if __name__ == "__main__":
-    # test = create_new()  # type: fk_component.FKComponent
+    test = create_new()  # type: fk_component.FKComponent
     test = get_existing()
     Logger.debug(test)
-    test.do_smth()
+    # test.do_smth()

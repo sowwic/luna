@@ -8,7 +8,7 @@ from maya import cmds as mc
 from Luna import Logger
 
 
-def remove_licence():
+def remove_licence_callback():
     """
     Adds  callback to remove student licence from saved file.
 

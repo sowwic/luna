@@ -10,13 +10,16 @@ def create_new():
     return new_component
 
 
-def get_existing():
-    test_component = component.Component("network1")
+def get_existing(node):
+    test_component = component.Component(node)
     return test_component
 
 
 if __name__ == "__main__":
     test = create_new()  # type: component.Component
-    # test = get_existing()
-    Logger.debug(test)
-    test.do_smth()
+    # test = get_existing("c_component_00_meta")
+    test2 = component.Component.create(None, "core.component.Component", 1)
+    test3 = component.Component.create(None, "core.component.Component", 1)
+
+    test.attach_to_component(test2)
+    test3.attach_to_component(test2)
