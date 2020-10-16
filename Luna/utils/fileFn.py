@@ -81,24 +81,15 @@ def load_pickle(path):
 
 
 # File
-def create_file(directory="", name="", data="", extension="", path=""):
-    if directory and name:
-        file_name = name
-        if extension:
-            file_name = "{0}.{1}".format(name, extension)
-
-        file_path = os.path.normpath(os.path.join(directory, file_name))
-    elif path:
-        file_path = path
-
+def create_file(path, data=""):
     try:
-        with open(file_path, "w") as f:
+        with open(path, "w") as f:
             f.write(data)
     except IOError:
-        Logger.exception("Failed to create file {0}".format(file_path))
+        Logger.exception("Failed to create file {0}".format(path))
         return None
 
-    return (file_path)
+    return path
 
 
 def delete_oldest(directory, file_limit):

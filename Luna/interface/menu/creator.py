@@ -14,7 +14,8 @@ if Logger.get_level() == 10:
     try:
         reload(main_cmds)
         reload(help_cmds)
-        Logger.debug("Reloaded command modules")
+        reload(external)
+        Logger.debug("Menu - reloaded command modules")
     except ImportError:
         Logger.exception("Failed to reload command modules")
 
@@ -91,6 +92,10 @@ class LunaMenu:
         if "dsRenamingTool" in pm.moduleInfo(lm=1):
             MenuUtil.addMenuItem(tools_menu, "Renaming tool", command=external.tools.renaming_tool, icon="rename.png", use_maya_icons=1)
             Logger.info("dsRenamingTool detected. Shortcut was added to Tools section")
+
+        if "sl_history" in pm.moduleInfo(lm=1):
+            MenuUtil.addMenuItem(tools_menu, "sl_history", command=external.tools.sl_history, icon="list.svg", use_maya_icons=1)
+            Logger.info("sl_history detected. Shortcut was added to Tools section")
 
         # Help and config section
         MenuUtil.addMenuItem(main_menu, divider=1)
