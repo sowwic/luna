@@ -1,5 +1,4 @@
 import os
-import platform
 import shutil
 from Luna import Logger
 from Luna.utils import fileFn
@@ -46,30 +45,16 @@ class Config:
 
     @classmethod
     def reset(cls):
-        config_dir = Config.get_config_dir()
-        config_file = os.path.join(config_dir, "Luna_config.json")
-        shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)
+        shutil.copy2(Directories.DEFAULT_CONFIG_PATH, Directories.CONFIG_PATH)
         Logger.info("Luna config reset to default")
-
-    @staticmethod
-    def get_config_dir():
-        if platform.system() == "Darwin":
-            config_dir = os.path.join(os.path.expanduser("~/Library/Preferences"), "Luna")
-        elif platform.system() == "Windows":
-            config_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Luna")
-        fileFn.create_missing_dir(config_dir)
-
-        return config_dir
 
     @ staticmethod
     def get_config_file():
-        config_dir = Config.get_config_dir()
-        config_file = os.path.join(config_dir, "Luna_config.json")
-        if not os.path.isfile(config_file):
-            shutil.copy2(Directories.LUNA_DEFAULT_CONFIG_PATH, config_file)
-            Logger.debug("Default config copied to: {0}".format(config_file))
+        if not os.path.isfile(Directories.CONFIG_PATH):
+            shutil.copy2(Directories.DEFAULT_CONFIG_PATH, Directories.CONFIG_PATH)
+            Logger.debug("Default config copied to: {0}".format(Directories.CONFIG_PATH))
 
-        return config_file
+        return Directories.DEFAULT_CONFIG_PATH
 
 
 if __name__ == "__main__":

@@ -14,4 +14,5 @@ class Directories:
     ICONS_PATH = os.path.join(LUNA_ROOT_PATH, "res", "images", "icons")  # type: str
     FALLBACK_IMG_PATH = os.path.join(LUNA_ROOT_PATH, "res", "images", "fallbacks")  # type: str
     COMET_ORIENT_PATH = MAYA_APP_PATH + "scripts/comet/cometJointOrient.mel"  # type: str
-    LUNA_DEFAULT_CONFIG_PATH = os.path.join(LUNA_ROOT_PATH, "configs", "Luna_config.json")  # type:str
+    DEFAULT_CONFIG_PATH = os.path.join(LUNA_ROOT_PATH, "configs", "default_config.json")  # type:str
+    CONFIG_PATH = os.path.join(LUNA_ROOT_PATH, "configs", "config.json")  # type:str
