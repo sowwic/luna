@@ -128,3 +128,4 @@ dmypy.json
 NOTES.md
 .vscode/settings.json
 *.DS_store
+configs/config.json
