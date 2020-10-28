@@ -2,20 +2,20 @@ import pymel.core as pm
 from functools import partial
 
 from Luna import Logger
+DEBUG_MODE = Logger.get_level() == 10
 try:
     from Luna import Config
-    from Luna import external
     from Luna.static import Directories
-    from Luna.interface.menu.commands import main_cmds
-    from Luna.interface.menu.commands import help_cmds
+    from Luna.interface.commands import tool_cmds
+    from Luna.interface.commands import help_cmds
+    from Luna.utils import fileFn
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
 
-if Logger.get_level() == 10:
+if DEBUG_MODE:
     try:
-        reload(main_cmds)
+        reload(tool_cmds)
         reload(help_cmds)
-        reload(external)
         Logger.debug("Menu - reloaded command modules")
     except ImportError:
         Logger.exception("Failed to reload command modules")
@@ -70,42 +70,54 @@ class MenuUtil:
 
 class LunaMenu:
     MAIN_WINDOW = pm.melGlobals["gMainWindow"]
-    MENU_OBJECT = "LunaMainMenu"
-    MENU_LABEL = "Luna"
+    MAIN_MENU_ID = "LunaMainMenu"
+    MAIN_MENU_LABEL = "Luna"
+    TOOLS_MENU_ID = "LunaToolsMenu"
 
     @classmethod
     def _delete_old(cls):
-        if pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, exists=1, parent=cls.MAIN_WINDOW):
-            pm.deleteUI(pm.menu(cls.MENU_OBJECT, e=1, deleteAllItems=1))
-            Logger.debug("Deleted existing {} object".format(cls.MENU_OBJECT))
+        if pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_ID, exists=1, parent=cls.MAIN_WINDOW):
+            pm.deleteUI(pm.menu(cls.MAIN_MENU_ID, e=1, deleteAllItems=1))
+            Logger.debug("Deleted existing {} object".format(cls.MAIN_MENU_ID))
 
     @classmethod
     def create(cls):
+        # Build main menu
         cls._delete_old()
-        Logger.info("Building {0} menu...".format(cls.MENU_LABEL))
-        main_menu = pm.menu(cls.MENU_OBJECT, label=cls.MENU_LABEL, parent=cls.MAIN_WINDOW, tearOff=1)
-        # Add items
-        MenuUtil.addMenuItem(main_menu, label="Build manager", command=main_cmds.build_manager)
+        Logger.info("Building {0} menu...".format(cls.MAIN_MENU_LABEL))
+        pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_LABEL, parent=cls.MAIN_WINDOW, tearOff=1)
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Tools")
 
-        # Tools menu
-        tools_menu = MenuUtil.addSubMenu(main_menu, label="Tools", tear_off=1)
-        MenuUtil.addMenuItem(tools_menu, divider=1, label="External")
-        if "dsRenamingTool" in pm.moduleInfo(lm=1):
-            MenuUtil.addMenuItem(tools_menu, "Renaming tool", command=external.tools.renaming_tool, icon="rename.png", use_maya_icons=1)
-            Logger.info("dsRenamingTool detected. Shortcut was added to Tools section")
-
-        if "sl_history" in pm.moduleInfo(lm=1):
-            MenuUtil.addMenuItem(tools_menu, "sl_history", command=external.tools.sl_history, icon="list.svg", use_maya_icons=1)
-            Logger.info("sl_history detected. Shortcut was added to Tools section")
+        # Tools
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder)
+        cls._add_external_tools()
 
         # Help and config section
-        MenuUtil.addMenuItem(main_menu, divider=1)
-        help_menu = MenuUtil.addSubMenu(main_menu, label="Help", tear_off=1)
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration", command=tool_cmds.luna_configer)
+        cls._add_help_menu()
+
+    @classmethod
+    def _add_external_tools(cls):
+        register = fileFn.load_json(Directories.EXTERNAL_TOOLS_REGISTER)
+        found = set(register).intersection(set(pm.moduleInfo(lm=1)))
+        if not found:
+            return
+
+        tools_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="External", tear_off=1)
+        for tool in found:
+            MenuUtil.addMenuItem(tools_menu,
+                                 label=register[tool].get("label"),
+                                 command=register[tool].get("command"),
+                                 icon=register[tool].get("icon"),
+                                 use_maya_icons=register[tool].get("useMayaIcon"))
+            Logger.info("Added {0} to Luna >> Tools menu".format(tool))
+
+    @classmethod
+    def _add_help_menu(cls):
+        help_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Help", tear_off=1)
         MenuUtil.addMenuItem(help_menu, "About", command=help_cmds.show_about_dialog)
         MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png", command=help_cmds.open_docs, use_maya_icons=1)
-
-        MenuUtil.addMenuItem(main_menu, label="Configuration", command=main_cmds.config_manager)
-        Logger.info("Successfully added menu: {0}".format(cls.MENU_LABEL))
 
 
 if __name__ == "__main__":

@@ -16,3 +16,4 @@ class Directories:
     COMET_ORIENT_PATH = MAYA_APP_PATH + "scripts/comet/cometJointOrient.mel"  # type: str
     DEFAULT_CONFIG_PATH = os.path.join(LUNA_ROOT_PATH, "configs", "default_config.json")  # type:str
     CONFIG_PATH = os.path.join(LUNA_ROOT_PATH, "configs", "config.json")  # type:str
+    EXTERNAL_TOOLS_REGISTER = os.path.join(LUNA_ROOT_PATH, "configs", "external_tools.json")  # type:str

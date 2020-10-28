@@ -1,0 +1,14 @@
+{
+    "dsRenamingTool": {
+        "label": "dsRenamingTool",
+        "command": "import dsRenamingTool\ndsRenamingTool.Dialog.display()",
+        "icon": "",
+        "useMayaIcon": false
+    },
+    "sl_history": {
+        "label": "sl_history",
+        "command": "import sl_history\nsl_history.Dialog.display()",
+        "icon": "",
+        "useMayaIcon": false
+    }
+}

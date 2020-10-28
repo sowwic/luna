@@ -54,7 +54,7 @@ class Config:
             shutil.copy2(Directories.DEFAULT_CONFIG_PATH, Directories.CONFIG_PATH)
             Logger.debug("Default config copied to: {0}".format(Directories.CONFIG_PATH))
 
-        return Directories.DEFAULT_CONFIG_PATH
+        return Directories.CONFIG_PATH
 
 
 if __name__ == "__main__":

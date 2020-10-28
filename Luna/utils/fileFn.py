@@ -43,7 +43,7 @@ def load_json(path, string_data=False):
         Logger.exception("Failed to load file {0}".format(path), exc_info=e)
         return None
 
-    return data
+    return data  # type:dict
 
 
 # Pickle
