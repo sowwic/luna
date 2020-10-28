@@ -1,10 +1,11 @@
 import pymel.core as pm
-from Luna import Logger
-from Luna import external
-from Luna.static import Directories
 from functools import partial
-from Luna.core.config import Config
+
+from Luna import Logger
 try:
+    from Luna import Config
+    from Luna import external
+    from Luna.static import Directories
     from Luna.interface.menu.commands import main_cmds
     from Luna.interface.menu.commands import help_cmds
 except Exception as e:

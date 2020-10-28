@@ -1,7 +1,7 @@
 import pymel.core as pm
 from Luna import Logger
 try:
-    from Luna.rig.functions import jointFn
+    from Luna_rig.functions import jointFn
     reload(jointFn)
 except ImportError:
     Logger.exception("Failed to reload jointFn")

@@ -1,5 +1,5 @@
 import pymel.core as pm
-from Luna.rig.core import component
+from Luna_rig.core import component
 from Luna import Logger
 reload(component)
 
