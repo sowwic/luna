@@ -7,10 +7,15 @@ try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
     from Luna.core.config import Config
-    from Luna.core.config import ProjectVars
     from Luna.interface.hud import LunaHud
 except Exception:
     Logger.exception("Failed to import modules")
+
+
+class ProjectVars:
+    recent_projects = "project.recent"
+    previous_project = "project.previous"
+    recent_max = "project.max_recent"
 
 
 class Project:
@@ -28,7 +33,7 @@ class Project:
     @classmethod
     def is_project(cls, path):
         search_file = os.path.join(path, cls.TAG_FILE)
-        Logger.debug("Workpace check ({0}) - {1}".format(os.path.isfile(search_file), path))
+        Logger.debug("isProject check ({0}) - {1}".format(os.path.isfile(search_file), path))
         return os.path.isfile(search_file)
 
     def get_meta(self):
@@ -45,9 +50,10 @@ class Project:
         return meta_dict
 
     def add_to_recent(self):
-        project_queue = Config.get(ProjectVars.recent_projects, default=deque(maxlen=3))
+        max_recent = Config.get(ProjectVars.recent_max, default=3)
+        project_queue = Config.get(ProjectVars.recent_projects, default=deque(maxlen=max_recent))
         if not isinstance(project_queue, deque):
-            project_queue = deque(project_queue, maxlen=3)
+            project_queue = deque(project_queue, maxlen=max_recent)
 
         entry = [self.name, self.path]
         if entry in project_queue:
@@ -55,6 +61,10 @@ class Project:
 
         project_queue.appendleft(entry)
         Config.set(ProjectVars.recent_projects, list(project_queue))
+
+    def update_meta(self):
+        meta_data = self.get_meta()
+        fileFn.write_json(self.meta_path, data=meta_data)
 
     @ staticmethod
     def create(path):
@@ -108,3 +118,12 @@ class Project:
         environFn.set_asset_var(None)
         environFn.set_project_var(None)
         LunaHud.refresh()
+
+    @staticmethod
+    def refresh_recent():
+        recent_projects = Config.get(ProjectVars.recent_projects)
+        existing_projects = []
+        for prj in recent_projects:
+            if os.path.isdir(prj[1]):
+                existing_projects.append(prj)
+        Config.set(ProjectVars.recent_projects, existing_projects)

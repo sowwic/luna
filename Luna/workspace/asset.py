@@ -13,25 +13,25 @@ class Asset:
         self.name = name
         self.type = typ.lower()
 
-        current_project = environFn.get_project_var()
-        if not current_project:
+        self.current_project = environFn.get_project_var()
+        if not self.current_project:
             raise exceptions.ProjectNotSet
 
         # Define paths
-        self.path = os.path.join(current_project.path, self.type.lower() + "s", self.name)  # type:str
+        self.path = os.path.join(self.current_project.path, self.type.lower() + "s", self.name)  # type:str
         self.meta_path = os.path.join(self.path, "asset.meta")  # type:str
         Logger.debug("Asset: {0} Type: {1} Path: {2}".format(self.name, self.type, self.path))
 
         # Meta updates
-        self.meta = self.get_meta()
+        self.meta = self.get_meta()  # type: dict
 
         #  Create directories
         fileFn.create_missing_dir(self.path)
         self.save_meta()
-        self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))
-        self.guides = fileFn.create_missing_dir(os.path.join(self.path, "guides"))
-        self.rig = fileFn.create_missing_dir(os.path.join(self.path, "rig"))
-        self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))
+        self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))  # type:str
+        self.guides = fileFn.create_missing_dir(os.path.join(self.path, "guides"))  # type:str
+        self.rig = fileFn.create_missing_dir(os.path.join(self.path, "rig"))  # type:str
+        self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))  # type:str
         self.weights = _weightsDirectorySctruct(self.path)
         self.data = _dataDirectoryStruct(self.path)
 
@@ -41,6 +41,8 @@ class Asset:
 
         # Set env variables and update hud
         environFn.set_asset_var(self)
+        self.current_project.update_meta()
+
         LunaHud.refresh()
 
     def get_meta(self):
@@ -84,23 +86,23 @@ class _weightsDirectorySctruct:
 
     def __init__(self, root):
         # DEFINE RIGGING DIRECTORIES
-        self.blend_shape = fileFn.create_missing_dir(os.path.join(root, "weights", "blend_shape"))
-        self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))
-        self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))
-        self.ncloth = fileFn.create_missing_dir(os.path.join(root, "weights", "ncloth"))
-        self.skin_cluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skin_cluster"))
-        self.non_linear = fileFn.create_missing_dir(os.path.join(root, "weights", "non_linear"))
-        self.tension = fileFn.create_missing_dir(os.path.join(root, "weights", "tension"))
-        self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))
-        self.dsAttract = fileFn.create_missing_dir(os.path.join(root, "weights", "dsAttract"))
-        self.ng_layers = fileFn.create_missing_dir(os.path.join(root, "weights", "ng_layers"))
+        self.blend_shape = fileFn.create_missing_dir(os.path.join(root, "weights", "blend_shape"))  # type:str
+        self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))  # type:str
+        self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))  # type:str
+        self.ncloth = fileFn.create_missing_dir(os.path.join(root, "weights", "ncloth"))  # type:str
+        self.skin_cluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skin_cluster"))  # type:str
+        self.non_linear = fileFn.create_missing_dir(os.path.join(root, "weights", "non_linear"))  # type:str
+        self.tension = fileFn.create_missing_dir(os.path.join(root, "weights", "tension"))  # type:str
+        self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))  # type:str
+        self.dsAttract = fileFn.create_missing_dir(os.path.join(root, "weights", "dsAttract"))  # type:str
+        self.ng_layers = fileFn.create_missing_dir(os.path.join(root, "weights", "ng_layers"))  # type:str
 
 
 class _dataDirectoryStruct:
     """Directory struct with folder per data type."""
 
     def __init__(self, root):
-        self.blend_shapes = fileFn.create_missing_dir(os.path.join(root, "data", "blend_shapes"))
-        self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))
-        self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))
-        self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))
+        self.blend_shapes = fileFn.create_missing_dir(os.path.join(root, "data", "blend_shapes"))  # type:str
+        self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))  # type:str
+        self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))  # type:str
+        self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))  # type:str

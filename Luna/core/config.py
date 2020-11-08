@@ -5,19 +5,9 @@ from Luna.utils import fileFn
 from Luna.static import Directories
 
 
-class ProjectVars:
-    recent_projects = "project.recent"
-    previous_project = "project.previous"
-
-
 class LunaVars:
     logging_level = "logging.level"
     command_port = "python.commandPort"
-
-
-class HudVars:
-    block = "hud.block"
-    section = "hud.section"
 
 
 class Config:
@@ -29,7 +19,7 @@ class Config:
     def update(cls, new_config_dict):
         current_config = cls.load()  # type: dict
         current_config.update(new_config_dict)
-        fileFn.write_json(cls.get_config_file(), current_config)
+        fileFn.write_json(cls.get_config_file(), current_config, sort_keys=False)
 
     @classmethod
     def get(cls, key, default=None):

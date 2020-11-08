@@ -1,8 +1,12 @@
 {
     "project.recent": [],
+    "project.previous": "",
+    "project_max_recent": 3,
     "python.commandPort": 7221,
     "logging.level": 20,
     "hud.block": 5,
-    "project.previous": "",
-    "hud.section": 7
+    "hud.section": 7,
+    "tests.delete_files": true,
+    "tests.delete_dirs": true,
+    "tests.temp_dir": ""
 }
