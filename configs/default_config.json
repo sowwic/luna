@@ -8,5 +8,7 @@
     "hud.section": 7,
     "tests.delete_files": true,
     "tests.delete_dirs": true,
-    "tests.temp_dir": ""
+    "tests.temp_dir": "",
+    "tests.buffer_output": true,
+    "tests.new_file": true
 }

@@ -8,6 +8,7 @@ try:
     from Luna.static import Directories
     from Luna.interface.commands import tool_cmds
     from Luna.interface.commands import help_cmds
+    from Luna.interface.commands import dev_cmds
     from Luna.utils import fileFn
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
@@ -92,6 +93,9 @@ class LunaMenu:
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder)
         cls._add_external_tools()
 
+        # Developer tools
+        cls._add_dev_menu()
+
         # Help and config section
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration", command=tool_cmds.luna_configer)
@@ -118,6 +122,13 @@ class LunaMenu:
         help_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Help", tear_off=1)
         MenuUtil.addMenuItem(help_menu, "About", command=help_cmds.show_about_dialog)
         MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png", command=help_cmds.open_docs, use_maya_icons=1)
+
+    @classmethod
+    def _add_dev_menu(cls):
+        dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1)
+        MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
+        MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=dev_cmds.maya_unit_test.TestVars.buffer_output)
+        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=dev_cmds.run_unit_tests)
 
 
 if __name__ == "__main__":
