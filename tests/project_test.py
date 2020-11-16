@@ -1,15 +1,10 @@
 import os
 import unittest
 from Luna.workspace.project import Project
-from Luna.workspace.project import ProjectVars
-from Luna.core.config import Config
+from Luna import ProjectVars
+from Luna import Config
 from Luna.utils import environFn
 from Luna.test import TestCase
-
-# prev_path = Config.get(project.ProjectVars.previous_project, "")
-# path = QtWidgets.QFileDialog.getExistingDirectory(None, "Create Luna project", prev_path)
-# if path:
-#     test_project = project.Project.create(path)
 
 
 class ProjectTests(TestCase):

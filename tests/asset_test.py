@@ -8,12 +8,6 @@ from Luna.utils import fileFn
 from Luna.static import Directories
 from Luna.test import TestCase
 
-# prev_path = Config.get(project.ProjectVars.previous_project, "")
-# path = QtWidgets.QFileDialog.getExistingDirectory(None, "Set Luna project", prev_path)
-# if path:
-#     test_project = project.Project.set(path)
-#     test_asset = asset.Asset(name="testAsset", typ="character")
-
 
 class AssetTests(TestCase):
     @classmethod

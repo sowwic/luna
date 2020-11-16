@@ -5,15 +5,8 @@ import logging
 import pymel.core as pm
 from Luna import Config
 from Luna import Logger
+from Luna import TestVars
 from Luna.static import Directories
-
-
-class TestVars:
-    delete_files = "tests.delete_files"
-    delete_dirs = "tests.delete_dirs"
-    temp_dir = "tests.temp_dir"
-    buffer_output = "tests.buffer_output"
-    new_file = "tests.new_file"
 
 
 class TestCase(unittest.TestCase):

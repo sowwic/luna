@@ -10,6 +10,7 @@ try:
     from Luna.interface.commands import help_cmds
     from Luna.interface.commands import dev_cmds
     from Luna.utils import fileFn
+    from Luna import TestVars
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
 
@@ -127,7 +128,7 @@ class LunaMenu:
     def _add_dev_menu(cls):
         dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1)
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
-        MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=dev_cmds.maya_unit_test.TestVars.buffer_output)
+        MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
         MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=dev_cmds.run_unit_tests)
 
 

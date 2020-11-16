@@ -125,7 +125,9 @@ dmypy.json
 .pyre/
 
 # Project
-NOTES.md
-.vscode/settings.json
+.vscode/
+.idea/
 *.DS_store
+
+# User generated files
 configs/config.json

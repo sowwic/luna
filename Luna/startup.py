@@ -1,7 +1,7 @@
 import pymel.core as pm
 from Luna import Logger
 from Luna.core.config import Config
-from Luna.core.config import LunaVars
+from Luna import LunaVars
 Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 
 try:

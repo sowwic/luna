@@ -6,16 +6,11 @@ from Luna import Logger
 try:
     from Luna.utils import fileFn
     from Luna.utils import environFn
-    from Luna.core.config import Config
+    from Luna import Config
+    from Luna import ProjectVars
     from Luna.interface.hud import LunaHud
 except Exception:
     Logger.exception("Failed to import modules")
-
-
-class ProjectVars:
-    recent_projects = "project.recent"
-    previous_project = "project.previous"
-    recent_max = "project.max_recent"
 
 
 class Project:

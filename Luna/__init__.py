@@ -1,3 +1,4 @@
+from Luna.static.vars import *
 from Luna.core.logger import Logger
 from Luna.core.config import Config
 
