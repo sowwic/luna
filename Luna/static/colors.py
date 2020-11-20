@@ -112,6 +112,6 @@ class ColorIndex(Enum):
 
 
 class SideColor(Enum):
-    C = ColorIndex.yellow.value
-    L = ColorIndex.blue.value
-    R = ColorIndex.red.value
+    c = ColorIndex.yellow.value
+    l = ColorIndex.blue.value
+    r = ColorIndex.red.value

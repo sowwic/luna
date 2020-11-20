@@ -10,6 +10,8 @@ class AnimComponentTests(TestCase):
         pm.newFile(f=1)
 
     def tearDown(self):
+        pm.renameFile(self.get_temp_filename("animComponentTest.ma"))
+        pm.saveFile(f=1)
         super(AnimComponentTests, self).tearDown()
         pm.newFile(f=1)
 
@@ -63,6 +65,25 @@ class AnimComponentTests(TestCase):
         # Assertions
         self.assertTrue(pm.isConnected(component2.pynode.metaParent, component1.pynode.metaChildren[0]))
         self.assertEqual(component2.get_meta_parent(), component1)
+
+    def test_get_meta_children(self):
+        component1 = AnimComponent.create()
+        child_components = []
+        for i in range(5):
+            child_components.append(AnimComponent.create(meta_parent=component1))
+
+        # Assertions
+        for child in child_components:
+            self.assertEqual(component1, child.get_meta_parent())
+            self.assertEqual(component1.pynode, child.get_meta_parent().pynode)
+        self.assertListEqual(child_components, component1.get_meta_children())
+        self.assertListEqual(child_components, component1.get_meta_children(of_type=AnimComponent))
+
+    def test_instance_ctor(self):
+        component1 = AnimComponent.create()
+        instance = AnimComponent(component1.pynode)
+
+        self.assertTrue(pm.hasAttr(instance.pynode, "rootGroup"))
 
 
 if __name__ == "__main__":
