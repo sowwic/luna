@@ -127,6 +127,8 @@ class LunaMenu:
     @classmethod
     def _add_dev_menu(cls):
         dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1)
+        MenuUtil.addMenuItem(dev_menu, label="General", divider=1)
+        MenuUtil.addMenuItem(dev_menu, label="Reload Luna modules", command=dev_cmds.reload_luna_modules)
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
         MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=dev_cmds.run_unit_tests)

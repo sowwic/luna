@@ -10,7 +10,7 @@ class AnimComponentTests(TestCase):
         pm.newFile(f=1)
 
     def tearDown(self):
-        pm.renameFile(self.get_temp_filename("animComponentTest.ma"))
+        pm.renameFile(self.get_temp_filename("anim_component_test.ma"))
         pm.saveFile(f=1)
         super(AnimComponentTests, self).tearDown()
         pm.newFile(f=1)
@@ -25,7 +25,7 @@ class AnimComponentTests(TestCase):
 
         # Metanode
         self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent._type_to_str(AnimComponent))
+        self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
         self.assertEqual(new_component.pynode.version.get(), 1)
         self.assertEqual(str(new_component.group.root), "{0}_{1}_00_grp".format(new_component.data.side, new_component.data.name))
         self.assertEqual(str(new_component.group.ctls), "{0}_{1}_00_ctls".format(new_component.data.side, new_component.data.name))

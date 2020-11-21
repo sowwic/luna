@@ -14,7 +14,7 @@ class CharacterTests(TestCase):
         pm.newFile(f=1)
 
     def tearDown(self):
-        pm.renameFile(self.get_temp_filename("animComponentTest.ma"))
+        pm.renameFile(self.get_temp_filename("character_component_test.ma"))
         pm.saveFile(f=1)
         super(CharacterTests, self).tearDown()
         pm.newFile(f=1)

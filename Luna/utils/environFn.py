@@ -23,3 +23,12 @@ def set_asset_var(value):
 
 def get_asset_var():
     return environ.get("LUNA_ASSET")
+
+
+def set_character_var(value):
+    environ.data["LUNA_CHARACTER"] = value
+    Logger.debug("LUNA_CHARACTER : {0}".format(value))
+
+
+def get_character_var():
+    return environ.get("LUNA_CHARACTER")
