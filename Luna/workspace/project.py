@@ -19,6 +19,9 @@ class Project:
     """
     TAG_FILE = "luna.proj"
 
+    def __repr__(self):
+        return "{0}({1}): {2}".format(self.name, self.path, self.get_meta())
+
     def __init__(self, path):
         self.path = path  # type: str
         self.name = os.path.basename(path)  # type:str
@@ -41,7 +44,6 @@ class Project:
             if os.path.isdir(category_path):
                 asset_dirs = filter(os.path.isdir, [os.path.join(category_path, item) for item in os.listdir(category_path)])
                 meta_dict[category] = [os.path.basename(asset) for asset in asset_dirs]
-        Logger.debug("{0} meta: {1}".format(self.name, meta_dict))
         return meta_dict
 
     def add_to_recent(self):
@@ -82,8 +84,7 @@ class Project:
         new_project.add_to_recent()
         LunaHud.refresh()
 
-        Logger.debug("New project path: {0}".format(new_project.path))
-        Logger.debug("New project name: {0}".format(new_project.name))
+        Logger.debug("New project: {0}".format(new_project))
 
         return new_project
 
@@ -103,9 +104,15 @@ class Project:
         project_instance.add_to_recent()
         LunaHud.refresh()
 
-        Logger.debug("Set project path: {0}".format(project_instance.path))
-        Logger.debug("Set project name: {0}".format(project_instance.name))
+        Logger.debug("Setted project: {0}".format(project_instance))
+        # Logger.debug("Set project path: {0}".format(project_instance.path))
+        # Logger.debug("Set project name: {0}".format(project_instance.name))
 
+        return project_instance
+
+    @staticmethod
+    def get():
+        project_instance = environFn.get_project_var()  # type: Project
         return project_instance
 
     @ staticmethod

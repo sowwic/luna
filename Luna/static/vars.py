@@ -20,3 +20,7 @@ class ProjectVars:
     recent_projects = "project.recent"
     previous_project = "project.previous"
     recent_max = "project.max_recent"
+
+
+class BuildVars:
+    clear_history = "build.clearHistory"

@@ -9,6 +9,10 @@ from PySide2 import QtWidgets
 
 
 class Asset:
+
+    def __repr__(self):
+        return "Asset: {0}({1}), Model: {2}".format(self.name, self.type, self.meta.get("model"))
+
     def __init__(self, name, typ):
         self.name = name
         self.type = typ.lower()
@@ -20,7 +24,6 @@ class Asset:
         # Define paths
         self.path = os.path.join(self.current_project.path, self.type.lower() + "s", self.name)  # type:str
         self.meta_path = os.path.join(self.path, "asset.meta")  # type:str
-        Logger.debug("Asset: {0} Type: {1} Path: {2}".format(self.name, self.type, self.path))
 
         # Meta updates
         self.meta = self.get_meta()  # type: dict
@@ -44,6 +47,7 @@ class Asset:
         self.current_project.update_meta()
 
         LunaHud.refresh()
+        Logger.debug("Asset: {0} Type: {1} Path: {2}".format(self.name, self.type, self.path))
 
     def get_meta(self):
         meta_dict = {}
@@ -74,11 +78,23 @@ class Asset:
 
         return model_path
 
-    def set_model(self, path):
+    def set_model_path(self, path):
         self.meta["model"] = path
         self.save_meta()
-
         return path
+
+    def get_model_path(self):
+        return self.meta.get("model")
+
+    def get_latest_guides_path(self):
+        filtered_files = []
+        for file_name in os.listdir(self.guides):
+            if "(" in file_name or ")" in file_name:
+                Logger.warning("Invalid files names in guides folder!")
+                continue
+            filtered_files.append(file_name)
+        sorted_versions = sorted(filtered_files, key=lambda file_name: file_name.split(".")[-2])
+        return os.path.join(self.guides, sorted_versions[-1])
 
 
 class _weightsDirectorySctruct:
