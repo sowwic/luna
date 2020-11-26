@@ -90,7 +90,7 @@ class Asset:
         return fileFn.get_latest_file("{0}_guides".format(self.name), self.guides, extension="ma", full_path=full_path, split_char=".")
 
     def get_latest_rig_path(self, full_path=True):
-        return fileFn.get_latest_file("{0}_rig".format(self.name), self.guides, extension="ma", full_path=full_path, split_char=".")
+        return fileFn.get_latest_file("{0}_rig".format(self.name), self.rig, extension="ma", full_path=full_path, split_char=".")
 
 
 class _weightsDirectorySctruct:

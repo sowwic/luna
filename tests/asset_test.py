@@ -58,8 +58,8 @@ class AssetTests(TestCase):
         self.assertTrue(os.path.isdir(test_asset.data.poses))
         self.assertTrue(os.path.isdir(test_asset.data.xgen))
         # Template files creation
-        self.assertTrue(os.path.isfile(os.path.join(test_asset.guides, "{0}.guides.0000.ma".format(test_asset.name))))
-        self.assertTrue(os.path.isfile(os.path.join(test_asset.rig, "{0}.rig.0000.ma".format(test_asset.name))))
+        self.assertTrue(os.path.isfile(os.path.join(test_asset.guides, "{0}_guides.0000.ma".format(test_asset.name))))
+        self.assertTrue(os.path.isfile(os.path.join(test_asset.rig, "{0}_rig.0000.ma".format(test_asset.name))))
 
 
 if __name__ == "__main__":
