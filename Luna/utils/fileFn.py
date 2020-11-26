@@ -138,5 +138,45 @@ def get_icon(name):
     return os.path.join(Directories.ICONS_PATH, name)
 
 
-if __name__ == "__main__":
-    pass
+def get_versioned_files(path, extension="", split_char="."):
+    files_dict = {}
+    all_files = [item for item in os.listdir(path) if os.path.isfile(os.path.join(path, item))]
+    if extension:
+        all_files = [item for item in all_files if item.endswith("." + extension)]
+
+    # Fill dict
+    for each_file in all_files:
+        if each_file.split(split_char)[0] not in files_dict.keys():
+            files_dict[each_file.split(split_char)[0]] = [each_file]
+        else:
+            files_dict[each_file.split(split_char)[0]].append(each_file)
+
+    # Sort items for each key
+    for key, value in files_dict.iteritems():
+        files_dict[key] = sorted(value)
+
+    return files_dict
+
+
+def get_latest_file(name, dir_path, extension="", full_path=False, split_char="."):
+    files_dict = get_versioned_files(dir_path, extension, split_char)
+    if name not in files_dict.keys():
+        return None
+    if full_path:
+        return os.path.join(dir_path, files_dict.get(name)[-1])
+    else:
+        return files_dict.get(name)[-1]
+
+
+def get_new_versioned_file(name, dir_path, extension="", split_char=".", full_path=False):
+    files_dict = get_versioned_files(dir_path, extension, split_char)
+    if name in files_dict.keys():
+        new_version = int(files_dict.get(name)[-1].split(split_char)[-2]) + 1
+    else:
+        new_version = 0
+
+    new_file_name = "{0}.{1}.{2}".format(name, str(new_version).zfill(4), extension)
+    if full_path:
+        return os.path.join(dir_path, new_file_name)
+
+    return "{0}.{1}.{2}".format(name, str(new_version).zfill(4), extension)

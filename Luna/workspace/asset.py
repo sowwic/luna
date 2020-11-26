@@ -39,8 +39,8 @@ class Asset:
         self.data = _dataDirectoryStruct(self.path)
 
         # Copy empty scenes
-        fileFn.copy_empty_scene(os.path.join(self.guides, "{0}.guides.0000.ma".format(self.name)))
-        fileFn.copy_empty_scene(os.path.join(self.rig, "{0}.rig.0000.ma".format(self.name)))
+        fileFn.copy_empty_scene(os.path.join(self.guides, "{0}_guides.0000.ma".format(self.name)))
+        fileFn.copy_empty_scene(os.path.join(self.rig, "{0}_rig.0000.ma".format(self.name)))
 
         # Set env variables and update hud
         environFn.set_asset_var(self)
@@ -86,15 +86,11 @@ class Asset:
     def get_model_path(self):
         return self.meta.get("model")
 
-    def get_latest_guides_path(self):
-        filtered_files = []
-        for file_name in os.listdir(self.guides):
-            if "(" in file_name or ")" in file_name:
-                Logger.warning("Invalid files names in guides folder!")
-                continue
-            filtered_files.append(file_name)
-        sorted_versions = sorted(filtered_files, key=lambda file_name: file_name.split(".")[-2])
-        return os.path.join(self.guides, sorted_versions[-1])
+    def get_latest_guides_path(self, full_path=True):
+        return fileFn.get_latest_file("{0}_guides".format(self.name), self.guides, extension="ma", full_path=full_path, split_char=".")
+
+    def get_latest_rig_path(self, full_path=True):
+        return fileFn.get_latest_file("{0}_rig".format(self.name), self.guides, extension="ma", full_path=full_path, split_char=".")
 
 
 class _weightsDirectorySctruct:
