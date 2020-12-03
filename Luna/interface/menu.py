@@ -8,7 +8,7 @@ try:
     from Luna.static import Directories
     from Luna.interface.commands import tool_cmds
     from Luna.interface.commands import help_cmds
-    from Luna.interface.commands import dev_cmds
+    from Luna.utils import devFn
     from Luna.utils import fileFn
     from Luna import TestVars
 except Exception as e:
@@ -18,6 +18,7 @@ if DEBUG_MODE:
     try:
         reload(tool_cmds)
         reload(help_cmds)
+        reload(devFn)
         Logger.debug("Menu - reloaded command modules")
     except ImportError:
         Logger.exception("Failed to reload command modules")
@@ -127,11 +128,11 @@ class LunaMenu:
     @classmethod
     def _add_dev_menu(cls):
         dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1)
-        MenuUtil.addMenuItem(dev_menu, label="General", divider=1)
-        MenuUtil.addMenuItem(dev_menu, label="Reload Luna modules", command=dev_cmds.reload_luna_modules)
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
-        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=dev_cmds.run_unit_tests)
+        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests)
+        MenuUtil.addMenuItem(dev_menu, label="Reload", divider=1)
+        MenuUtil.addMenuItem(dev_menu, label="Rig components", command=devFn.reload_rig_components)
 
 
 if __name__ == "__main__":
