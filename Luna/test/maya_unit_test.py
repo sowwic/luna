@@ -6,7 +6,7 @@ import pymel.core as pm
 from Luna import Config
 from Luna import Logger
 from Luna import TestVars
-from Luna.static import Directories
+from Luna.static import directories
 
 
 class TestCase(unittest.TestCase):
@@ -166,7 +166,7 @@ class ScriptEditorState(object):
 
 
 def run_all_tests():
-    test_suite = unittest.TestLoader().discover(start_dir=Directories.TEST_DIR_PATH, pattern="*_test.py")
+    test_suite = unittest.TestLoader().discover(start_dir=directories.TEST_DIR_PATH, pattern="*_test.py")
     Logger.info("Running {0} tests...".format(test_suite.countTestCases()))
     test_runner = unittest.TextTestRunner(verbosity=2, resultclass=TestResult)
     test_runner.failfast = False

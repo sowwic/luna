@@ -5,7 +5,7 @@ from Luna import LunaVars
 Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 
 try:
-    from Luna.static import Directories
+    from Luna.static import directories
     from Luna.interface.menu import LunaMenu
     from Luna.interface.hud import LunaHud
 except Exception as e:
@@ -38,8 +38,8 @@ def build_luna_hud():
 
 def run():
     # Logging
-    Logger.write_to_rotating_file(Directories.LOG_FILE, level=30)
-    Logger.info("Logging to file: {0}".format(Directories.LOG_FILE))
+    Logger.write_to_rotating_file(directories.LOG_FILE, level=30)
+    Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
     Logger.info("Current logging level: {0}".format(Logger.get_level(name=1)))
 
     # Luna initialization

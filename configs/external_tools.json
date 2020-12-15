@@ -10,5 +10,11 @@
         "command": "import sl_history\nsl_history.Dialog.display()",
         "icon": "",
         "useMayaIcon": false
+    },
+    "ngskintools2": {
+        "label": "ngskintools2",
+        "command": "import ngSkinTools2; ngSkinTools2.open_ui()",
+        "icon": "ngSkinTools2ShelfIcon.png",
+        "useMayaIcon": true
     }
 }

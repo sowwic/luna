@@ -5,7 +5,7 @@ from Luna.workspace.asset import Asset
 from Luna.workspace.project import Project
 from Luna.utils import environFn
 from Luna.utils import fileFn
-from Luna.static import Directories
+from Luna.static import directories
 from Luna.test import TestCase
 
 
@@ -22,7 +22,7 @@ class AssetTests(TestCase):
         Override find_model file to avoid QFileDialog call.
         Return test model path instead
         """
-        model_path = os.path.join(Directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
+        model_path = os.path.join(directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
         return os.path.normpath(model_path)
 
     def test_asset_ctor(self):

@@ -5,7 +5,7 @@ from Luna import Logger
 DEBUG_MODE = Logger.get_level() == 10
 try:
     from Luna import Config
-    from Luna.static import Directories
+    from Luna.static import directories
     from Luna.interface.commands import tool_cmds
     from Luna.interface.commands import help_cmds
     from Luna.utils import devFn
@@ -42,7 +42,7 @@ class MenuUtil:
                     default_value=False):
 
         if icon and not use_maya_icons:
-            icon = Directories.ICONS_PATH + icon
+            icon = fileFn.get_icon_path(icon)
 
         if divider:
             return pm.menuItem(p=parent, dl=label, i=icon, d=divider)
@@ -66,7 +66,7 @@ class MenuUtil:
     def addSubMenu(parent, label, tear_off=False, icon=None, use_maya_icons=False):
         '''Adds a sub menu item with the specified label and icon to the specified parent popup menu.'''
         if icon and not use_maya_icons:
-            icon = Directories.ICONS_PATH + icon
+            icon = fileFn.get_icon_path(icon)
 
         return pm.menuItem(p=parent, l=label, i=icon, subMenu=True, to=tear_off)
 
@@ -92,7 +92,7 @@ class LunaMenu:
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Tools")
 
         # Tools
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder)
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder, icon="builder.svg")
         cls._add_external_tools()
 
         # Developer tools
@@ -100,17 +100,17 @@ class LunaMenu:
 
         # Help and config section
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration", command=tool_cmds.luna_configer)
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration", command=tool_cmds.luna_configer, icon="config.svg")
         cls._add_help_menu()
 
     @classmethod
     def _add_external_tools(cls):
-        register = fileFn.load_json(Directories.EXTERNAL_TOOLS_REGISTER)
+        register = fileFn.load_json(directories.EXTERNAL_TOOLS_REGISTER)
         found = set(register).intersection(set(pm.moduleInfo(lm=1)))
         if not found:
             return
 
-        tools_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="External", tear_off=1)
+        tools_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="External", tear_off=1, icon="")
         for tool in found:
             MenuUtil.addMenuItem(tools_menu,
                                  label=register[tool].get("label"),
@@ -121,16 +121,16 @@ class LunaMenu:
 
     @classmethod
     def _add_help_menu(cls):
-        help_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Help", tear_off=1)
+        help_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Help", tear_off=1, icon="")
         MenuUtil.addMenuItem(help_menu, "About", command=help_cmds.show_about_dialog)
         MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png", command=help_cmds.open_docs, use_maya_icons=1)
 
     @classmethod
     def _add_dev_menu(cls):
-        dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1)
+        dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1, icon="")
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
-        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests)
+        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests, icon="checklist.svg")
         MenuUtil.addMenuItem(dev_menu, label="Reload", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Rig components", command=devFn.reload_rig_components)
 

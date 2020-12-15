@@ -5,7 +5,7 @@ import pickle
 import shutil
 import pymel.core as pm
 from Luna import Logger
-from Luna.static import Directories
+from Luna.static import directories
 
 
 # Json
@@ -121,10 +121,18 @@ def create_missing_dir(path):
 
 # Pipeline functions
 def copy_empty_scene(new_path):
+    """Copy empty scenes from Luna's resource directory ot a given path. Scene version is based on current Maya version.
+
+    Args:
+        new_path (str): Full path to a new scene file location.
+
+    Raises:
+        IOError: If scene for selected maya version doesn't exist.
+    """
     if os.path.isfile(new_path):
         return
 
-    source_path = os.path.join(Directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{0}.ma".format(pm.about(v=1)))
+    source_path = os.path.join(directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{0}.ma".format(pm.about(v=1)))
     Logger.debug("Copying file {0} to {1}".format(source_path, new_path))
     if not os.path.isfile(source_path):
         raise IOError
@@ -134,8 +142,16 @@ def copy_empty_scene(new_path):
         Logger.exception("Failed to copy scene {0}".format(source_path))
 
 
-def get_icon(name):
-    return os.path.join(Directories.ICONS_PATH, name)
+def get_icon_path(name):
+    """Get path to icon with specified name in Luna's icon directory
+
+    Args:
+        name (str): Icon name.
+
+    Returns:
+        str: Path to icon.
+    """
+    return os.path.join(directories.ICONS_PATH, name)
 
 
 def get_versioned_files(path, extension="", split_char="."):
