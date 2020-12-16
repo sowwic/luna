@@ -80,6 +80,7 @@ class Asset:
 
     def set_model_path(self, path):
         self.meta["model"] = path
+        self.meta["modified"] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         self.save_meta()
         return path
 

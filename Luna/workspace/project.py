@@ -84,8 +84,6 @@ class Project:
         new_project.add_to_recent()
         LunaHud.refresh()
 
-        Logger.debug("New project: {0}".format(new_project))
-
         return new_project
 
     @ staticmethod
@@ -103,10 +101,6 @@ class Project:
         Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
         LunaHud.refresh()
-
-        Logger.debug("Setted project: {0}".format(project_instance))
-        # Logger.debug("Set project path: {0}".format(project_instance.path))
-        # Logger.debug("Set project name: {0}".format(project_instance.name))
 
         return project_instance
 
