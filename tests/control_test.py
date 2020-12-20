@@ -1,13 +1,10 @@
 import pymel.core as pm
 import unittest
-import json
 
-from Luna import Logger
 from Luna.test import TestCase
 from Luna_rig.core import control
 from Luna_rig.core.shape_manager import ShapeManager
 from Luna.static import colors
-reload(control)
 
 
 class ControlTests(TestCase):

@@ -16,22 +16,14 @@ class AssetTests(TestCase):
         Project.exit()
         Project.refresh_recent()
 
-    @staticmethod
-    def patch_find_model(*args):
-        """
-        Override find_model file to avoid QFileDialog call.
-        Return test model path instead
-        """
-        model_path = os.path.join(directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
-        return os.path.normpath(model_path)
-
     def test_asset_ctor(self):
         asset_type = "character"
 
         creation_path = AssetTests.get_temp_dirname("testProject")
         test_project = Project.create(creation_path)
-        Asset.find_model = self.patch_find_model
         test_asset = Asset("testAsset", typ=asset_type)
+        dummy_model_path = os.path.join(directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
+        test_asset.meta_data = ("model", dummy_model_path)
 
         # Base Assertions
         self.assertTrue(os.path.isdir(test_asset.path))  # Asset folder created

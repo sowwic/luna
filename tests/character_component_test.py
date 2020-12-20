@@ -1,11 +1,9 @@
 import pymel.core as pm
 import unittest
 
-from Luna import Logger
 from Luna.test import TestCase
 from Luna.static import names
 from Luna_rig import components
-reload(components)
 
 
 class CharacterTests(TestCase):

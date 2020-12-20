@@ -2,7 +2,6 @@ import pymel.core as pm
 import unittest
 from Luna.test import TestCase
 from Luna_rig.core.component import AnimComponent
-from Luna_rig.functions import nameFn
 
 
 class AnimComponentTests(TestCase):
