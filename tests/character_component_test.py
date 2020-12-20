@@ -31,11 +31,11 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
         # Struct population
-        self.assertEqual(str(instance.hierarchy.control_rig), names.Character.control_rig.value)
-        self.assertEqual(str(instance.hierarchy.deformation_rig), names.Character.deformation_rig.value)
-        self.assertEqual(str(instance.hierarchy.geometry_grp), names.Character.geometry.value)
-        self.assertEqual(str(instance.hierarchy.locators_grp), names.Character.locators.value)
-        self.assertTrue(pm.objExists(instance.hierarchy.world_loc))
+        self.assertEqual(str(instance.control_rig), names.Character.control_rig.value)
+        self.assertEqual(str(instance.deformation_rig), names.Character.deformation_rig.value)
+        self.assertEqual(str(instance.geometry_grp), names.Character.geometry.value)
+        self.assertEqual(str(instance.locators_grp), names.Character.locators.value)
+        self.assertTrue(pm.objExists(instance.world_locator))
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("character_component_test_create_default.ma"))
@@ -56,16 +56,16 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "locatorsGroup"))
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
-        # Hierarchy struct
-        self.assertEqual(str(instance.hierarchy.control_rig), names.Character.control_rig.value)
-        self.assertEqual(str(instance.hierarchy.deformation_rig), names.Character.deformation_rig.value)
-        self.assertEqual(str(instance.hierarchy.geometry_grp), names.Character.geometry.value)
-        self.assertEqual(str(instance.hierarchy.locators_grp), names.Character.locators.value)
-        self.assertTrue(pm.objExists(instance.hierarchy.world_loc))
+        # Main groups
+        self.assertEqual(str(instance.control_rig), names.Character.control_rig.value)
+        self.assertEqual(str(instance.deformation_rig), names.Character.deformation_rig.value)
+        self.assertEqual(str(instance.geometry_grp), names.Character.geometry.value)
+        self.assertEqual(str(instance.locators_grp), names.Character.locators.value)
+        self.assertTrue(pm.objExists(instance.world_locator))
 
         # Data struct
-        self.assertEqual(instance.data.side, "char")
-        self.assertEqual(instance.data.name, "character")
+        self.assertEqual(instance.side, "char")
+        self.assertEqual(instance.name, "character")
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("character_component_test_instance_from_meta.ma"))

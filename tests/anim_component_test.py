@@ -17,19 +17,19 @@ class AnimComponentTests(TestCase):
 
         # Assertions
         # Metanode
-        self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.data.side, new_component.data.name))
+        self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
         self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
         self.assertEqual(new_component.pynode.version.get(), 1)
-        self.assertEqual(str(new_component.group.root), "{0}_{1}_00_comp".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.ctls), "{0}_{1}_00_ctls".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.joints), "{0}_{1}_00_jnts".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.parts), "{0}_{1}_00_parts".format(new_component.data.side, new_component.data.name))
+        self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_parts), "{0}_{1}_00_parts".format(new_component.side, new_component.name))
 
         # Meta parent attrs on hierarchy
-        self.assertTrue(pm.hasAttr(new_component.group.root, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.ctls, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.joints, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.parts, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.root, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_ctls, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_joints, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_parts, "metaParent"))
 
         # Attributes on meta node
         self.assertTrue(pm.hasAttr(new_component.pynode, "rootGroup"))
@@ -38,14 +38,14 @@ class AnimComponentTests(TestCase):
         self.assertTrue(pm.hasAttr(new_component.pynode, "partsGroup"))
 
         # Connections to metanode
-        self.assertTrue(pm.isConnected(new_component.group.root.metaParent, new_component.pynode.rootGroup))
-        self.assertTrue(pm.isConnected(new_component.group.ctls.metaParent, new_component.pynode.ctlsGroup))
-        self.assertTrue(pm.isConnected(new_component.group.joints.metaParent, new_component.pynode.jointsGroup))
-        self.assertTrue(pm.isConnected(new_component.group.parts.metaParent, new_component.pynode.partsGroup))
+        self.assertTrue(pm.isConnected(new_component.root.metaParent, new_component.pynode.rootGroup))
+        self.assertTrue(pm.isConnected(new_component.group_ctls.metaParent, new_component.pynode.ctlsGroup))
+        self.assertTrue(pm.isConnected(new_component.group_joints.metaParent, new_component.pynode.jointsGroup))
+        self.assertTrue(pm.isConnected(new_component.group_parts.metaParent, new_component.pynode.partsGroup))
 
-        # Structs
-        self.assertEqual(new_component.data.name, "anim_component")
-        self.assertEqual(new_component.data.side, "c")
+        # Name, side
+        self.assertEqual(new_component.name, "anim_component")
+        self.assertEqual(new_component.side, "c")
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_create_default.ma"))
@@ -98,23 +98,23 @@ class AnimComponentTests(TestCase):
 
         # Assertions
         # Structs
-        self.assertEqual(new_component.data.name, "anim_component")
-        self.assertEqual(new_component.data.side, "c")
+        self.assertEqual(new_component.name, "anim_component")
+        self.assertEqual(new_component.side, "c")
 
         # Metanode
-        self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.data.side, new_component.data.name))
+        self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
         self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
         self.assertEqual(new_component.pynode.version.get(), 1)
-        self.assertEqual(str(new_component.group.root), "{0}_{1}_00_comp".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.ctls), "{0}_{1}_00_ctls".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.joints), "{0}_{1}_00_jnts".format(new_component.data.side, new_component.data.name))
-        self.assertEqual(str(new_component.group.parts), "{0}_{1}_00_parts".format(new_component.data.side, new_component.data.name))
+        self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_parts), "{0}_{1}_00_parts".format(new_component.side, new_component.name))
 
         # Meta parent attrs on hierarchy
-        self.assertTrue(pm.hasAttr(new_component.group.root, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.ctls, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.joints, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group.parts, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.root, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_ctls, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_joints, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_parts, "metaParent"))
 
         # Attributes on meta node
         self.assertTrue(pm.hasAttr(new_component.pynode, "rootGroup"))
@@ -123,10 +123,10 @@ class AnimComponentTests(TestCase):
         self.assertTrue(pm.hasAttr(new_component.pynode, "partsGroup"))
 
         # Connections to metanode
-        self.assertTrue(pm.isConnected(new_component.group.root.metaParent, new_component.pynode.rootGroup))
-        self.assertTrue(pm.isConnected(new_component.group.ctls.metaParent, new_component.pynode.ctlsGroup))
-        self.assertTrue(pm.isConnected(new_component.group.joints.metaParent, new_component.pynode.jointsGroup))
-        self.assertTrue(pm.isConnected(new_component.group.parts.metaParent, new_component.pynode.partsGroup))
+        self.assertTrue(pm.isConnected(new_component.root.metaParent, new_component.pynode.rootGroup))
+        self.assertTrue(pm.isConnected(new_component.group_ctls.metaParent, new_component.pynode.ctlsGroup))
+        self.assertTrue(pm.isConnected(new_component.group_joints.metaParent, new_component.pynode.jointsGroup))
+        self.assertTrue(pm.isConnected(new_component.group_parts.metaParent, new_component.pynode.partsGroup))
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_instance_from_meta.ma"))
