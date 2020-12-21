@@ -39,9 +39,8 @@ class Asset:
         environFn.set_asset_var(self)
         self.current_project.update_meta()
         self.update_meta()
-
+        # Update hude
         LunaHud.refresh()
-        Logger.debug("Asset: {0} Type: {1} Path: {2}".format(self.name, self.type, self.path))
 
     @property
     def meta_path(self):
