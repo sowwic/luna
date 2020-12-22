@@ -1,5 +1,14 @@
 # Luna
 
+## Installation
+1. Clone/download repo to anywhere on your machine
+2. Create **Luna.mod** in *documents/maya/modules*
+3. Add the following lines to it:
+
+```python
++ Luna 0.0.2 YourPathHere/Luna
+scripts: YourPathHere/Luna
+```
 
 ## WIP features
 - Control to Python object instancing:
