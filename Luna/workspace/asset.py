@@ -66,9 +66,14 @@ class Asset:
 
     @property
     def model_path(self):
-        data = self.meta_data
-        path = data.get("model", "")  # type:str
+        path = self.meta_data.get("model", "")  # type:str
         return path
+
+    def set_data(self, key, value):
+        data = self.meta_data
+        data[key] = value
+        data["modified"] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        fileFn.write_json(self.meta_path, data)
 
     def update_meta(self):
         meta_dict = self.meta_data

@@ -131,6 +131,7 @@ class Project(object):
     def exit():
         environFn.set_asset_var(None)
         environFn.set_project_var(None)
+        environFn.set_character_var(None)
         LunaHud.refresh()
 
     @staticmethod
