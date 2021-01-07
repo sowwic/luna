@@ -2,6 +2,7 @@ import pymel.core as pm
 from Luna import Logger
 from Luna.core.config import Config
 from Luna import LunaVars
+from Luna.core import callbacks
 Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 
 try:
@@ -29,6 +30,15 @@ def build_luna_menu():
         Logger.exception("Failed to build Luna menu", exc_info=e)
 
 
+def add_luna_callbacks():
+    if Config.get(LunaVars.callback_licence, True):
+        try:
+            callbacks.remove_licence_popup_callback()
+            Logger.info("Added file save licence callback")
+        except RuntimeError:
+            Logger.exception("Failed to add file save licence callback!")
+
+
 def build_luna_hud():
     try:
         LunaHud.create()
@@ -46,3 +56,4 @@ def run():
     open_port(lang="python")
     build_luna_menu()
     build_luna_hud()
+    add_luna_callbacks()

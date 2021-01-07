@@ -1,14 +1,12 @@
 """
 Module containing callbacks related functions
 """
-
 import os
-from maya.api import OpenMaya as om2
-from maya import cmds as mc
-from Luna import Logger
+import pymel.core as pm
+import pymel.api as pma
 
 
-def remove_licence_callback():
+def remove_licence_popup_callback():
     """
     Adds  callback to remove student licence from saved file.
 
@@ -17,7 +15,7 @@ def remove_licence_callback():
     :return: Info message
     :rtype: str
     """
-    om2.MSceneMessage.addCallback(om2.MSceneMessage.kAfterSave, _remove_licence_line, None)
+    pma.MSceneMessage.addCallback(pma.MSceneMessage.kAfterSave, _remove_licence_line, None)
     return "Remove licence callback"
 
 
@@ -25,7 +23,7 @@ def _remove_licence_line(*args):
     """
     Removes student licence from current file if it is MAYA ASCII format.
     """
-    path = mc.file(q=True, sn=True)
+    path = pm.sceneName()
     if os.path.isfile(path) and path.endswith(".ma"):
         with open(path, 'r') as f:
             lines = f.readlines()
@@ -34,7 +32,3 @@ def _remove_licence_line(*args):
                 if each.strip("\n") != 'fileInfo "license" "student";':
                     f.write(each)
             f.truncate()
-
-
-if __name__ == "__main__":
-    pass
