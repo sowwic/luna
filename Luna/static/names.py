@@ -8,9 +8,9 @@ class OppositeSide(Enum):
 
 class Character(Enum):
     node = "character_grp"
-    control_rig = "control_rig_grp"
+    control_rig = "control_rig"
     geometry = "geometry_grp"
-    deformation_rig = "deformation_rig_grp"
+    deformation_rig = "deformation_rig"
     locators = "locators_grp"
     world_space = "c_world_space_loc"
 
