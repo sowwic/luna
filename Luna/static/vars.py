@@ -24,4 +24,4 @@ class ProjectVars:
 
 
 class BuildVars:
-    clear_history = "build.clearHistory"
+    geometry_override = "build.geometry.overrideEnabled"
