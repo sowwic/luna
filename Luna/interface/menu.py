@@ -133,6 +133,7 @@ class LunaMenu:
         MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests, icon="checklist.svg")
         MenuUtil.addMenuItem(dev_menu, label="Reload", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Rig components", command=devFn.reload_rig_components)
+        MenuUtil.addMenuItem(dev_menu, label="Rig functions", command=devFn.reload_rig_functions)
 
 
 if __name__ == "__main__":
