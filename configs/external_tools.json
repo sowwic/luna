@@ -11,6 +11,12 @@
         "icon": "",
         "useMayaIcon": false
     },
+    "ngSkinTools": {
+        "label": "ngskintools",
+        "command": "from ngSkinTools.ui.mainwindow import MainWindow\nMainWindow.open()",
+        "icon": "ngSkinToolsShelfIcon.png",
+        "useMayaIcon": true
+    },
     "ngskintools2": {
         "label": "ngskintools2",
         "command": "import ngSkinTools2; ngSkinTools2.open_ui()",
