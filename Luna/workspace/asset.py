@@ -3,7 +3,7 @@ from datetime import datetime
 from Luna import Logger
 from Luna.utils import environFn
 from Luna.utils import fileFn
-from Luna.interface.hud import LunaHud
+from Luna.interface.hud import LunaHUD
 
 
 class Asset:
@@ -40,7 +40,7 @@ class Asset:
         self.current_project.update_meta()
         self.update_meta()
         # Update hude
-        LunaHud.refresh()
+        LunaHUD.refresh()
 
     @property
     def meta_path(self):
@@ -101,6 +101,7 @@ class _weightsDirectorySctruct:
         self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))  # type:str
         self.dsAttract = fileFn.create_missing_dir(os.path.join(root, "weights", "dsAttract"))  # type:str
         self.ng_layers = fileFn.create_missing_dir(os.path.join(root, "weights", "ng_layers"))  # type:str
+        self.ng_layers2 = fileFn.create_missing_dir(os.path.join(root, "weights", "ng_layers2"))  # type:str
 
 
 class _dataDirectoryStruct:

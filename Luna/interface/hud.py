@@ -5,8 +5,8 @@ from Luna import HudVars
 from Luna.utils import environFn
 
 
-class LunaHud:
-    HUD_NAME = "LunaHud"
+class LunaHUD:
+    HUD_NAME = "LunaHUD"
     UPDATE_EVENT = "SceneOpened"
     SECTION = Config.get(HudVars.section, default=7)
     BLOCK = Config.get(HudVars.block, default=5)
@@ -21,11 +21,12 @@ class LunaHud:
         # Delete old
         cls.remove()
         hud_instance = pm.headsUpDisplay(cls.HUD_NAME,
+                                         allowOverlap=True,
                                          section=cls.SECTION,
                                          block=cls.BLOCK,
                                          blockSize=cls.BLOCK_SIZE,
                                          labelFontSize=cls.FONT_SIZE,
-                                         command=cls.getHudText,
+                                         command=cls.get_hud_text,
                                          event=cls.UPDATE_EVENT)
         Logger.info("Successfully created HUD: {0}".format(cls.HUD_NAME))
 
@@ -44,7 +45,7 @@ class LunaHud:
             pm.headsUpDisplay(cls.HUD_NAME, rem=1)
 
     @staticmethod
-    def getHudText():
+    def get_hud_text():
         stringToDraw = ""
         current_project = environFn.get_project_var()
         current_asset = environFn.get_asset_var()

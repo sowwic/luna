@@ -8,7 +8,7 @@ Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 try:
     from Luna.static import directories
     from Luna.interface.menu import LunaMenu
-    from Luna.interface.hud import LunaHud
+    from Luna.interface.hud import LunaHUD
 except Exception as e:
     Logger.exception("Failed to import modules")
 
@@ -41,7 +41,7 @@ def add_luna_callbacks():
 
 def build_luna_hud():
     try:
-        LunaHud.create()
+        LunaHUD.create()
     except Exception:
         Logger.exception("Failed to create HUD")
 

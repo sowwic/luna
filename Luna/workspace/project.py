@@ -8,7 +8,7 @@ try:
     from Luna.utils import environFn
     from Luna import Config
     from Luna import ProjectVars
-    from Luna.interface.hud import LunaHud
+    from Luna.interface.hud import LunaHUD
 except Exception:
     Logger.exception("Failed to import modules")
 
@@ -83,7 +83,7 @@ class Project(object):
         environFn.set_project_var(new_project)
         Config.set(ProjectVars.previous_project, new_project.path)
         new_project.add_to_recent()
-        LunaHud.refresh()
+        LunaHUD.refresh()
 
         return new_project
 
@@ -118,7 +118,7 @@ class Project(object):
         environFn.set_project_var(project_instance)
         Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
-        LunaHud.refresh()
+        LunaHUD.refresh()
 
         return project_instance
 
@@ -132,7 +132,7 @@ class Project(object):
         environFn.set_asset_var(None)
         environFn.set_project_var(None)
         environFn.set_character_var(None)
-        LunaHud.refresh()
+        LunaHUD.refresh()
 
     @staticmethod
     def refresh_recent():
