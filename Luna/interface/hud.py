@@ -8,8 +8,8 @@ from Luna.utils import environFn
 class LunaHUD:
     HUD_NAME = "LunaHUD"
     UPDATE_EVENT = "SceneOpened"
-    SECTION = Config.get(HudVars.section, default=7)
-    BLOCK = Config.get(HudVars.block, default=5)
+    SECTION = Config.get(HudVars.section, default=7)  # type: int
+    BLOCK = Config.get(HudVars.block, default=5)  # type: int
     BLOCK_SIZE = "medium"
     FONT_SIZE = "large"
 
@@ -17,18 +17,23 @@ class LunaHUD:
     def create(cls):
         hud_instance = None
         Logger.info("Building {0}...".format(cls.HUD_NAME))
+        cls.SECTION = Config.get(HudVars.section, default=7)
+        cls.BLOCK = Config.get(HudVars.block, default=5)
 
         # Delete old
         cls.remove()
-        hud_instance = pm.headsUpDisplay(cls.HUD_NAME,
-                                         allowOverlap=True,
-                                         section=cls.SECTION,
-                                         block=cls.BLOCK,
-                                         blockSize=cls.BLOCK_SIZE,
-                                         labelFontSize=cls.FONT_SIZE,
-                                         command=cls.get_hud_text,
-                                         event=cls.UPDATE_EVENT)
-        Logger.info("Successfully created HUD: {0}".format(cls.HUD_NAME))
+        try:
+            hud_instance = pm.headsUpDisplay(cls.HUD_NAME,
+                                             allowOverlap=True,
+                                             section=cls.SECTION,
+                                             block=cls.BLOCK,
+                                             blockSize=cls.BLOCK_SIZE,
+                                             labelFontSize=cls.FONT_SIZE,
+                                             command=cls.get_hud_text,
+                                             event=cls.UPDATE_EVENT)
+            Logger.info("Successfully created HUD: {0}".format(cls.HUD_NAME))
+        except RuntimeError:
+            Logger.error("HUD position ({0}:{1}) is occupied by another HUD. Use configer to select other block/section.".format(cls.SECTION, cls.BLOCK))
 
         return hud_instance
 
