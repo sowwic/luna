@@ -18,7 +18,6 @@ class AnimComponentTests(TestCase):
         # Metanode
         self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
         self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
-        self.assertEqual(new_component.pynode.version.get(), 1)
         self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
@@ -103,7 +102,6 @@ class AnimComponentTests(TestCase):
         # Metanode
         self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
         self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
-        self.assertEqual(new_component.pynode.version.get(), 1)
         self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
