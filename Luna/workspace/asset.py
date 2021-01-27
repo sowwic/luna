@@ -45,6 +45,7 @@ class Asset:
     @property
     def meta_path(self):
         path = os.path.join(self.path, self.name + ".meta")  # type:str
+        path = os.path.normpath(path)
         return path
 
     @property
@@ -60,8 +61,18 @@ class Asset:
         return path
 
     @property
+    def new_guides_path(self):
+        path = fileFn.get_new_versioned_file("{0}_guides".format(self.name), self.guides, extension="ma", full_path=True, split_char=".")
+        return path
+
+    @property
     def latest_rig_path(self):
         path = fileFn.get_latest_file("{0}_rig".format(self.name), self.rig, extension="ma", full_path=True, split_char=".")  # type: str
+        return path
+
+    @property
+    def new_rig_path(self):
+        path = fileFn.get_new_versioned_file("{0}_rig".format(self.name), self.rig, extension="ma", full_path=True, split_char=".")  # type: str
         return path
 
     @property

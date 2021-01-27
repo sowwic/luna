@@ -54,7 +54,7 @@ class AnimComponentTests(TestCase):
         component2 = AnimComponent.create(meta_parent=component1)
 
         self.assertTrue(pm.isConnected(component2.pynode.metaParent, component1.pynode.metaChildren[0]))
-        self.assertEqual(component2.get_meta_parent(), component1)
+        self.assertEqual(component2.meta_parent, component1)
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_create_with_meta_parent.ma"))
@@ -67,7 +67,7 @@ class AnimComponentTests(TestCase):
 
         # Assertions
         self.assertTrue(pm.isConnected(component2.pynode.metaParent, component1.pynode.metaChildren[0]))
-        self.assertEqual(component2.get_meta_parent(), component1)
+        self.assertEqual(component2.meta_parent, component1)
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_attach_to_component.ma"))
@@ -81,8 +81,8 @@ class AnimComponentTests(TestCase):
 
         # Assertions
         for child in child_components:
-            self.assertEqual(component1, child.get_meta_parent())
-            self.assertEqual(component1.pynode, child.get_meta_parent().pynode)
+            self.assertEqual(component1, child.meta_parent)
+            self.assertEqual(component1.pynode, child.meta_parent.pynode)
         self.assertListEqual(child_components, component1.get_meta_children())
         self.assertListEqual(child_components, component1.get_meta_children(of_type=AnimComponent))
 

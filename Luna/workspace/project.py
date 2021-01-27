@@ -81,6 +81,8 @@ class Project(object):
 
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(new_project)
+        environFn.set_asset_var(None)
+        environFn.set_character_var(None)
         Config.set(ProjectVars.previous_project, new_project.path)
         new_project.add_to_recent()
         LunaHUD.refresh()
@@ -116,6 +118,8 @@ class Project(object):
         project_instance.update_meta()
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(project_instance)
+        environFn.set_asset_var(None)
+        environFn.set_character_var(None)
         Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
         LunaHUD.refresh()
