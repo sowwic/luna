@@ -13,7 +13,7 @@ def show_about_dialog(*args):
     icon_pixmap = icon_pixmap.scaled(128, 128)
     about_dialog = QtWidgets.QMessageBox()
     about_dialog.setWindowIcon(QtGui.QIcon(icon_pixmap))
-    about_dialog.setWindowTitle("luna")
+    about_dialog.setWindowTitle("Luna")
     about_dialog.setText(help_text)
     about_dialog.setIconPixmap(icon_pixmap)
     about_dialog.exec_()

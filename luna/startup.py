@@ -1,9 +1,9 @@
 import pymel.core as pm
 from luna import Logger
 from luna.core.config import Config
-from luna import lunaVars
+from luna import LunaVars
 from luna.core import callbacks
-Logger.set_level(Config.get(lunaVars.logging_level, default=10))
+Logger.set_level(Config.get(LunaVars.logging_level, default=10))
 
 try:
     from luna.static import directories
@@ -14,7 +14,7 @@ except Exception as e:
 
 
 def open_port(lang="python"):
-    port = Config.get(lunaVars.command_port, default=7221)
+    port = Config.get(LunaVars.command_port, default=7221)
     if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
         try:
             pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
@@ -31,7 +31,7 @@ def build_luna_menu():
 
 
 def add_luna_callbacks():
-    if Config.get(lunaVars.callback_licence, True):
+    if Config.get(LunaVars.callback_licence, True):
         try:
             callbacks.remove_licence_popup_callback()
             Logger.info("Added file save licence callback")
