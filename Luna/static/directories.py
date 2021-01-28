@@ -4,8 +4,8 @@ import pymel.core as pm
 MAYA_APP_PATH = str(pm.internalVar(uad=1))  # type: str
 TMP_PATH = pm.internalVar(utd=1)  # type: str
 USER_PREFS_PATH = pm.internalVar(upd=1)  # type: str
-LUNA_ROOT_PATH = pm.moduleInfo(moduleName="Luna", p=1)  # type: str # type: str
-LOG_FILE = os.path.join(LUNA_ROOT_PATH, "Luna.log")  # type: str
+LUNA_ROOT_PATH = pm.moduleInfo(moduleName="luna", p=1)  # type: str # type: str
+LOG_FILE = os.path.join(LUNA_ROOT_PATH, "luna.log")  # type: str
 SHAPES_LIB_PATH = os.path.join(LUNA_ROOT_PATH, "res", "shapes")  # type: str
 TEMPLATES_PATH = os.path.join(LUNA_ROOT_PATH, "res", "templates")  # type: str
 EMPTY_SCENES_PATH = os.path.join(TEMPLATES_PATH, "emptyScenes")  # type: str

@@ -1,16 +1,16 @@
 import pymel.core as pm
 from functools import partial
 
-from Luna import Logger
+from luna import Logger
 DEBUG_MODE = Logger.get_level() == 10
 try:
-    from Luna import Config
-    from Luna.static import directories
-    from Luna.interface.commands import tool_cmds
-    from Luna.interface.commands import help_cmds
-    from Luna.utils import devFn
-    from Luna.utils import fileFn
-    from Luna import TestVars
+    from luna import Config
+    from luna.static import directories
+    from luna.interface.commands import tool_cmds
+    from luna.interface.commands import help_cmds
+    from luna.utils import devFn
+    from luna.utils import fileFn
+    from luna import TestVars
 except Exception as e:
     Logger.exception("Failed to import modules", exc_info=e)
 
@@ -73,9 +73,9 @@ class MenuUtil:
 
 class LunaMenu:
     MAIN_WINDOW = pm.melGlobals["gMainWindow"]
-    MAIN_MENU_ID = "LunaMainMenu"
+    MAIN_MENU_ID = "lunaMainMenu"
     MAIN_MENU_LABEL = "Luna"
-    TOOLS_MENU_ID = "LunaToolsMenu"
+    TOOLS_MENU_ID = "lunaToolsMenu"
 
     @classmethod
     def _delete_old(cls):
@@ -117,7 +117,7 @@ class LunaMenu:
                                  command=register[tool].get("command"),
                                  icon=register[tool].get("icon"),
                                  use_maya_icons=register[tool].get("useMayaIcon"))
-            Logger.info("Added {0} to Luna >> Tools menu".format(tool))
+            Logger.info("Added {0} to luna >> Tools menu".format(tool))
 
     @classmethod
     def _add_help_menu(cls):

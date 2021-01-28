@@ -1,7 +1,7 @@
 import pymel.core as pm
 import unittest
-from Luna.test import TestCase
-from Luna_rig.core.component import AnimComponent
+from luna.test import TestCase
+from luna_rig.core.component import AnimComponent
 
 
 class AnimComponentTests(TestCase):

@@ -1,5 +1,5 @@
 from os import environ
-from Luna import Logger
+from luna import Logger
 
 
 def set_project_var(value):
@@ -11,7 +11,7 @@ def get_project_var():
     """Get workpace object stored in enviroment variable
 
     :return: Current project
-    :rtype: Luna.workspace.project.Project
+    :rtype: luna.workspace.project.Project
     """
     return environ.get("LUNA_PROJECT")
 

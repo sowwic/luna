@@ -2,13 +2,13 @@ import os
 from collections import deque
 from datetime import datetime
 
-from Luna import Logger
+from luna import Logger
 try:
-    from Luna.utils import fileFn
-    from Luna.utils import environFn
-    from Luna import Config
-    from Luna import ProjectVars
-    from Luna.interface.hud import LunaHUD
+    from luna.utils import fileFn
+    from luna.utils import environFn
+    from luna import Config
+    from luna import ProjectVars
+    from luna.interface.hud import LunaHUD
 except Exception:
     Logger.exception("Failed to import modules")
 

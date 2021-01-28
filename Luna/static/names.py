@@ -1,4 +1,4 @@
-from Luna.utils.enumFn import Enum
+from luna.utils.enumFn import Enum
 
 
 class OppositeSide(Enum):

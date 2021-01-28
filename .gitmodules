@@ -1,9 +1,9 @@
-[submodule "Luna_rig"]
-	path = Luna_rig
-	url = https://github.com/S0nic014/Luna_rig
-[submodule "Luna_configer"]
-	path = Luna_configer
-	url = https://github.com/S0nic014/Luna_configer
-[submodule "Luna_builder"]
-	path = Luna_builder
-	url = https://github.com/S0nic014/Luna_builder
+[submodule "luna_rig"]
+	path = luna_rig
+	url = https://github.com/S0nic014/luna_rig
+[submodule "luna_configer"]
+	path = luna_configer
+	url = https://github.com/S0nic014/luna_configer
+[submodule "luna_builder"]
+	path = luna_builder
+	url = https://github.com/S0nic014/luna_builder

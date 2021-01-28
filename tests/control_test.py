@@ -1,11 +1,11 @@
 import pymel.core as pm
 import unittest
 
-from Luna.test import TestCase
-from Luna_rig.core import control
-from Luna_rig.core.shape_manager import ShapeManager
-from Luna_rig.functions import nameFn
-from Luna.static import colors
+from luna.test import TestCase
+from luna_rig.core import control
+from luna_rig.core.shape_manager import ShapeManager
+from luna_rig.functions import nameFn
+from luna.static import colors
 
 
 class ControlTests(TestCase):

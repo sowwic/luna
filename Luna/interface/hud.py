@@ -1,8 +1,8 @@
 import pymel.core as pm
-from Luna import Logger
-from Luna import Config
-from Luna import HudVars
-from Luna.utils import environFn
+from luna import Logger
+from luna import Config
+from luna import HudVars
+from luna.utils import environFn
 
 
 class LunaHUD:

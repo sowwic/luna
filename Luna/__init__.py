@@ -1,6 +1,6 @@
-from Luna.static.vars import *
-from Luna.core.logger import Logger
-from Luna.core.config import Config
+from luna.static.vars import *
+from luna.core.logger import Logger
+from luna.core.config import Config
 
 
 __version__ = "0.0.2"

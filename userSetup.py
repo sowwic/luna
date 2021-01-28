@@ -1,3 +1,3 @@
 import pymel.core as pm
 
-pm.evalDeferred("import Luna.startup\nLuna.startup.run()", lp=1)
+pm.evalDeferred("import luna.startup\nluna.startup.run()", lp=1)

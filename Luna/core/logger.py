@@ -8,7 +8,7 @@ import pymel.core as pm
 
 class Logger:
 
-    LOGGER_NAME = "Luna"
+    LOGGER_NAME = "luna"
     LEVEL_DEFAULT = logging.DEBUG
     PROPAGATE_DEFAULT = False
     FORMAT_DEFAULT = "[{0}][%(levelname)s] %(message)s"

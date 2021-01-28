@@ -1,7 +1,7 @@
 from PySide2 import QtWidgets
 from PySide2 import QtGui
-from Luna import Logger
-from Luna.utils import enumFn
+from luna import Logger
+from luna.utils import enumFn
 
 
 class PathWidget(QtWidgets.QWidget):

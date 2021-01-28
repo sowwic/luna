@@ -1,5 +1,5 @@
 import pymel.core as pm
-from Luna import Config
+from luna import Config
 
 
 def switch_geo_picker():

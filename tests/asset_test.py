@@ -1,12 +1,12 @@
 import os
 import unittest
 import pymel.core as pm
-from Luna.workspace.asset import Asset
-from Luna.workspace.project import Project
-from Luna.utils import environFn
-from Luna.utils import fileFn
-from Luna.static import directories
-from Luna.test import TestCase
+from luna.workspace.asset import Asset
+from luna.workspace.project import Project
+from luna.utils import environFn
+from luna.utils import fileFn
+from luna.static import directories
+from luna.test import TestCase
 
 
 class AssetTests(TestCase):

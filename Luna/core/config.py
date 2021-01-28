@@ -1,8 +1,8 @@
 import os
 import shutil
-from Luna import Logger
-from Luna.utils import fileFn
-from Luna.static import directories
+from luna import Logger
+from luna.utils import fileFn
+from luna.static import directories
 
 
 class Config:
@@ -57,7 +57,7 @@ class Config:
         Reset config to default. Copies default config file with normal config name
         """
         shutil.copy2(directories.DEFAULT_CONFIG_PATH, directories.CONFIG_PATH)
-        Logger.info("Luna config reset to default")
+        Logger.info("luna config reset to default")
 
     @ classmethod
     def get_config_path(cls):

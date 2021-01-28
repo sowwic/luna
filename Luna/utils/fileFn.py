@@ -4,8 +4,8 @@ import os
 import pickle
 import shutil
 import pymel.core as pm
-from Luna import Logger
-from Luna.static import directories
+from luna import Logger
+from luna.static import directories
 
 
 # Json
@@ -121,7 +121,7 @@ def create_missing_dir(path):
 
 # Pipeline functions
 def copy_empty_scene(new_path):
-    """Copy empty scenes from Luna's resource directory ot a given path. Scene version is based on current Maya version.
+    """Copy empty scenes from luna's resource directory ot a given path. Scene version is based on current Maya version.
 
     Args:
         new_path (str): Full path to a new scene file location.
@@ -143,7 +143,7 @@ def copy_empty_scene(new_path):
 
 
 def get_icon_path(name):
-    """Get path to icon with specified name in Luna's icon directory
+    """Get path to icon with specified name in luna's icon directory
 
     Args:
         name (str): Icon name.

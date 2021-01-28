@@ -2,7 +2,7 @@ import os
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from Luna.static import directories
+from luna.static import directories
 
 
 def save_pixmap(path, pixmap, quality=-1):

@@ -1,7 +1,7 @@
 import unittest
 import pymel.core as pm
-from Luna.test import TestCase
-from Luna_rig.functions import jointFn
+from luna.test import TestCase
+from luna_rig.functions import jointFn
 reload(jointFn)
 
 

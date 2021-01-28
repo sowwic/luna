@@ -1,10 +1,10 @@
 import os
 import unittest
-from Luna.workspace.project import Project
-from Luna import ProjectVars
-from Luna import Config
-from Luna.utils import environFn
-from Luna.test import TestCase
+from luna.workspace.project import Project
+from luna import ProjectVars
+from luna import Config
+from luna.utils import environFn
+from luna.test import TestCase
 
 
 class ProjectTests(TestCase):

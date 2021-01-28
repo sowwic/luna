@@ -1,4 +1,4 @@
-class LunaVars:
+class lunaVars:
     logging_level = "logging.level"
     command_port = "python.commandPort"
     callback_licence = "callback.license"

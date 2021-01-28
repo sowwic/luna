@@ -3,10 +3,10 @@ import shutil
 import unittest
 import logging
 import pymel.core as pm
-from Luna import Config
-from Luna import Logger
-from Luna import TestVars
-from Luna.static import directories
+from luna import Config
+from luna import Logger
+from luna import TestVars
+from luna.static import directories
 
 
 class TestCase(unittest.TestCase):
