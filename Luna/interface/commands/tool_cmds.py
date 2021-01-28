@@ -1,8 +1,0 @@
-def luna_configer(*args):
-    import luna_configer
-    luna_configer.MainDialog()
-
-
-def luna_builder(*args):
-    import luna_builder
-    luna_builder.MainDialog.display()
