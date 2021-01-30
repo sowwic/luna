@@ -101,7 +101,6 @@ class _weightsDirectorySctruct:
     """Directory scruct with folder per weight type"""
 
     def __init__(self, root):
-        # DEFINE RIGGING DIRECTORIES
         self.blend_shape = fileFn.create_missing_dir(os.path.join(root, "weights", "blend_shape"))  # type:str
         self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))  # type:str
         self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))  # type:str
@@ -123,3 +122,4 @@ class _dataDirectoryStruct:
         self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))  # type:str
         self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))  # type:str
         self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))  # type:str
+        self.psd = fileFn.create_missing_dir(os.path.join(root, "data", "psd"))

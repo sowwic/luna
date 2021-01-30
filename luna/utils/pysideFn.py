@@ -1,7 +1,6 @@
 import os
 from PySide2 import QtCore
 from PySide2 import QtGui
-from PySide2 import QtWidgets
 from luna.static import directories
 
 

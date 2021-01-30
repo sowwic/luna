@@ -93,6 +93,7 @@ class LunaMenu:
 
         # Tools
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder, icon="builder.svg")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Data manager")
         cls._add_external_tools()
 
         # Developer tools
