@@ -101,12 +101,12 @@ class _weightsDirectorySctruct:
     """Directory scruct with folder per weight type"""
 
     def __init__(self, root):
-        self.blend_shape = fileFn.create_missing_dir(os.path.join(root, "weights", "blend_shape"))  # type:str
+        self.blendshape = fileFn.create_missing_dir(os.path.join(root, "weights", "blendshape"))  # type:str
         self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))  # type:str
         self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))  # type:str
         self.ncloth = fileFn.create_missing_dir(os.path.join(root, "weights", "ncloth"))  # type:str
         self.skin_cluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skin_cluster"))  # type:str
-        self.non_linear = fileFn.create_missing_dir(os.path.join(root, "weights", "non_linear"))  # type:str
+        self.nonlinear = fileFn.create_missing_dir(os.path.join(root, "weights", "nonlinear"))  # type:str
         self.tension = fileFn.create_missing_dir(os.path.join(root, "weights", "tension"))  # type:str
         self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))  # type:str
         self.dsAttract = fileFn.create_missing_dir(os.path.join(root, "weights", "dsAttract"))  # type:str
@@ -118,7 +118,7 @@ class _dataDirectoryStruct:
     """Directory struct with folder per data type."""
 
     def __init__(self, root):
-        self.blend_shapes = fileFn.create_missing_dir(os.path.join(root, "data", "blend_shapes"))  # type:str
+        self.blendshapes = fileFn.create_missing_dir(os.path.join(root, "data", "blendshapes"))  # type:str
         self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))  # type:str
         self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))  # type:str
         self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))  # type:str

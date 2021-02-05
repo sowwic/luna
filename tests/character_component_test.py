@@ -1,8 +1,8 @@
 import pymel.core as pm
 import unittest
 
+from luna import static
 from luna.test import TestCase
-from luna.static import names
 from luna_rig import components
 
 
@@ -29,10 +29,10 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
         # Struct population
-        self.assertEqual(str(instance.control_rig), names.Character.control_rig.value)
-        self.assertEqual(str(instance.deformation_rig), names.Character.deformation_rig.value)
-        self.assertEqual(str(instance.geometry_grp), names.Character.geometry.value)
-        self.assertEqual(str(instance.locators_grp), names.Character.locators.value)
+        self.assertEqual(str(instance.control_rig), static.CharacterMembers.control_rig.value)
+        self.assertEqual(str(instance.deformation_rig), static.CharacterMembers.deformation_rig.value)
+        self.assertEqual(str(instance.geometry_grp), static.CharacterMembers.geometry.value)
+        self.assertEqual(str(instance.locators_grp), static.CharacterMembers.locators.value)
         self.assertTrue(pm.objExists(instance.world_locator))
 
         # Save test scene
@@ -55,10 +55,10 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
         # Main groups
-        self.assertEqual(str(instance.control_rig), names.Character.control_rig.value)
-        self.assertEqual(str(instance.deformation_rig), names.Character.deformation_rig.value)
-        self.assertEqual(str(instance.geometry_grp), names.Character.geometry.value)
-        self.assertEqual(str(instance.locators_grp), names.Character.locators.value)
+        self.assertEqual(str(instance.control_rig), static.CharacterMembers.control_rig.value)
+        self.assertEqual(str(instance.deformation_rig), static.CharacterMembers.deformation_rig.value)
+        self.assertEqual(str(instance.geometry_grp), static.CharacterMembers.geometry.value)
+        self.assertEqual(str(instance.locators_grp), static.CharacterMembers.locators.value)
         self.assertTrue(pm.objExists(instance.world_locator))
 
         # Data struct

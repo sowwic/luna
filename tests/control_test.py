@@ -1,11 +1,11 @@
 import pymel.core as pm
 import unittest
 
+from luna import static
 from luna.test import TestCase
 from luna_rig.core import control
 from luna_rig.core.shape_manager import ShapeManager
 from luna_rig.functions import nameFn
-from luna.static import colors
 
 
 class ControlTests(TestCase):
@@ -78,7 +78,7 @@ class ControlTests(TestCase):
     def test_set_color(self):
         instance = control.Control.create(name="arm_ik",
                                           side="r")
-        self.assertEqual(ShapeManager.get_color(instance.transform), colors.SideColor[instance.side].value)
+        self.assertEqual(ShapeManager.get_color(instance.transform), static.SideColor[instance.side].value)
         test_color = 17
         instance.color = test_color
         self.assertEqual(ShapeManager.get_color(instance.transform), test_color)
