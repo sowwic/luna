@@ -32,25 +32,25 @@ class AssetTests(TestCase):
         self.assertTrue(os.path.isdir(os.path.join(test_project.path, asset_type + "s")))  # Asset category folder is created
         # Check asset folders creations
         self.assertTrue(os.path.isdir(test_asset.controls))
-        self.assertTrue(os.path.isdir(test_asset.guides))
+        self.assertTrue(os.path.isdir(test_asset.skeleton))
         self.assertTrue(os.path.isdir(test_asset.rig))
         self.assertTrue(os.path.isdir(test_asset.settings))
-        self.assertTrue(os.path.isdir(test_asset.weights.blend_shape))
+        self.assertTrue(os.path.isdir(test_asset.weights.blendshape))
         self.assertTrue(os.path.isdir(test_asset.weights.delta_mush))
         self.assertTrue(os.path.isdir(test_asset.weights.dsAttract))
         self.assertTrue(os.path.isdir(test_asset.weights.ffd))
         self.assertTrue(os.path.isdir(test_asset.weights.ncloth))
         self.assertTrue(os.path.isdir(test_asset.weights.ng_layers))
-        self.assertTrue(os.path.isdir(test_asset.weights.non_linear))
+        self.assertTrue(os.path.isdir(test_asset.weights.nonlinear))
         self.assertTrue(os.path.isdir(test_asset.weights.skin_cluster))
         self.assertTrue(os.path.isdir(test_asset.weights.soft_mod))
         self.assertTrue(os.path.isdir(test_asset.weights.tension))
-        self.assertTrue(os.path.isdir(test_asset.data.blend_shapes))
+        self.assertTrue(os.path.isdir(test_asset.data.blendshapes))
         self.assertTrue(os.path.isdir(test_asset.data.mocap))
         self.assertTrue(os.path.isdir(test_asset.data.poses))
         self.assertTrue(os.path.isdir(test_asset.data.xgen))
         # Template files creation
-        self.assertTrue(os.path.isfile(os.path.join(test_asset.guides, "{0}_guides.0000.ma".format(test_asset.name))))
+        self.assertTrue(os.path.isfile(os.path.join(test_asset.skeleton, "{0}_skeleton.0000.ma".format(test_asset.name))))
         self.assertTrue(os.path.isfile(os.path.join(test_asset.rig, "{0}_rig.0000.ma".format(test_asset.name))))
 
 

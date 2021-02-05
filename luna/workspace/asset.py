@@ -25,14 +25,14 @@ class Asset:
         #  Create directories
         fileFn.create_missing_dir(self.path)
         self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))  # type:str
-        self.guides = fileFn.create_missing_dir(os.path.join(self.path, "guides"))  # type:str
+        self.skeleton = fileFn.create_missing_dir(os.path.join(self.path, "skeleton"))  # type:str
         self.rig = fileFn.create_missing_dir(os.path.join(self.path, "rig"))  # type:str
         self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))  # type:str
         self.weights = _weightsDirectorySctruct(self.path)
         self.data = _dataDirectoryStruct(self.path)
 
         # Copy empty scenes
-        fileFn.copy_empty_scene(os.path.join(self.guides, "{0}_guides.0000.ma".format(self.name)))
+        fileFn.copy_empty_scene(os.path.join(self.skeleton, "{0}_skeleton.0000.ma".format(self.name)))
         fileFn.copy_empty_scene(os.path.join(self.rig, "{0}_rig.0000.ma".format(self.name)))
 
         # Set env variables and update hud
@@ -56,13 +56,13 @@ class Asset:
         return meta_dict
 
     @property
-    def latest_guides_path(self):
-        path = fileFn.get_latest_file("{0}_guides".format(self.name), self.guides, extension="ma", full_path=True, split_char=".")  # type: str
+    def latest_skeleton_path(self):
+        path = fileFn.get_latest_file("{0}_skeleton".format(self.name), self.skeleton, extension="ma", full_path=True, split_char=".")  # type: str
         return path
 
     @property
-    def new_guides_path(self):
-        path = fileFn.get_new_versioned_file("{0}_guides".format(self.name), self.guides, extension="ma", full_path=True, split_char=".")
+    def new_skeleton_path(self):
+        path = fileFn.get_new_versioned_file("{0}_skeleton".format(self.name), self.skeleton, extension="ma", full_path=True, split_char=".")
         return path
 
     @property
