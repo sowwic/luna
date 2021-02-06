@@ -3,7 +3,7 @@ import unittest
 
 from luna import static
 from luna.test import TestCase
-from luna_rig import components
+import luna_rig
 
 
 class CharacterTests(TestCase):
@@ -15,7 +15,7 @@ class CharacterTests(TestCase):
         pm.newFile(f=1)
 
     def test_create_default(self):
-        instance = components.Character.create()
+        instance = luna_rig.components.Character.create()
 
         # Assertions
         # Metanode attributes
@@ -40,8 +40,8 @@ class CharacterTests(TestCase):
         pm.saveFile(f=1)
 
     def test_intance_from_meta(self):
-        new_character = components.Character.create()
-        instance = components.Character(new_character.pynode.name())
+        new_character = luna_rig.components.Character.create()
+        instance = luna_rig.components.Character(new_character.pynode.name())
 
         # Assertions
         # Meta node attributes

@@ -24,7 +24,7 @@ class RigBuild(pybuild.PyBuild):
                                                         start_joint="l_leg_00_jnt",
                                                         end_joint="l_leg_02_jnt",
                                                         meta_parent=self.spine,
-                                                        attach_point=self.spine.AttachPoints.HIPS)
+                                                        attach_point=self.spine.Hooks.HIPS)
         self.right_leg = components.FKIKComponent.create(side="r",
                                                          name="leg",
                                                          start_joint="r_leg_00_jnt",

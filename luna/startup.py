@@ -1,10 +1,10 @@
 import pymel.core as pm
+import luna_rig  # noqa: F401
 from luna import Logger
 from luna.core.config import Config
 from luna import LunaVars
 from luna.core import callbacks
 Logger.set_level(Config.get(LunaVars.logging_level, default=10))
-
 try:
     from luna.static import directories
     from luna.interface.menu import LunaMenu

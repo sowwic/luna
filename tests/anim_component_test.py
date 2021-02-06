@@ -1,7 +1,7 @@
 import pymel.core as pm
 import unittest
 from luna.test import TestCase
-from luna_rig.core.component import AnimComponent
+import luna_rig
 
 
 class AnimComponentTests(TestCase):
@@ -12,12 +12,12 @@ class AnimComponentTests(TestCase):
         pm.newFile(f=1)
 
     def test_create_default(self):
-        new_component = AnimComponent.create()
+        new_component = luna_rig.AnimComponent.create()
 
         # Assertions
         # Metanode
         self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
-        self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
+        self.assertEqual(new_component.pynode.metaRigType.get(), luna_rig.AnimComponent.as_str())
         self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
@@ -50,8 +50,8 @@ class AnimComponentTests(TestCase):
         pm.saveFile(f=1)
 
     def test_create_with_meta_parent(self):
-        component1 = AnimComponent.create()
-        component2 = AnimComponent.create(meta_parent=component1)
+        component1 = luna_rig.AnimComponent.create()
+        component2 = luna_rig.AnimComponent.create(meta_parent=component1)
 
         self.assertTrue(pm.isConnected(component2.pynode.metaParent, component1.pynode.metaChildren[0]))
         self.assertEqual(component2.meta_parent, component1)
@@ -61,8 +61,8 @@ class AnimComponentTests(TestCase):
         pm.saveFile(f=1)
 
     def test_attach_to_component(self):
-        component1 = AnimComponent.create()
-        component2 = AnimComponent.create()
+        component1 = luna_rig.AnimComponent.create()
+        component2 = luna_rig.AnimComponent.create()
         component2.attach_to_component(component1)
 
         # Assertions
@@ -74,25 +74,25 @@ class AnimComponentTests(TestCase):
         pm.saveFile(f=1)
 
     def test_get_meta_children(self):
-        component1 = AnimComponent.create()
+        component1 = luna_rig.AnimComponent.create()
         child_components = []
         for i in range(5):
-            child_components.append(AnimComponent.create(meta_parent=component1))
+            child_components.append(luna_rig.AnimComponent.create(meta_parent=component1))
 
         # Assertions
         for child in child_components:
             self.assertEqual(component1, child.meta_parent)
             self.assertEqual(component1.pynode, child.meta_parent.pynode)
         self.assertListEqual(child_components, component1.get_meta_children())
-        self.assertListEqual(child_components, component1.get_meta_children(of_type=AnimComponent))
+        self.assertListEqual(child_components, component1.get_meta_children(of_type=luna_rig.AnimComponent))
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_get_meta_children.ma"))
         pm.saveFile(f=1)
 
     def test_instance_from_meta(self):
-        component1 = AnimComponent.create()
-        new_component = AnimComponent(component1.pynode.name())
+        component1 = luna_rig.AnimComponent.create()
+        new_component = luna_rig.AnimComponent(component1.pynode.name())
 
         # Assertions
         # Structs
@@ -101,7 +101,7 @@ class AnimComponentTests(TestCase):
 
         # Metanode
         self.assertEqual(str(new_component.pynode), "{0}_{1}_00_meta".format(new_component.side, new_component.name))
-        self.assertEqual(new_component.pynode.metaRigType.get(), AnimComponent.as_str())
+        self.assertEqual(new_component.pynode.metaRigType.get(), luna_rig.AnimComponent.as_str())
         self.assertEqual(str(new_component.root), "{0}_{1}_00_comp".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
