@@ -4,8 +4,8 @@ from datetime import datetime
 
 from luna import Logger
 try:
-    from luna.utils import fileFn
-    from luna.utils import environFn
+    import luna.utils.fileFn as fileFn
+    import luna.utils.environFn as environFn
     from luna import Config
     from luna import ProjectVars
     from luna.interface.hud import LunaHUD

@@ -13,6 +13,7 @@ class CharacterMembers(Enum):
     deformation_rig = "deformation_rig"
     locators = "locators_grp"
     world_space = "c_world_space_loc"
+    util_group = "util_grp"
 
 
 class ComponentType(Enum):

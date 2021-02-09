@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
 from luna import Logger
-from luna.utils import environFn
-from luna.utils import fileFn
+import luna.utils.environFn as environFn
+import luna.utils.fileFn as fileFn
 from luna.interface.hud import LunaHUD
 
 
@@ -62,7 +62,7 @@ class Asset:
 
     @property
     def new_skeleton_path(self):
-        path = fileFn.get_new_versioned_file("{0}_skeleton".format(self.name), self.skeleton, extension="ma", full_path=True, split_char=".")
+        path = fileFn.get_new_versioned_file("{0}_skeleton".format(self.name), self.skeleton, extension="ma", full_path=True, split_char=".")  # type: str
         return path
 
     @property
@@ -122,4 +122,4 @@ class _dataDirectoryStruct:
         self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))  # type:str
         self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))  # type:str
         self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))  # type:str
-        self.psd = fileFn.create_missing_dir(os.path.join(root, "data", "psd"))
+        self.psd = fileFn.create_missing_dir(os.path.join(root, "data", "psd"))  # type:str
