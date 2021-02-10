@@ -35,3 +35,12 @@ def set_character_var(value):
 
 def get_character_var():
     return environ.get("LUNA_CHARACTER")
+
+
+def store_config(config_dict):
+    environ.data["LUNA_CONFIG"] = config_dict
+
+
+def get_config():
+    data_dict = environ.get("LUNA_CONFIG")  # type: dict
+    return data_dict

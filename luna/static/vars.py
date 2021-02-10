@@ -2,6 +2,8 @@ class LunaVars:
     logging_level = "logging.level"
     command_port = "python.commandPort"
     callback_licence = "callback.license"
+    naming_templates = "naming.templates"
+    naming_profile = "naming.profile"
 
 
 class HudVars:

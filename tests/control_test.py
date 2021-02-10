@@ -115,6 +115,10 @@ class ControlTests(TestCase):
         self.assertEqual(instance.offset_list[0].name(), expected_ofs_name)
         self.assertEqual(instance.offset.name(), expected_extra_ofs_name)
 
+        # Save test file
+        pm.renameFile(self.get_temp_filename("control_test_rename.ma"))
+        pm.saveFile(f=1)
+
 
 if __name__ == "__main__":
     unittest.main(exit=False)

@@ -1,5 +1,6 @@
 import os
 import shutil
+import luna.utils.environFn as environFn
 from luna import Logger
 from luna.utils import fileFn
 from luna.static import directories
@@ -22,10 +23,11 @@ class Config:
     def update(cls, new_config_dict):
         current_config = cls.load()  # type: dict
         current_config.update(new_config_dict)
+        environFn.store_config(current_config)
         fileFn.write_json(cls.get_config_path(), current_config, sort_keys=False)
 
     @classmethod
-    def get(cls, key, default=None):
+    def get(cls, key, default=None, stored=False):
         """Get setting by key
 
         Args:
@@ -35,7 +37,10 @@ class Config:
         Returns:
             any: Value for requested setting
         """
-        current_config = cls.load()  # type:dict
+        if stored:
+            current_config = environFn.get_config()
+        else:
+            current_config = cls.load()  # type:dict
         if key not in current_config.keys():
             current_config[key] = default
             cls.update(current_config)
