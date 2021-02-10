@@ -96,3 +96,16 @@ class ScrollWidget(QtWidgets.QWidget):
 
     def resizeEvent(self, e):
         self.scroll_area.resizeEvent(e)
+
+
+class LineFieldWidget(QtWidgets.QWidget):
+    def __init__(self, label_text, button_text, parent=None):
+        super(LineFieldWidget, self).__init__(parent)
+        self.label = QtWidgets.QLabel(label_text)
+        self.button = QtWidgets.QPushButton(button_text)
+        self.line_edit = QtWidgets.QLineEdit()
+        self.main_layout = QtWidgets.QHBoxLayout()
+        self.main_layout.addWidget(self.label)
+        self.main_layout.addWidget(self.line_edit)
+        self.main_layout.addWidget(self.button)
+        self.setLayout(self.main_layout)

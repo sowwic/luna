@@ -89,7 +89,7 @@ class ControlTests(TestCase):
                                            offset_grp=True)
         self.assertEqual(instance.offset_list[0], instance.offset)
         old_offset = instance.offset
-        expected_name = nameFn.generate_name(name=[instance.name, "extra"], side="r", suffix="ofs")
+        expected_name = nameFn.generate_name(name=[instance.indexed_name, "extra"], side="r", suffix="ofs")
         new_offset = instance.insert_offset(extra_name="extra")
         self.assertEqual(new_offset.name(), expected_name)
         self.assertEqual(instance.offset, new_offset)
@@ -100,15 +100,14 @@ class ControlTests(TestCase):
                                            side="r",
                                            offset_grp=True,
                                            joint=1)
-        instance.insert_offset(extra_name="extra")
-
-        # Expectations
+        # Expectated names
         expected_ctl_name = nameFn.generate_name(name="leg", side="l", suffix="ctl")
         expected_grp_name = nameFn.generate_name(name="leg", side="l", suffix="grp")
         expected_jnt_name = nameFn.generate_name(name="leg", side="l", suffix="cjnt")
         expected_ofs_name = nameFn.generate_name(name="leg", side="l", suffix="ofs")
-        expected_extra_ofs_name = nameFn.generate_name(name="leg_extra", side="l", suffix="ofs")
+        expected_extra_ofs_name = nameFn.generate_name(name="leg_00_extra", side="l", suffix="ofs")
 
+        instance.insert_offset(extra_name="extra")
         instance.rename(side="l", name="leg")
         self.assertEqual(instance.transform.name(), expected_ctl_name)
         self.assertEqual(instance.group.name(), expected_grp_name)

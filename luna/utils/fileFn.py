@@ -174,7 +174,7 @@ def get_versioned_files(path, extension="", split_char="."):
     return files_dict
 
 
-def get_latest_file(name, dir_path, extension="", full_path=False, split_char="."):
+def get_latest_file(name, dir_path, extension="", full_path=True, split_char="."):
     files_dict = get_versioned_files(dir_path, extension, split_char)
     if name not in files_dict.keys():
         return None
@@ -184,7 +184,7 @@ def get_latest_file(name, dir_path, extension="", full_path=False, split_char=".
         return files_dict.get(name)[-1]
 
 
-def get_new_versioned_file(name, dir_path, extension="", split_char=".", full_path=False):
+def get_new_versioned_file(name, dir_path, extension="", split_char=".", full_path=True):
     files_dict = get_versioned_files(dir_path, extension, split_char)
     if name in files_dict.keys():
         new_version = int(files_dict.get(name)[-1].split(split_char)[-2]) + 1
@@ -196,3 +196,12 @@ def get_new_versioned_file(name, dir_path, extension="", split_char=".", full_pa
         return os.path.join(dir_path, new_file_name)
 
     return "{0}.{1}.{2}".format(name, str(new_version).zfill(4), extension)
+
+
+def get_latest_from_sub_name(sub_name, dir_path, extension="", sub_index=0, sub_split="-", full_path=True, split_char="."):
+    files_dict = get_versioned_files(dir_path, extension, split_char)
+    related_names = [name for name in files_dict.keys() if name.split(sub_split)[sub_index] == sub_name]
+    latest_versions = []
+    for full_name in related_names:
+        latest_versions.append(get_latest_file(full_name, dir_path, extension=extension, full_path=full_path, split_char=split_char))
+    return latest_versions
