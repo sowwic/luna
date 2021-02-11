@@ -7,3 +7,6 @@
 [submodule "luna_builder"]
 	path = luna_builder
 	url = https://github.com/S0nic014/luna_builder.git
+[submodule "luna_exporter"]
+	path = luna_exporter
+	url = https://github.com/S0nic014/luna_exporter.git
