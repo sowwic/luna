@@ -32,9 +32,9 @@ def load_json(path, string_data=False):
     try:
         with open(path, "r") as json_file:
             if string_data:
-                data = json.loads(json_file)
+                data = json.loads(json_file)  # type:str
             else:
-                data = json.load(json_file)
+                data = json.load(json_file)  # type:dict
 
     except IOError as e:
         Logger.exception("{0} is not a valid file path".format(path), exc_info=e)

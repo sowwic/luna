@@ -24,7 +24,7 @@ class Config:
         current_config = cls.load()  # type: dict
         current_config.update(new_config_dict)
         environFn.store_config(current_config)
-        fileFn.write_json(cls.get_config_path(), current_config, sort_keys=False)
+        fileFn.write_json(cls.get_config_path(), current_config, sort_keys=True)
 
     @classmethod
     def get(cls, key, default=None, stored=False):

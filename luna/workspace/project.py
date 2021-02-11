@@ -53,47 +53,13 @@ class Project(object):
                 meta_dict[category] = [os.path.basename(asset) for asset in asset_dirs]
         return meta_dict
 
-    @meta_data.setter
-    def meta_data(self, value):
+    def set_data(self, key, value):
         data_dict = self.meta_data
-        if isinstance(value, tuple):
-            key, value = value
-            data_dict[key] = value
-        elif isinstance(value, dict):
-            data_dict.update(value)
+        data_dict[key] = value
         fileFn.write_json(self.meta_path, data_dict, sort_keys=True)
 
     def update_meta(self):
         fileFn.write_json(self.meta_path, data=self.meta_data)
-
-    @ staticmethod
-    def create(path):
-        if Project.is_project(path):
-            Logger.error("Already a project: {0}".format(path))
-            return
-
-        new_project = Project(path)
-        # Create missing meta and tag files
-        fileFn.create_missing_dir(new_project.path)
-        fileFn.create_file(path=new_project.tag_path)
-        creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        new_project.meta_data = ("created", creation_date)
-
-        # Set enviroment variables and refresh HUD
-        environFn.set_project_var(new_project)
-        environFn.set_asset_var(None)
-        environFn.set_character_var(None)
-        Config.set(ProjectVars.previous_project, new_project.path)
-        new_project.add_to_recent()
-        LunaHUD.refresh()
-
-        return new_project
-
-    @classmethod
-    def is_project(cls, path):
-        search_file = os.path.join(path, cls.TAG_FILE)
-        Logger.debug("isProject check ({0}) - {1}".format(os.path.isfile(search_file), path))
-        return os.path.isfile(search_file)
 
     def add_to_recent(self):
         max_recent = Config.get(ProjectVars.recent_max, default=3)
@@ -108,13 +74,41 @@ class Project(object):
         project_queue.appendleft(entry)
         Config.set(ProjectVars.recent_projects, list(project_queue))
 
-    @ staticmethod
-    def set(path):
-        if not Project.is_project(path):
+    @classmethod
+    def create(cls, path):
+        if cls.is_project(path):
+            Logger.error("Already a project: {0}".format(path))
+            return
+
+        new_project = cls(path)
+        # Create missing meta and tag files
+        fileFn.create_missing_dir(new_project.path)
+        fileFn.create_file(path=new_project.tag_path)
+        creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        new_project.meta_data = ("created", creation_date)
+
+        # Set enviroment variables and refresh HUD
+        environFn.set_project_var(new_project)
+        environFn.set_asset_var(None)
+        environFn.set_character_var(None)
+        Config.set(ProjectVars.previous_project, new_project.path)
+        new_project.add_to_recent()
+        LunaHUD.refresh()
+        return new_project
+
+    @classmethod
+    def is_project(cls, path):
+        search_file = os.path.join(path, cls.TAG_FILE)
+        Logger.debug("isProject check ({0}) - {1}".format(os.path.isfile(search_file), path))
+        return os.path.isfile(search_file)
+
+    @classmethod
+    def set(cls, path):
+        if not cls.is_project(path):
             Logger.error("Not a project: {0}".format(path))
             return
 
-        project_instance = Project(path)
+        project_instance = cls(path)
         project_instance.update_meta()
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(project_instance)
@@ -123,7 +117,6 @@ class Project(object):
         Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
         LunaHUD.refresh()
-
         return project_instance
 
     @staticmethod

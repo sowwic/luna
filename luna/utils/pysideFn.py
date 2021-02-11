@@ -32,3 +32,19 @@ def maya_main_window():
         return wrapInstance(long(mainWindowPtr), QtWidgets.QWidget)
     else:
         maya_main_window()
+
+
+def qlist_all_items(qlist):
+    if not isinstance(qlist, QtWidgets.QListWidget):
+        raise TypeError("Invalid widget type. Must be QListWidget")
+    items = []
+    for index in range(qlist.count()):
+        items.append(qlist.item(index))
+    return items
+
+
+def line_separator():
+    line = QtWidgets.QFrame()
+    line.setFrameShape(QtWidgets.QFrame.HLine)
+    line.setFrameShadow(QtWidgets.QFrame.Sunken)
+    return line

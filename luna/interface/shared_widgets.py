@@ -1,7 +1,13 @@
+from maya.app.general import resourceBrowser
+from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
+import luna_rig
+import luna_rig.functions.animFn as animFn
 from luna import Logger
-from luna.utils import enumFn
+import luna.utils.enumFn as enumFn
+import luna.utils.inspectFn as inspectFn
+reload(inspectFn)
 
 
 class PathWidget(QtWidgets.QWidget):
@@ -94,6 +100,9 @@ class ScrollWidget(QtWidgets.QWidget):
     def add_widget(self, widget):
         self.content_layout.addWidget(widget)
 
+    def add_layout(self, layout):
+        self.content_layout.addLayout(layout)
+
     def resizeEvent(self, e):
         self.scroll_area.resizeEvent(e)
 
@@ -109,3 +118,216 @@ class LineFieldWidget(QtWidgets.QWidget):
         self.main_layout.addWidget(self.line_edit)
         self.main_layout.addWidget(self.button)
         self.setLayout(self.main_layout)
+
+
+class TimeRangeWidget(QtWidgets.QGroupBox):
+    def __init__(self, parent=None, title="Time", mode=0, start_time=0, end_time=120, max_time=9999, min_time=-9999):
+        super(TimeRangeWidget, self).__init__(title, parent)
+
+        # Widgets
+        self.timeslider_radio = QtWidgets.QRadioButton("Time slider")
+        self.startend_radio = QtWidgets.QRadioButton("Start/end")
+        self.timeslider_radio.setChecked(mode)
+        self.startend_radio.setChecked(not mode)
+
+        self.start_label = QtWidgets.QLabel("Start:")
+        self.start_time = QtWidgets.QSpinBox()
+        self.start_time.setMinimumWidth(50)
+        self.start_time.setMinimum(min_time)
+        self.start_time.setMaximum(max_time)
+        self.start_time.setValue(start_time)
+        self.start_time.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.end_label = QtWidgets.QLabel("End:")
+        self.end_time = QtWidgets.QSpinBox()
+        self.end_time.setMinimumWidth(50)
+        self.end_time.setMinimum(min_time)
+        self.end_time.setMaximum(max_time)
+        self.end_time.setValue(end_time)
+        self.end_time.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+
+        # Layouts
+        self.radio_layout = QtWidgets.QHBoxLayout()
+        self.radio_layout.addWidget(QtWidgets.QLabel("Range:"))
+        self.radio_layout.addWidget(self.timeslider_radio)
+        self.radio_layout.addWidget(self.startend_radio)
+        self.radio_layout.addStretch()
+        self.time_range_layout = QtWidgets.QHBoxLayout()
+        self.time_range_layout.addWidget(self.start_label)
+        self.time_range_layout.addWidget(self.start_time)
+        self.time_range_layout.addWidget(self.end_label)
+        self.time_range_layout.addWidget(self.end_time)
+        self.time_range_layout.addStretch()
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addLayout(self.radio_layout)
+        self.main_layout.addLayout(self.time_range_layout)
+        self.setLayout(self.main_layout)
+
+        # Connections
+        self.startend_radio.toggled.connect(self.set_spinboxes_enabled)
+
+    def showEvent(self, event):
+        super(TimeRangeWidget, self).showEvent(event)
+        self.set_spinboxes_enabled(self.startend_radio.isChecked())
+
+    def set_spinboxes_enabled(self, state):
+        for wgt in [self.start_label, self.start_time, self.end_label, self.end_time]:
+            wgt.setEnabled(state)
+
+    def get_range(self):
+        if self.startend_radio.isChecked():
+            return self.start_time.value(), self.end_time.value()
+        else:
+            return animFn.get_playback_range()
+
+
+class ComponentsList(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(ComponentsList, self).__init__(parent)
+
+        self._create_widgets()
+        self._create_layouts()
+        self._create_connections()
+        self.update_types()
+
+    def _create_widgets(self):
+        self.existing_checkbox = QtWidgets.QCheckBox("Only existing")
+        self.existing_checkbox.setChecked(True)
+        self.type_field = QtWidgets.QComboBox()
+        self.type_field.setEditable(True)
+        self.list = QtWidgets.QListWidget()
+        self.list.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+
+    def _create_layouts(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.existing_checkbox)
+        self.main_layout.addWidget(self.type_field)
+        self.main_layout.addWidget(self.list)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.main_layout)
+
+    def _create_connections(self):
+        self.type_field.currentTextChanged.connect(self.update_items)
+        self.existing_checkbox.toggled.connect(self.update_types)
+
+    def update_items(self):
+        self.list.clear()
+        for component in luna_rig.MetaRigNode.list_nodes(of_type=self.type_field.currentData()):
+            list_item = QtWidgets.QListWidgetItem(str(component))
+            list_item.setData(1, component)
+            self.list.addItem(list_item)
+
+    def update_types(self):
+        self.type_field.clear()
+        if self.existing_checkbox.isChecked():
+            for meta_type, instances in luna_rig.MetaRigNode.get_existing_nodes().items():
+                self.type_field.addItem(meta_type.as_str(name_only=True), meta_type)
+        else:
+            for cls_name, cls_ref in inspectFn.get_classes(luna_rig.components):
+                self.type_field.addItem(cls_name, cls_ref)
+            base_classes = inspectFn.get_classes(luna_rig, as_dict=True)
+            self.type_field.addItem("AnimComponent", base_classes.get("AnimComponent"))
+
+
+class FrameLayout(QtWidgets.QWidget):
+    """dsFrameLayout class """
+
+    def __init__(self, parent=None, title="", collapsed=True):
+        super(FrameLayout, self).__init__(parent=parent)
+
+        self._isCollapsed = collapsed
+        self._titleFrame = None
+        self._content = None
+        self._contentLayout = None
+
+        self.mainLayout = QtWidgets.QVBoxLayout(self)
+        self.mainLayout.addWidget(self._init_titleFrame(title, self._isCollapsed))
+        self.mainLayout.addWidget(self._init_content(self._isCollapsed))
+        self.mainLayout.setMargin(0)
+
+        self._init_collapsable()
+
+    def _init_titleFrame(self, title, collapsed):
+        self._titleFrame = self.TitleFrame(title=title, collapsed=collapsed)
+
+        return self._titleFrame
+
+    def _init_content(self, collapsed):
+        self._content = QtWidgets.QWidget()
+        self._contentLayout = QtWidgets.QVBoxLayout()
+
+        self._content.setLayout(self._contentLayout)
+        self._content.setVisible(not collapsed)
+
+        return self._content
+
+    def _init_collapsable(self):
+        QtCore.QObject.connect(self._titleFrame, QtCore.SIGNAL('clicked()'), self.toggleCollapsed)
+
+    def toggleCollapsed(self):
+        self._content.setVisible(self._isCollapsed)
+        self._isCollapsed = not self._isCollapsed
+        self._titleFrame._arrow.setArrow(int(self._isCollapsed))
+
+    def addWidget(self, widget):
+        self._contentLayout.addWidget(widget)
+
+    def addLayout(self, layout):
+        self._contentLayout.addLayout(layout)
+
+    class TitleFrame(QtWidgets.QFrame):
+        def __init__(self, parent=None, title="", collapsed=False):
+            super(FrameLayout.TitleFrame, self).__init__(parent=parent)
+
+            self.setMinimumHeight(24)
+            self.move(QtCore.QPoint(24, 0))
+            self.setStyleSheet("border:1px solid rgb(41, 41, 41);")
+
+            self._hlayout = QtWidgets.QHBoxLayout(self)
+            self._hlayout.setContentsMargins(10, 0, 0, 0)
+            self._hlayout.setSpacing(0)
+
+            self._arrow = None
+            self._title = None
+
+            self._hlayout.addWidget(self._init_arrow(collapsed))
+            self._hlayout.addWidget(self._init_title(title))
+
+        def _init_arrow(self, collapsed):
+            self._arrow = FrameLayout.Arrow(collapsed=collapsed)
+            self._arrow.setStyleSheet("border:0px")
+
+            return self._arrow
+
+        def _init_title(self, title=None):
+            self._title = QtWidgets.QLabel(title)
+            self._title.setMinimumHeight(24)
+            self._title.move(QtCore.QPoint(24, 0))
+            self._title.setStyleSheet("border:0px")
+
+            return self._title
+
+        def mousePressEvent(self, event):
+            self.emit(QtCore.SIGNAL("clicked()"))
+
+            return super(FrameLayout.TitleFrame, self).mousePressEvent(event)
+
+    class Arrow(QtWidgets.QLabel):
+        def __init__(self, parent=None, collapsed=False):
+            super(FrameLayout.Arrow, self).__init__(parent=parent)
+
+            self.setMaximumSize(18, 24)
+
+            #horizontal == 0
+            self._arrowHorizontal = QtGui.QPixmap(":arrowRight.png")
+            # vertical == 1
+            self._arrowVertical = QtGui.QPixmap(":arrowDown.png")
+
+            self._arrow = None
+            self.setArrow(int(collapsed))
+
+        def setArrow(self, arrowDir):
+            if arrowDir:
+                self._arrow = self._arrowHorizontal
+            else:
+                self._arrow = self._arrowVertical
+            self.setPixmap(self._arrow)

@@ -27,3 +27,25 @@ class ProjectVars:
 
 class BuildVars:
     geometry_override = "build.geometry.overrideEnabled"
+
+
+class UnrealVars:
+    project = "unreal.project"
+    anim_dir = "unreal.animations"
+    mesh_dir = "unreal.meshes"
+
+
+class AnimExporterVars:
+    prorerties_root = "animexporter"
+    bake_on_remove = "animexporter.bakeOnRemove"
+    minimize_rotation = "animexporter.minimizeRotation"
+    simulation = "animexporter.simulation"
+    keep_unbacked_keys = "animexporter.keepUnbackedKeys"
+    sparce_curve_bake = "animexporter.sparceCurveBake"
+    disable_implicit = "animexporter.disableImplicitControl"
+    unroll_rotation = "animexporter.unrollRotation"
+    sample_by = "animexporter.sample"
+    oversample_rate = "animexporter.oversampleRate"
+    increase_fidelity = "animexporter.increaseFidelity"
+    fidelity_keys_tol = "animexporter.fidelityKeysTolerance"
+    smart_bake = "animexporter.smartBake"
