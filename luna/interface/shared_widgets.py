@@ -189,6 +189,10 @@ class ComponentsList(QtWidgets.QWidget):
         self._create_connections()
         self.update_types()
 
+    def showEvent(self, event):
+        super(ComponentsList, self).showEvent(event)
+        self.update_types()
+
     def _create_widgets(self):
         self.existing_checkbox = QtWidgets.QCheckBox("Only existing")
         self.existing_checkbox.setChecked(True)
@@ -208,6 +212,10 @@ class ComponentsList(QtWidgets.QWidget):
     def _create_connections(self):
         self.type_field.currentTextChanged.connect(self.update_items)
         self.existing_checkbox.toggled.connect(self.update_types)
+
+    def get_selected_components(self):
+        components = [item.data(1) for item in self.list.selectedItems() if isinstance(item.data(1), luna_rig.MetaRigNode)]
+        return components
 
     def update_items(self):
         self.list.clear()
@@ -242,7 +250,7 @@ class FrameLayout(QtWidgets.QWidget):
         self.mainLayout = QtWidgets.QVBoxLayout(self)
         self.mainLayout.addWidget(self._init_titleFrame(title, self._isCollapsed))
         self.mainLayout.addWidget(self._init_content(self._isCollapsed))
-        self.mainLayout.setMargin(0)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
         self._init_collapsable()
 
@@ -261,41 +269,39 @@ class FrameLayout(QtWidgets.QWidget):
         return self._content
 
     def _init_collapsable(self):
-        QtCore.QObject.connect(self._titleFrame, QtCore.SIGNAL('clicked()'), self.toggleCollapsed)
+        self._titleFrame.clicked.connect(self.toggleCollapsed)
 
     def toggleCollapsed(self):
         self._content.setVisible(self._isCollapsed)
         self._isCollapsed = not self._isCollapsed
         self._titleFrame._arrow.setArrow(int(self._isCollapsed))
 
-    def addWidget(self, widget):
+    def add_widget(self, widget):
         self._contentLayout.addWidget(widget)
 
-    def addLayout(self, layout):
+    def add_layout(self, layout):
         self._contentLayout.addLayout(layout)
 
     class TitleFrame(QtWidgets.QFrame):
+        clicked = QtCore.Signal()
+
         def __init__(self, parent=None, title="", collapsed=False):
             super(FrameLayout.TitleFrame, self).__init__(parent=parent)
 
             self.setMinimumHeight(24)
             self.move(QtCore.QPoint(24, 0))
             self.setStyleSheet("border:1px solid rgb(41, 41, 41);")
-
             self._hlayout = QtWidgets.QHBoxLayout(self)
             self._hlayout.setContentsMargins(10, 0, 0, 0)
             self._hlayout.setSpacing(0)
-
             self._arrow = None
             self._title = None
-
             self._hlayout.addWidget(self._init_arrow(collapsed))
             self._hlayout.addWidget(self._init_title(title))
 
         def _init_arrow(self, collapsed):
             self._arrow = FrameLayout.Arrow(collapsed=collapsed)
             self._arrow.setStyleSheet("border:0px")
-
             return self._arrow
 
         def _init_title(self, title=None):
@@ -303,25 +309,20 @@ class FrameLayout(QtWidgets.QWidget):
             self._title.setMinimumHeight(24)
             self._title.move(QtCore.QPoint(24, 0))
             self._title.setStyleSheet("border:0px")
-
             return self._title
 
         def mousePressEvent(self, event):
-            self.emit(QtCore.SIGNAL("clicked()"))
-
+            self.clicked.emit()
             return super(FrameLayout.TitleFrame, self).mousePressEvent(event)
 
     class Arrow(QtWidgets.QLabel):
         def __init__(self, parent=None, collapsed=False):
             super(FrameLayout.Arrow, self).__init__(parent=parent)
-
             self.setMaximumSize(18, 24)
-
-            #horizontal == 0
+            # horizontal == 0
             self._arrowHorizontal = QtGui.QPixmap(":arrowRight.png")
             # vertical == 1
             self._arrowVertical = QtGui.QPixmap(":arrowDown.png")
-
             self._arrow = None
             self.setArrow(int(collapsed))
 

@@ -101,7 +101,7 @@ class LunaMenu:
 
         # Animation tools etc
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Animation")
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Animation exporter", command="import luna_anim_exporter;luna_anim_exporter.MainDialog.display()")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Exporter", command="import luna_exporter;luna_exporter.MainDialog.display()")
 
         # Help and config section
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
