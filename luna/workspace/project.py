@@ -85,7 +85,7 @@ class Project(object):
         fileFn.create_missing_dir(new_project.path)
         fileFn.create_file(path=new_project.tag_path)
         creation_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        new_project.meta_data = ("created", creation_date)
+        new_project.set_data("created", creation_date)
 
         # Set enviroment variables and refresh HUD
         environFn.set_project_var(new_project)

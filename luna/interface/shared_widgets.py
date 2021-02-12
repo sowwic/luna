@@ -214,12 +214,12 @@ class ComponentsList(QtWidgets.QWidget):
         self.existing_checkbox.toggled.connect(self.update_types)
 
     def get_selected_components(self):
-        components = [item.data(1) for item in self.list.selectedItems() if isinstance(item.data(1), luna_rig.MetaRigNode)]
+        components = [item.data(1) for item in self.list.selectedItems() if isinstance(item.data(1), luna_rig.MetaNode)]
         return components
 
     def update_items(self):
         self.list.clear()
-        for component in luna_rig.MetaRigNode.list_nodes(of_type=self.type_field.currentData()):
+        for component in luna_rig.MetaNode.list_nodes(of_type=self.type_field.currentData()):
             list_item = QtWidgets.QListWidgetItem(str(component))
             list_item.setData(1, component)
             self.list.addItem(list_item)
@@ -227,7 +227,7 @@ class ComponentsList(QtWidgets.QWidget):
     def update_types(self):
         self.type_field.clear()
         if self.existing_checkbox.isChecked():
-            for meta_type, instances in luna_rig.MetaRigNode.get_existing_nodes().items():
+            for meta_type, instances in luna_rig.MetaNode.get_existing_nodes().items():
                 self.type_field.addItem(meta_type.as_str(name_only=True), meta_type)
         else:
             for cls_name, cls_ref in inspectFn.get_classes(luna_rig.components):
