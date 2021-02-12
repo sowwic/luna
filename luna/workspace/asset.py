@@ -105,7 +105,7 @@ class _weightsDirectorySctruct:
         self.delta_mush = fileFn.create_missing_dir(os.path.join(root, "weights", "delta_mush"))  # type:str
         self.ffd = fileFn.create_missing_dir(os.path.join(root, "weights", "ffd"))  # type:str
         self.ncloth = fileFn.create_missing_dir(os.path.join(root, "weights", "ncloth"))  # type:str
-        self.skin_cluster = fileFn.create_missing_dir(os.path.join(root, "weights", "skin_cluster"))  # type:str
+        self.skin = fileFn.create_missing_dir(os.path.join(root, "weights", "skin"))  # type:str
         self.nonlinear = fileFn.create_missing_dir(os.path.join(root, "weights", "nonlinear"))  # type:str
         self.tension = fileFn.create_missing_dir(os.path.join(root, "weights", "tension"))  # type:str
         self.soft_mod = fileFn.create_missing_dir(os.path.join(root, "weights", "soft_mod"))  # type:str

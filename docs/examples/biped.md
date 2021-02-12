@@ -114,7 +114,7 @@ class RigBuild(pybuild.PyBuild):
         # Import data
         importexport.CtlShapeManager().import_asset_shapes()
         # importexport.BlendShapeManager().import_all()
-        # importexport.SkinClusterManager().import_all()
+        # importexport.SkinManager().import_all()
 
 
 if __name__ == "__main__":
