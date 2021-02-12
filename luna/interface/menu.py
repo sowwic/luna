@@ -93,15 +93,14 @@ class LunaMenu:
 
         # Tools
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder, icon="builder.svg")
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Data manager")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Exporter", command="import luna_exporter;luna_exporter.MainDialog.display()")
         cls._add_external_tools()
 
         # Developer tools
         cls._add_dev_menu()
 
         # Animation tools etc
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Animation")
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Exporter", command="import luna_exporter;luna_exporter.MainDialog.display()")
+        # MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Animation")
 
         # Help and config section
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
