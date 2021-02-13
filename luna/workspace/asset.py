@@ -119,7 +119,7 @@ class _dataDirectoryStruct:
 
     def __init__(self, root):
         self.blendshapes = fileFn.create_missing_dir(os.path.join(root, "data", "blendshapes"))  # type:str
-        self.poses = fileFn.create_missing_dir(os.path.join(root, "data", "poses"))  # type:str
+        self.driven_poses = fileFn.create_missing_dir(os.path.join(root, "data", "driven_poses"))  # type:str
         self.xgen = fileFn.create_missing_dir(os.path.join(root, "data", "xgen"))  # type:str
         self.mocap = fileFn.create_missing_dir(os.path.join(root, "data", "mocap"))  # type:str
         self.psd = fileFn.create_missing_dir(os.path.join(root, "data", "psd"))  # type:str

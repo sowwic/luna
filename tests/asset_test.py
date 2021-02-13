@@ -48,7 +48,7 @@ class AssetTests(TestCase):
         self.assertTrue(os.path.isdir(test_asset.weights.tension))
         self.assertTrue(os.path.isdir(test_asset.data.blendshapes))
         self.assertTrue(os.path.isdir(test_asset.data.mocap))
-        self.assertTrue(os.path.isdir(test_asset.data.poses))
+        self.assertTrue(os.path.isdir(test_asset.data.driven_poses))
         self.assertTrue(os.path.isdir(test_asset.data.xgen))
         # Template files creation
         self.assertTrue(os.path.isfile(os.path.join(test_asset.skeleton, "{0}_skeleton.0000.ma".format(test_asset.name))))

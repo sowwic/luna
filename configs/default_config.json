@@ -20,5 +20,6 @@
     },
     "naming.profile.indexPadding": 2,
     "naming.profile.template": "default",
-    "naming.profile.startIndex": 0
+    "naming.profile.startIndex": 0,
+    "rig.export.skin.filetype": "pickle"
 }

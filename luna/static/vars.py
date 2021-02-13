@@ -38,3 +38,7 @@ class NamingVars:
     current_template = "naming.profile.template"
     index_padding = "naming.profile.indexPadding"
     start_index = "naming.profile.startIndex"
+
+
+class RigVars:
+    skin_export_type = "rig.io.skin.filetype"
