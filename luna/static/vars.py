@@ -2,8 +2,6 @@ class LunaVars:
     logging_level = "logging.level"
     command_port = "python.commandPort"
     callback_licence = "callback.license"
-    naming_templates = "naming.templates"
-    naming_profile = "naming.profile"
 
 
 class HudVars:
@@ -35,17 +33,8 @@ class UnrealVars:
     mesh_dir = "unreal.meshes"
 
 
-class AnimExporterVars:
-    prorerties_root = "animexporter"
-    bake_on_remove = "animexporter.bakeOnRemove"
-    minimize_rotation = "animexporter.minimizeRotation"
-    simulation = "animexporter.simulation"
-    keep_unbacked_keys = "animexporter.keepUnbackedKeys"
-    sparce_curve_bake = "animexporter.sparceCurveBake"
-    disable_implicit = "animexporter.disableImplicitControl"
-    unroll_rotation = "animexporter.unrollRotation"
-    sample_by = "animexporter.sample"
-    oversample_rate = "animexporter.oversampleRate"
-    increase_fidelity = "animexporter.increaseFidelity"
-    fidelity_keys_tol = "animexporter.fidelityKeysTolerance"
-    smart_bake = "animexporter.smartBake"
+class NamingVars:
+    templates_dict = "naming.templates"
+    current_template = "naming.profile.template"
+    index_padding = "naming.profile.indexPadding"
+    start_index = "naming.profile.startIndex"

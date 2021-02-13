@@ -11,14 +11,14 @@
     "tests.temp_dir": "",
     "tests.buffer_output": true,
     "tests.new_file": true,
+    "build.geometry.overrideEnabled": true,
+    "unreal.project": "",
     "naming.templates": {
         "default": "{side}_{name}_{suffix}",
         "alternavive": "{name}_{side}_{suffix}",
         "unreal": "{suffix}_{name}_{side}"
     },
-    "naming.profile": {
-        "template": "default",
-        "index_padding": 2,
-        "start_index": 0
-    }
+    "naming.profile.indexPadding": 2,
+    "naming.profile.template": "default",
+    "naming.profile.startIndex": 0
 }
