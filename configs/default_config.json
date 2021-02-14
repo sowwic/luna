@@ -21,5 +21,8 @@
     "naming.profile.indexPadding": 2,
     "naming.profile.template": "default",
     "naming.profile.startIndex": 0,
-    "rig.export.skin.filetype": "pickle"
+    "rig.export.skin.fileFormat": "pickle",
+    "rig.io.nglayers.fileFormat": "pickle",
+    "unreal.animations": "{project}/Content/animations",
+    "unreal.meshes": "{project}/Content/models"
 }
