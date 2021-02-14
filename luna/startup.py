@@ -51,7 +51,7 @@ def build_luna_hud():
 
 def run():
     # Logging
-    Logger.write_to_rotating_file(directories.LOG_FILE, level=30)
+    Logger.write_to_rotating_file(directories.LOG_FILE, level=40)
     Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
     Logger.info("Current logging level: {0}".format(Logger.get_level(name=1)))
 

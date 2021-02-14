@@ -236,6 +236,42 @@ class ComponentsList(QtWidgets.QWidget):
             self.type_field.addItem("AnimComponent", base_classes.get("AnimComponent"))
 
 
+class ControlsList(QtWidgets.QWidget):
+    def __init__(self, components_list, parent=None):
+        super(ControlsList, self).__init__(parent)
+        if not isinstance(components_list, ComponentsList):
+            Logger.exception("Control list requires {0} instance.".format(ComponentsList))
+            raise TypeError
+        self.components_list = components_list  # type: ComponentsList
+        self.create_widgets()
+        self.create_layouts()
+        self.create_connections()
+
+    def create_widgets(self):
+        self.list = QtWidgets.QListWidget()
+        self.list.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+
+    def create_layouts(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.setLayout(self.main_layout)
+        self.main_layout.addWidget(self.list)
+
+    def create_connections(self):
+        self.components_list.list.currentItemChanged.connect(self.update_list)
+
+    def update_list(self, item):
+        self.list.clear()
+        if not item:
+            return
+        component = item.data(1)
+        if not isinstance(component, luna_rig.AnimComponent) and not isinstance(component, luna_rig.components.Character):
+            return
+        for control in component.controls:
+            list_item = QtWidgets.QListWidgetItem(control.transform.name())
+            list_item.setData(1, control)
+            self.list.addItem(list_item)
+
+
 class FrameLayout(QtWidgets.QWidget):
     """dsFrameLayout class """
 
