@@ -87,7 +87,7 @@ class LunaMenu:
     def create(cls):
         # Build main menu
         cls._delete_old()
-        Logger.info("Building {0} menu...".format(cls.MAIN_MENU_LABEL))
+        Logger.info("Building menu...")
         pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_LABEL, parent=cls.MAIN_WINDOW, tearOff=1)
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Tools")
 

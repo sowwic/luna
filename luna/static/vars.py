@@ -2,6 +2,7 @@ class LunaVars:
     logging_level = "logging.level"
     command_port = "python.commandPort"
     callback_licence = "callback.license"
+    marking_menu_mode = "markingMenu.mode"
 
 
 class HudVars:
@@ -43,3 +44,8 @@ class NamingVars:
 class RigVars:
     skin_export_format = "rig.io.skin.fileFormat"
     nglayers_export_format = "rig.io.nglayers.fileFormat"
+
+
+class ToolVars:
+    locator_match_orient = "tool.locator.orient"
+    locator_match_position = "tool.locator.position"

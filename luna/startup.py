@@ -11,6 +11,7 @@ try:
     from luna.static import directories
     from luna.interface.menu import LunaMenu
     from luna.interface.hud import LunaHUD
+    import luna.interface.marking_menu as marking_menu
 except Exception as e:
     Logger.exception("Failed to import modules")
 # Store config
@@ -26,14 +27,14 @@ def open_port(lang="python"):
             Logger.exception("Failed to open command port", exc_info=e)
 
 
-def build_luna_menu():
+def build_menu():
     try:
         LunaMenu.create()
     except Exception as e:
-        Logger.exception("Failed to build luna menu", exc_info=e)
+        Logger.exception("Failed to build menu", exc_info=e)
 
 
-def add_luna_callbacks():
+def add_callbacks():
     if Config.get(LunaVars.callback_licence, True, stored=True):
         try:
             callbacks.remove_licence_popup_callback()
@@ -42,11 +43,18 @@ def add_luna_callbacks():
             Logger.exception("Failed to add file save licence callback!")
 
 
-def build_luna_hud():
+def build_hud():
     try:
         LunaHUD.create()
     except Exception:
         Logger.exception("Failed to create HUD")
+
+
+def build_marking_menu():
+    try:
+        marking_menu.MarkingMenu.create()
+    except Exception:
+        Logger.exception("Failed to build marking menu")
 
 
 def run():
@@ -57,6 +65,7 @@ def run():
 
     # luna initialization
     open_port(lang="python")
-    build_luna_menu()
-    build_luna_hud()
-    add_luna_callbacks()
+    build_menu()
+    build_hud()
+    build_marking_menu()
+    add_callbacks()

@@ -16,7 +16,7 @@ class LunaHUD:
     @classmethod
     def create(cls):
         hud_instance = None
-        Logger.info("Building {0}...".format(cls.HUD_NAME))
+        Logger.info("Building HUD...")
         cls.SECTION = Config.get(HudVars.section, default=7)
         cls.BLOCK = Config.get(HudVars.block, default=5)
 

@@ -24,5 +24,6 @@
     "rig.export.skin.fileFormat": "pickle",
     "rig.io.nglayers.fileFormat": "pickle",
     "unreal.animations": "{project}/Content/animations",
-    "unreal.meshes": "{project}/Content/models"
+    "unreal.meshes": "{project}/Content/models",
+    "markingMenu.mode": 1
 }
