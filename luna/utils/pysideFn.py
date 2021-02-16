@@ -21,17 +21,8 @@ def get_QIcon(name, maya_icon=False):
 
 
 def maya_main_window():
-    """Get maya main window as QWidget
-
-    :return: Maya main window as QWidget
-    :rtype: QtWidgets.QWidget
-    """
-    #
     mainWindowPtr = pma.MQtUtil_mainWindow()
-    if mainWindowPtr:
-        return wrapInstance(long(mainWindowPtr), QtWidgets.QWidget)
-    else:
-        maya_main_window()
+    return wrapInstance(long(mainWindowPtr), QtWidgets.QWidget)
 
 
 def qlist_all_items(qlist):

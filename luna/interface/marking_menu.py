@@ -42,16 +42,14 @@ class MarkingMenu(object):
         pm.popupMenu(cls.NAME, mm=1, e=1, dai=1)
         # Populate menu based on selection
         selection = pm.selected()
+        if not selection:
+            return
         is_rigging_mode = Config.get(LunaVars.marking_menu_mode, default=1, stored=True)
         if is_rigging_mode:
-            if not selection:
-                return
             if luna_rig.Control.is_control(selection[-1]):
                 cls.__add_rigger_control_actions(root_menu, selection)
             elif isinstance(selection[-1], luna_rig.nt.Joint):
                 cls.__add_joint_actions(root_menu, selection)
-                cls.__add_util_rigger_actions(root_menu, selection=selection)
-
         else:
             if luna_rig.Control.is_control(selection[-1]):
                 cls.__add_animator_control_actions(root_menu, selection)
