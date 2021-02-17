@@ -95,13 +95,9 @@ def load_cpickle(path):
 
 
 def create_file(path, data=""):
-    try:
+    if not os.path.isfile(path):
         with open(path, "w") as f:
             f.write(data)
-    except IOError:
-        Logger.exception("Failed to create file {0}".format(path))
-        return None
-
     return path
 
 
