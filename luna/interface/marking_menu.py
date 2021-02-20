@@ -89,7 +89,7 @@ class MarkingMenu(object):
 
     @classmethod
     def __add_joint_actions(cls, root_menu, selection):
-        pm.menuItem(p=root_menu, l="Joint chain from selection", rp="E", c=lambda *args: jointFn.create_chain(joint_list=selection), i="kinJoint.png")
+        pm.menuItem(p=root_menu, l="Joint chain from selection", rp="E", c=lambda *args: jointFn.create_chain(joint_list=pm.selected(type="joint")), i="kinJoint.png")
         pm.menuItem(p=root_menu, l="Mirror joints", rp="W", c=lambda *args: jointFn.mirror_chain(chains=selection), i="mirrorJoint.png")
 
 
