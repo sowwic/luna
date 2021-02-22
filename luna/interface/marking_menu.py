@@ -84,8 +84,9 @@ class MarkingMenu(object):
 
         if selected_control.connected_component:
             pm.menuItem(p=root_menu, l=str(selected_control.connected_component), en=0)
-            for label, data_dict in selected_control.connected_component.actions_dict.items():
-                pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
+            if hasattr(selected_control.connected_component, "actions_dict"):
+                for label, data_dict in selected_control.connected_component.actions_dict.items():
+                    pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
 
     @classmethod
     def __add_joint_actions(cls, root_menu, selection):
