@@ -20,9 +20,9 @@ class ControlTests(TestCase):
         guide.ty.set(5)
         instance = luna_rig.Control.create(name="arm_ik",
                                            side="r",
-                                           object_to_match=guide,
+                                           guide=guide,
                                            attributes="tr",
-                                           delete_match_object=False)
+                                           delete_guide=False)
 
         # Assertions
         self.assertTrue(instance.is_control(instance.transform))

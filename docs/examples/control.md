@@ -11,7 +11,7 @@
     # Fully create new control
     ctl1 = Control.create(name="arm_ik",
                             side="r",
-                            object_to_match=None,
+                            guide=None,
                             joint=True,
                             shape="cube",
                             tag="ik")
