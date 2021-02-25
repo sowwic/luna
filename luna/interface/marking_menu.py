@@ -7,7 +7,6 @@ import luna.utils.fileFn as fileFn
 import luna_rig
 import luna_rig.functions.curveFn as curveFn
 import luna_rig.functions.jointFn as jointFn
-import luna_rig.functions.nodeFn as nodeFn
 import luna_rig.importexport as importexport
 import luna_rig.core.shape_manager as shape_manager
 
@@ -27,12 +26,12 @@ class MarkingMenu(object):
     @classmethod
     def create(cls):
         Logger.info("Building marking menu...")
-        cls.__delete_old()
+        cls._delete_old()
         pm.popupMenu(cls.NAME, mm=1, aob=1, button=2, ctl=1, alt=1, sh=0, p="viewPanes", pmo=0, pmc=cls.__populate)
         Logger.info("Successfully added marking menu: (CTL+ALT+MMB)")
 
     @classmethod
-    def __delete_old(cls):
+    def _delete_old(cls):
         if pm.popupMenu(cls.NAME, ex=1):
             pm.deleteUI(cls.NAME)
 

@@ -81,7 +81,6 @@ class LunaMenu:
     def _delete_old(cls):
         if pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_ID, exists=1, parent=cls.MAIN_WINDOW):
             pm.deleteUI(pm.menu(cls.MAIN_MENU_ID, e=1, deleteAllItems=1))
-            Logger.debug("Deleted existing {} object".format(cls.MAIN_MENU_ID))
 
     @classmethod
     def create(cls):

@@ -15,8 +15,8 @@ def remove_licence_popup_callback():
     :return: Info message
     :rtype: str
     """
-    pma.MSceneMessage.addCallback(pma.MSceneMessage.kAfterSave, _remove_licence_line, None)
-    return "Remove licence callback"
+    callback_id = pma.MSceneMessage.addCallback(pma.MSceneMessage.kAfterSave, _remove_licence_line, None)  # type: int
+    return callback_id
 
 
 def _remove_licence_line(*args):
