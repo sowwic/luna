@@ -1,13 +1,13 @@
-from maya.app.general import resourceBrowser
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
+
 import luna_rig
 import luna_rig.functions.animFn as animFn
 from luna import Logger
 import luna.utils.enumFn as enumFn
 import luna.utils.inspectFn as inspectFn
-reload(inspectFn)
+import luna.utils.pysideFn as pysideFn
 
 
 class PathWidget(QtWidgets.QWidget):
@@ -180,30 +180,53 @@ class TimeRangeWidget(QtWidgets.QGroupBox):
             return animFn.get_playback_range()
 
 
-class ComponentsList(QtWidgets.QWidget):
+class CharactersComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
-        super(ComponentsList, self).__init__(parent)
+        super(CharactersComboBox, self).__init__(parent)
+        self.update_items()
+
+    def update_items(self):
+        self.clear()
+        character_nodes = luna_rig.MetaNode.list_nodes(of_type=luna_rig.components.Character)
+        for char_node in character_nodes:
+            self.addItem(str(char_node), char_node)
+
+
+class ComponentsTypesComboBox(QtWidgets.QComboBox):
+    def __init__(self, parent=None, of_type=luna_rig.Component):
+        super(ComponentsTypesComboBox, self).__init__(parent)
+        self.base_type = of_type
+        self.setEditable(True)
+        self.update_items()
+
+    def update_items(self):
+        self.clear()
+        self.addItem("All", luna_rig.Component)
+        # for component_node in luna_rig.MetaNode.list_nodes(of_type=self.base_type):
+        #     self.addItem(str(component_node), type(component_node))
+        for meta_type, instances in luna_rig.MetaNode.get_existing_nodes().items():
+            self.addItem(meta_type.as_str(name_only=True), meta_type)
+
+
+class ComponentsListing(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(ComponentsListing, self).__init__(parent)
 
         self._create_widgets()
         self._create_layouts()
         self._create_connections()
-        self.update_types()
 
     def showEvent(self, event):
-        super(ComponentsList, self).showEvent(event)
-        self.update_types()
+        super(ComponentsListing, self).showEvent(event)
+        self.type_field.update_items()
 
     def _create_widgets(self):
-        self.existing_checkbox = QtWidgets.QCheckBox("Only existing")
-        self.existing_checkbox.setChecked(True)
-        self.type_field = QtWidgets.QComboBox()
-        self.type_field.setEditable(True)
+        self.type_field = ComponentsTypesComboBox()
         self.list = QtWidgets.QListWidget()
         self.list.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def _create_layouts(self):
         self.main_layout = QtWidgets.QVBoxLayout()
-        self.main_layout.addWidget(self.existing_checkbox)
         self.main_layout.addWidget(self.type_field)
         self.main_layout.addWidget(self.list)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -211,7 +234,6 @@ class ComponentsList(QtWidgets.QWidget):
 
     def _create_connections(self):
         self.type_field.currentTextChanged.connect(self.update_items)
-        self.existing_checkbox.toggled.connect(self.update_types)
 
     def get_selected_components(self):
         components = [item.data(1) for item in self.list.selectedItems() if isinstance(item.data(1), luna_rig.MetaNode)]
@@ -222,27 +244,17 @@ class ComponentsList(QtWidgets.QWidget):
         for component in luna_rig.MetaNode.list_nodes(of_type=self.type_field.currentData()):
             list_item = QtWidgets.QListWidgetItem(str(component))
             list_item.setData(1, component)
+            list_item.setToolTip(component.pynode.name())
             self.list.addItem(list_item)
-
-    def update_types(self):
-        self.type_field.clear()
-        if self.existing_checkbox.isChecked():
-            for meta_type, instances in luna_rig.MetaNode.get_existing_nodes().items():
-                self.type_field.addItem(meta_type.as_str(name_only=True), meta_type)
-        else:
-            for cls_name, cls_ref in inspectFn.get_classes(luna_rig.components):
-                self.type_field.addItem(cls_name, cls_ref)
-            base_classes = inspectFn.get_classes(luna_rig, as_dict=True)
-            self.type_field.addItem("AnimComponent", base_classes.get("AnimComponent"))
 
 
 class ControlsList(QtWidgets.QWidget):
     def __init__(self, components_list, parent=None):
         super(ControlsList, self).__init__(parent)
-        if not isinstance(components_list, ComponentsList):
-            Logger.exception("Control list requires {0} instance.".format(ComponentsList))
+        if not isinstance(components_list, ComponentsListing):
+            Logger.exception("Control list requires {0} instance.".format(ComponentsListing))
             raise TypeError
-        self.components_list = components_list  # type: ComponentsList
+        self.components_list = components_list  # type: ComponentsListing
         self.create_widgets()
         self.create_layouts()
         self.create_connections()
@@ -368,3 +380,31 @@ class FrameLayout(QtWidgets.QWidget):
             else:
                 self._arrow = self._arrowVertical
             self.setPixmap(self._arrow)
+
+
+class ItemsListGroup(QtWidgets.QGroupBox):
+    def __init__(self, title="", parent=None):
+        super(ItemsListGroup, self).__init__(title, parent)
+
+        self.create_widgets()
+        self.create_layouts()
+        self.create_connections()
+
+    def create_widgets(self):
+        self.list = QtWidgets.QListWidget()
+        self.add_button = QtWidgets.QPushButton(pysideFn.get_QIcon("plus.png"), "")
+        self.delete_button = QtWidgets.QPushButton(pysideFn.get_QIcon("delete.png"), "")
+
+    def create_layouts(self):
+        self.buttons_layout = QtWidgets.QHBoxLayout()
+        self.buttons_layout.addStretch()
+        self.buttons_layout.addWidget(self.add_button)
+        self.buttons_layout.addWidget(self.delete_button)
+
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.list)
+        self.main_layout.addLayout(self.buttons_layout)
+        self.setLayout(self.main_layout)
+
+    def create_connections(self):
+        pass
