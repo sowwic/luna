@@ -107,17 +107,64 @@ class ScrollWidget(QtWidgets.QWidget):
         self.scroll_area.resizeEvent(e)
 
 
-class LineFieldWidget(QtWidgets.QWidget):
-    def __init__(self, label_text, button_text, parent=None):
-        super(LineFieldWidget, self).__init__(parent)
+class StringFieldWidget(QtWidgets.QWidget):
+    def __init__(self, label_text, button=True, button_text="", parent=None):
+        super(StringFieldWidget, self).__init__(parent)
         self.label = QtWidgets.QLabel(label_text)
-        self.button = QtWidgets.QPushButton(button_text)
         self.line_edit = QtWidgets.QLineEdit()
+        self.button = None
+
         self.main_layout = QtWidgets.QHBoxLayout()
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.label)
         self.main_layout.addWidget(self.line_edit)
-        self.main_layout.addWidget(self.button)
+        if button:
+            self.button = QtWidgets.QPushButton(button_text)
+            self.main_layout.addWidget(self.button)
+
         self.setLayout(self.main_layout)
+
+    def text(self):
+        return self.line_edit.text()
+
+
+class NumericFieldWidget(QtWidgets.QWidget):
+    def __init__(self, label_text,
+                 button=False,
+                 data_type="int",
+                 default_value=0.0,
+                 min_value=-1000.0,
+                 max_value=1000.0,
+                 button_text="",
+                 spinbox_symbols=False,
+                 parent=None):
+        super(NumericFieldWidget, self).__init__(parent)
+        self.label = QtWidgets.QLabel(label_text)
+        self.button = None
+        if data_type == "int":
+            self.spin_box = QtWidgets.QSpinBox()
+        elif data_type == "double":
+            self.spin_box = QtWidgets.QDoubleSpinBox()
+        self.spin_box.setValue(default_value)
+        self.spin_box.setMinimum(min_value)
+        self.spin_box.setMaximum(max_value)
+
+        if not spinbox_symbols:
+            self.spin_box.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+
+        self.main_layout = QtWidgets.QHBoxLayout()
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.addWidget(self.label)
+        self.main_layout.addWidget(self.spin_box)
+        self.main_layout.setAlignment(QtCore.Qt.AlignLeft)
+        if button:
+            self.button = QtWidgets.QPushButton(button_text)
+            self.main_layout.addWidget(self.button)
+
+        self.setLayout(self.main_layout)
+
+    def value(self):
+        return self.spin_box.value()
 
 
 class TimeRangeWidget(QtWidgets.QGroupBox):
@@ -215,6 +262,7 @@ class ComponentsListing(QtWidgets.QWidget):
         self._create_widgets()
         self._create_layouts()
         self._create_connections()
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
     def showEvent(self, event):
         super(ComponentsListing, self).showEvent(event)
@@ -234,6 +282,7 @@ class ComponentsListing(QtWidgets.QWidget):
 
     def _create_connections(self):
         self.type_field.currentTextChanged.connect(self.update_items)
+        self.customContextMenuRequested.connect(self.show_context_menu)
 
     def get_selected_components(self):
         components = [item.data(1) for item in self.list.selectedItems() if isinstance(item.data(1), luna_rig.MetaNode)]
@@ -246,6 +295,15 @@ class ComponentsListing(QtWidgets.QWidget):
             list_item.setData(1, component)
             list_item.setToolTip(component.pynode.name())
             self.list.addItem(list_item)
+
+    def show_context_menu(self, point):
+        context_menu = QtWidgets.QMenu("Components menu", self)
+        update_action = QtWidgets.QAction("Update", self)
+        # Connections
+        update_action.triggered.connect(self.type_field.update_items)
+        # Populate menu
+        context_menu.addAction(update_action)
+        context_menu.exec_(self.mapToGlobal(point))
 
 
 class ControlsList(QtWidgets.QWidget):
@@ -265,6 +323,7 @@ class ControlsList(QtWidgets.QWidget):
 
     def create_layouts(self):
         self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.main_layout)
         self.main_layout.addWidget(self.list)
 
