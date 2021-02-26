@@ -4,6 +4,7 @@ from functools import partial
 from luna import Logger
 DEBUG_MODE = Logger.get_level() == 10
 try:
+    import luna.tools
     from luna import Config
     from luna.static import directories
     from luna.interface.commands import tool_cmds
@@ -91,8 +92,15 @@ class LunaMenu:
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Tools")
 
         # Tools
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Builder", command=tool_cmds.luna_builder, icon="builder.svg")
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Exporter", command="import luna_exporter;luna_exporter.MainDialog.display()")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
+                             label="Builder",
+                             command=tool_cmds.luna_builder, icon="builder.svg")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
+                             label="Exporter",
+                             command="import luna_exporter;luna_exporter.MainDialog.display()")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
+                             label="Transfer keyframes",
+                             command=lambda *args: luna.tools.TransferKeyframesDialog.display())
         cls._add_external_tools()
 
         # Developer tools

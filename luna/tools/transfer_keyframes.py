@@ -3,17 +3,15 @@ from PySide2 import QtWidgets
 
 import luna.utils.pysideFn as pysideFn
 import luna.interface.shared_widgets as shared_widgets
-import luna_rig
-reload(shared_widgets)
 
 
-class TransferDialog(QtWidgets.QDialog):
+class TransferKeyframesDialog(QtWidgets.QDialog):
 
-    INSTANCE = None  # type: TransferDialog
+    INSTANCE = None  # type: TransferKeyframesDialog
     GEOMETRY = None
 
     def __init__(self, parent=pysideFn.maya_main_window()):
-        super(TransferDialog, self).__init__(parent)
+        super(TransferKeyframesDialog, self).__init__(parent)
         self.setWindowTitle("Transfer keyframes")
         self.setProperty("saveWindowPref", True)
         # Init ui
@@ -21,7 +19,7 @@ class TransferDialog(QtWidgets.QDialog):
         self.create_layouts()
         self.create_connections()
         # Post init
-        self.restoreGeometry(TransferDialog.GEOMETRY)
+        self.restoreGeometry(TransferKeyframesDialog.GEOMETRY)
 
     @classmethod
     def display(cls):
@@ -49,6 +47,9 @@ class TransferDialog(QtWidgets.QDialog):
         self.vertical_splitter.addWidget(self.target_group)
         self.transfer_button = QtWidgets.QPushButton("Transfer")
 
+        self.problems_log = QtWidgets.QTextEdit()
+        self.problems_log.setReadOnly(True)
+
     def create_layouts(self):
         source_layout = QtWidgets.QVBoxLayout()
         source_layout.addWidget(self.source_component_wgt)
@@ -67,12 +68,15 @@ class TransferDialog(QtWidgets.QDialog):
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addWidget(self.time_range_wgt)
         self.main_layout.addWidget(self.vertical_splitter)
+        self.main_layout.addWidget(self.problems_log)
         self.main_layout.addStretch()
         self.main_layout.addWidget(self.transfer_button)
         self.setLayout(self.main_layout)
 
     def create_connections(self):
         self.transfer_button.clicked.connect(self.make_transfer)
+        self.source_component_wgt.list.itemSelectionChanged.connect(self.update_problems)
+        self.target_component_wgt.list.itemSelectionChanged.connect(self.update_problems)
 
     def make_transfer(self):
         if not self.source_component_wgt.list.currentItem():
@@ -81,12 +85,25 @@ class TransferDialog(QtWidgets.QDialog):
         if not self.target_component_wgt.list.selectedItems():
             pm.warning("Select at least 1 target component")
             return
-        source_component = self.source_component_wgt.list.currentItem().data(1)  # type: luna_rig.Component
+        source_component = self.source_component_wgt.list.currentItem().data(1)
         time_offset = self.time_offset_dspinbox.value()
         for selected_target in self.target_component_wgt.list.selectedItems():
             target_component = selected_target.data(1)
             source_component.copy_keyframes(self.time_range_wgt.get_range(), target_component, time_offset=time_offset)
 
+    def update_problems(self):
+        self.problems_log.clear()
+        if not self.source_component_wgt.list.currentItem() or not self.target_component_wgt.list.selectedItems():
+            return
+        source_component = self.source_component_wgt.list.currentItem().data(1)
+        source_controls_names = [ctl.transform.stripNamespace() for ctl in source_component.controls]
+        for selected_target in self.target_component_wgt.list.selectedItems():
+            target_component = selected_target.data(1)
+            target_controls_names = [ctl.transform.stripNamespace() for ctl in target_component.controls]
+            for source_name in source_controls_names:
+                if source_name not in target_controls_names:
+                    self.problems_log.append("{0}: Missing control {1}".format(target_component, source_name))
+
 
 if __name__ == "__main__":
-    TransferDialog.display()
+    TransferKeyframesDialog.display()
