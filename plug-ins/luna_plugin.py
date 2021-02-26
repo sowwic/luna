@@ -13,18 +13,6 @@ import luna.core.callbacks as callbacks
 REGISTERED_CALLBACKS = []
 
 
-class MAYA_PLUGIN_VERSION(object):
-    version_data = {'MAJOR': 0,
-                    'MINOR': 0,
-                    'PATCH': 3}
-    MAJOR = version_data['MAJOR']
-    MINOR = version_data['MINOR']
-    PATCH = version_data['PATCH']
-    VERSION_TUPLE = (MAJOR, MINOR, PATCH)
-    VERSION_STR = '.'.join(str(v) for v in VERSION_TUPLE)
-    VERSION = VERSION_STR
-
-
 def open_port(lang="python"):
     port = luna.Config.get(luna.LunaVars.command_port, stored=True)
     if not port:
@@ -50,7 +38,7 @@ def initialize_callbacks():
 
 def initializePlugin(mobject):
     vendor = "Dmitrii Shevchenko"
-    version = MAYA_PLUGIN_VERSION.VERSION
+    version = luna.__version__
     # Init luna.Config
     environFn.store_config(luna.Config.load())
     luna.Logger.set_level(luna.Config.get(luna.LunaVars.logging_level, default=10, stored=True))
@@ -78,11 +66,11 @@ def uninitializePlugin(mobject):
     pma.MFnPlugin(mobject)
     try:
         LunaMenu._delete_old()
-        luna.Logger.info("Removed luna menu")
+        luna.Logger.info("Removed menu")
         LunaHUD.remove()
-        luna.Logger.info("Removed luna HUD")
+        luna.Logger.info("Removed HUD")
         marking_menu.MarkingMenu._delete_old()
-        luna.Logger.info("Removed luna")
+        luna.Logger.info("Removed marking menu")
         for callback_id in REGISTERED_CALLBACKS:
             pma.MMessage.removeCallback(callback_id)
         luna.Logger.info("Removed callbacks")
