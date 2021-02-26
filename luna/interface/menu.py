@@ -20,6 +20,7 @@ if DEBUG_MODE:
         reload(tool_cmds)
         reload(help_cmds)
         reload(devFn)
+        reload(luna.tools)
         Logger.debug("Menu - reloaded command modules")
     except ImportError:
         Logger.exception("Failed to reload command modules")
@@ -96,11 +97,11 @@ class LunaMenu:
                              label="Builder",
                              command=tool_cmds.luna_builder, icon="builder.svg")
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
-                             label="Exporter",
-                             command="import luna_exporter;luna_exporter.MainDialog.display()")
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
                              label="Transfer keyframes",
                              command=lambda *args: luna.tools.TransferKeyframesDialog.display())
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
+                             label="Animation baker",
+                             command=lambda *args: luna.tools.AnimBakerDialog.display())
         cls._add_external_tools()
 
         # Developer tools
