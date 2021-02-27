@@ -39,3 +39,7 @@ def line_separator():
     line.setFrameShape(QtWidgets.QFrame.HLine)
     line.setFrameShadow(QtWidgets.QFrame.Sunken)
     return line
+
+
+class ReValidators:
+    no_space = QtGui.QRegExpValidator(QtCore.QRegExp("^[A-Za-z0-9]+"))

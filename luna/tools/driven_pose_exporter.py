@@ -36,6 +36,7 @@ class DrivenPoseExporter(QtWidgets.QDialog):
 
     def create_widgets(self):
         self.pose_name_field = shared_widgets.StringFieldWidget("Pose name:", button=False)
+        self.pose_name_field.line_edit.setValidator(pysideFn.ReValidators.no_space)
         self.driver_field = shared_widgets.StringFieldWidget("Driver:", button_text="Set")
         self.driver_field.button.setMinimumWidth(40)
         self.driver_field.line_edit.setReadOnly(True)
