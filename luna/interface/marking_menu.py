@@ -7,6 +7,7 @@ import luna.utils.fileFn as fileFn
 import luna_rig
 import luna_rig.functions.curveFn as curveFn
 import luna_rig.functions.jointFn as jointFn
+import luna_rig.functions.transformFn as transformFn
 import luna_rig.importexport as importexport
 import luna_rig.core.shape_manager as shape_manager
 
@@ -49,6 +50,8 @@ class MarkingMenu(object):
                 cls.__add_rigger_control_actions(root_menu, selection)
             elif isinstance(selection[-1], luna_rig.nt.Joint):
                 cls.__add_joint_actions(root_menu, selection)
+            elif isinstance(selection[-1], luna_rig.nt.Transform):
+                cls.__add_transform_actions(root_menu, selection)
         else:
             if luna_rig.Control.is_control(selection[-1]):
                 cls.__add_animator_control_actions(root_menu, selection)
@@ -56,6 +59,7 @@ class MarkingMenu(object):
     @classmethod
     def __add_animator_control_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
+        # Bind pose sub menu
         bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="N")
         pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
         pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
@@ -71,10 +75,12 @@ class MarkingMenu(object):
         pm.menuItem(p=root_menu, l="Copy color", rp="S", c=lambda *args: shape_manager.ShapeManager.copy_color(), i=fileFn.get_icon_path("copyColor.png"))
         pm.menuItem(p=root_menu, l="Paste color", rp="SE", c=lambda *args: shape_manager.ShapeManager.paste_color(), i=fileFn.get_icon_path("pasteColor.png"))
         pm.menuItem(p=root_menu, l="Select CVs", rp="W", c=lambda *args: curveFn.select_cvs(), i=fileFn.get_icon_path("cvs.png"))
+        # Adjust shape sub menu
         adjust_shape_menu = pm.subMenuItem(p=root_menu, l="Adjust shape", rp="NW")
         pm.menuItem(p=adjust_shape_menu, l="Mirror shape YZ", rp="N", c=lambda *args: selected_control.mirror_shape())
         pm.menuItem(p=adjust_shape_menu, l="Flip shape YZ", rp="NE", c=lambda *args: curveFn.flip_shape(selected_control.transform))
         pm.menuItem(p=adjust_shape_menu, l="Mirror shape to opposite control", rp="NW", c=lambda *args: selected_control.mirror_shape_to_opposite())
+        # Bind pose sub menu
         bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="SW")
         pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
         pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
@@ -91,6 +97,18 @@ class MarkingMenu(object):
     def __add_joint_actions(cls, root_menu, selection):
         pm.menuItem(p=root_menu, l="Joint chain from selection", rp="E", c=lambda *args: jointFn.create_chain(joint_list=pm.selected(type="joint")), i="kinJoint.png")
         pm.menuItem(p=root_menu, l="Mirror joints", rp="W", c=lambda *args: jointFn.mirror_chain(chains=selection), i="mirrorJoint.png")
+        # Transform menu
+        transform_menu = pm.subMenuItem(p=root_menu, l="Transform", rp="N")
+        cls.__add_transform_actions(transform_menu, selection)
+
+    @classmethod
+    def __add_transform_actions(cls, root_menu, selection):
+        # Match position sub menu
+        match_position_menu = pm.subMenuItem(p=root_menu, l="Match", rp="N")
+        pm.menuItem(p=match_position_menu, l="Position", rp="S", c=lambda *args: pm.matchTransform(selection[-1], selection[0], pos=True))
+        pm.menuItem(p=match_position_menu, l="Rotation", rp="SW", c=lambda *args: pm.matchTransform(selection[-1], selection[0], rot=True))
+        pm.menuItem(p=match_position_menu, l="Object center", rp="N", c=lambda *args: transformFn.snap_to_object_center(selection[0], selection[1:]))
+        pm.menuItem(p=match_position_menu, l="Components center", rp="W", c=lambda *args: transformFn.snap_to_components_center(selection[:-1], selection[-1]))
 
 
 if __name__ == "__main__":
