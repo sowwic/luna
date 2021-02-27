@@ -213,7 +213,10 @@ class TimeRangeWidget(QtWidgets.QGroupBox):
         self.startend_radio.toggled.connect(self.set_spinboxes_enabled)
 
     def showEvent(self, event):
-        super(TimeRangeWidget, self).showEvent(event)
+        try:
+            super(TimeRangeWidget, self).showEvent(event)
+        except TypeError:
+            pass
         self.set_spinboxes_enabled(self.startend_radio.isChecked())
 
     def set_spinboxes_enabled(self, state):
@@ -265,7 +268,10 @@ class ComponentsListing(QtWidgets.QWidget):
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
     def showEvent(self, event):
-        super(ComponentsListing, self).showEvent(event)
+        try:
+            super(ComponentsListing, self).showEvent(event)
+        except TypeError:
+            pass
         self.type_field.update_items()
 
     def _create_widgets(self):
