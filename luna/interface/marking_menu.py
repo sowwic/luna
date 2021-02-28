@@ -8,6 +8,7 @@ import luna_rig
 import luna_rig.functions.curveFn as curveFn
 import luna_rig.functions.jointFn as jointFn
 import luna_rig.functions.transformFn as transformFn
+import luna_rig.functions.nodeFn as nodeFn
 import luna_rig.importexport as importexport
 import luna_rig.core.shape_manager as shape_manager
 
@@ -59,14 +60,14 @@ class MarkingMenu(object):
     @classmethod
     def __add_animator_control_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
+        pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
         # Bind pose sub menu
         bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="N")
         pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
         pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
         pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
-        pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
 
-    @classmethod
+    @ classmethod
     def __add_rigger_control_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
         pm.menuItem(p=root_menu, l="Load shape", rp="E", c=lambda *args: importexport.CtlShapeManager.load_shape_from_lib(), i=fileFn.get_icon_path("library.png"))
@@ -93,16 +94,17 @@ class MarkingMenu(object):
                 for label, data_dict in selected_control.connected_component.actions_dict.items():
                     pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
 
-    @classmethod
+    @ classmethod
     def __add_joint_actions(cls, root_menu, selection):
         pm.menuItem(p=root_menu, l="Joint chain from selection", rp="E", c=lambda *args: jointFn.create_chain(joint_list=pm.selected(type="joint")), i="kinJoint.png")
-        pm.menuItem(p=root_menu, l="Mirror joints", rp="W", c=lambda *args: jointFn.mirror_chain(chains=selection), i="mirrorJoint.png")
+        pm.menuItem(p=root_menu, l="Mirror joints", rp="W", c=lambda *args: jointFn.mirror_chain(chains=selection), i=fileFn.get_icon_path("mirrorJoint.png"))
         # Transform menu
         transform_menu = pm.subMenuItem(p=root_menu, l="Transform", rp="N")
         cls.__add_transform_actions(transform_menu, selection)
 
-    @classmethod
+    @ classmethod
     def __add_transform_actions(cls, root_menu, selection):
+        pm.menuItem(p=root_menu, l="Create locator", rp="E", c=lambda *args: nodeFn.create_locator(at_object=selection[-1]), i="locator.png")
         # Match position sub menu
         match_position_menu = pm.subMenuItem(p=root_menu, l="Match", rp="N")
         pm.menuItem(p=match_position_menu, l="Position", rp="S", c=lambda *args: pm.matchTransform(selection[-1], selection[0], pos=True))
