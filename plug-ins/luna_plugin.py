@@ -6,9 +6,12 @@ import luna_rig  # noqa: F401
 from luna.static import directories
 from luna.interface.hud import LunaHUD
 from luna.interface.menu import LunaMenu
+import luna.utils.devFn as devFn
 import luna.interface.marking_menu as marking_menu
 import luna.utils.environFn as environFn
 import luna.core.callbacks as callbacks
+import luna_builder
+import luna_configer
 
 REGISTERED_CALLBACKS = []
 
@@ -65,15 +68,27 @@ def initializePlugin(mobject):
 def uninitializePlugin(mobject):
     pma.MFnPlugin(mobject)
     try:
+        # Remove UI elements
         LunaMenu._delete_old()
         luna.Logger.info("Removed menu")
         LunaHUD.remove()
         luna.Logger.info("Removed HUD")
         marking_menu.MarkingMenu._delete_old()
         luna.Logger.info("Removed marking menu")
+
+        # Remove PySide2 windows
+        luna_builder.MainDialog.hide_and_delete()
+        luna_configer.MainDialog.hide_and_delete()
+
+        # Callbacks
         for callback_id in REGISTERED_CALLBACKS:
             pma.MMessage.removeCallback(callback_id)
         luna.Logger.info("Removed callbacks")
+        # Python modules
+        devFn.unload_builder_modules()
+        devFn.unload_configer_modules()
+        devFn.unload_rig_modules()
+        devFn.unload_luna_modules()
 
     except Exception:
         luna.Logger.exception("Failed to fully uninitialize luna plugin")
