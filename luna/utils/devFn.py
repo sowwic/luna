@@ -1,4 +1,5 @@
 import sys
+import pymel.core as pm
 
 from luna import Logger
 from luna.test import maya_unit_test
@@ -13,14 +14,16 @@ def reload_rig_components(*args):
     avoid_reload = set("luna_rig.core.meta, luna_rig.core.component")
     to_reload = set()
     for mod_name in sys.modules.keys():
-        if "luna_rig.components" in mod_name and "pymel" not in mod_name:
+        if "luna_rig.components." in mod_name and "pymel" not in mod_name:
             to_reload.add(mod_name)
 
     for mod_name in to_reload.difference(avoid_reload):
         mod = sys.modules.get(mod_name)
         if mod:
-            reload(mod)
+            reload(mod)  # noqa: F821
             Logger.info("Reloaded {0}".format(mod_name))
+    # Components module reload last
+    reload(sys.modules.get("luna_rig.components"))
 
 
 def reload_rig_functions(*args):
@@ -33,7 +36,7 @@ def reload_rig_functions(*args):
     for mod_name in to_reload.difference(avoid_reload):
         mod = sys.modules.get(mod_name)
         if mod:
-            reload(mod)
+            reload(mod)  # noqa: F821
             Logger.info("Reloaded {0}".format(mod_name))
 
 
