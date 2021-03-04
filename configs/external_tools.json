@@ -22,5 +22,11 @@
         "command": "import ngSkinTools2; ngSkinTools2.open_ui()",
         "icon": "ngSkinTools2ShelfIcon.png",
         "useMayaIcon": true
+    },
+    "texture_retargeter": {
+        "label": "Texture retargeter",
+        "command": "import texture_retargeter\ntexture_retargeter.MainDialog.display()",
+        "icon": "",
+        "useMayaIcon": false
     }
 }
