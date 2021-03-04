@@ -143,9 +143,10 @@ class LunaMenu:
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
         MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
         MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests, icon="checklist.svg")
-        MenuUtil.addMenuItem(dev_menu, label="Reload", divider=1)
-        MenuUtil.addMenuItem(dev_menu, label="Rig components", command=devFn.reload_rig_components)
-        MenuUtil.addMenuItem(dev_menu, label="Rig functions", command=devFn.reload_rig_functions)
+        MenuUtil.addMenuItem(dev_menu, label="Unload", divider=1)
+        MenuUtil.addMenuItem(dev_menu, label="Rig modules", command=devFn.unload_rig_modules)
+        MenuUtil.addMenuItem(dev_menu, label="Builder modules", command=devFn.unload_builder_modules)
+        MenuUtil.addMenuItem(dev_menu, label="Configer modules", command=devFn.unload_configer_modules)
 
 
 if __name__ == "__main__":
