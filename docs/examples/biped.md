@@ -16,7 +16,7 @@ class RigBuild(pybuild.PyBuild):
     def run(self):
         importexport.BlendShapeManager().import_all()
 
-        self.spine = luna_rig.components.FKIKSpineComponent.create(side="c",
+        self.spine = luna_rig.components.FKIKSpine.create(side="c",
                                                                    name="spine",
                                                                    start_joint="c_spine_00_jnt",
                                                                    end_joint="c_spine_02_jnt")
@@ -67,12 +67,12 @@ class RigBuild(pybuild.PyBuild):
                                                            add_end_ctl=False,
                                                            meta_parent=self.spine,
                                                            hook=self.spine.Hooks.CHEST)
-        self.left_foot = luna_rig.components.FootComponent.create(meta_parent=self.left_leg,
+        self.left_foot = luna_rig.components.Foot.create(meta_parent=self.left_leg,
                                                                   start_joint="l_foot_00_jnt",
                                                                   end_joint="l_foot_01_jnt",
                                                                   rv_chain="l_foot_rv_00_jnt",
                                                                   foot_locators_grp="l_foot_roll_grp")
-        self.right_foot = luna_rig.components.FootComponent.create(meta_parent=self.right_leg,
+        self.right_foot = luna_rig.components.Foot.create(meta_parent=self.right_leg,
                                                                    start_joint="r_foot_00_jnt",
                                                                    end_joint="r_foot_01_jnt",
                                                                    rv_chain="r_foot_rv_00_jnt",
