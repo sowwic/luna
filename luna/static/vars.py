@@ -11,17 +11,18 @@ class HudVars:
 
 
 class TestVars:
-    delete_files = "tests.delete_files"
-    delete_dirs = "tests.delete_dirs"
-    temp_dir = "tests.temp_dir"
-    buffer_output = "tests.buffer_output"
-    new_file = "tests.new_file"
+    delete_files = "tests.deleteFiles"
+    delete_dirs = "tests.deleteDirs"
+    temp_dir = "tests.tempDir"
+    buffer_output = "tests.bufferOutput"
+    new_file = "tests.newFile"
 
 
 class ProjectVars:
+    # TODO: Remove previous project and just use recent list
     recent_projects = "project.recent"
     previous_project = "project.previous"
-    recent_max = "project.max_recent"
+    recent_max = "project.maxRecent"
 
 
 class BuildVars:
