@@ -61,11 +61,14 @@ class MarkingMenu(object):
     def __add_animator_control_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
         pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
+        pm.menuItem(p=root_menu, l="Key component controls", rp="W", c=lambda *args: selected_control.connected_component.key_controls())
         # Bind pose sub menu
         bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="N")
         pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
         pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
         pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
+        # Component actions
+        cls.__add_component_actions(root_menu, selected_control)
 
     @ classmethod
     def __add_rigger_control_actions(cls, root_menu, selection):
@@ -87,12 +90,23 @@ class MarkingMenu(object):
         pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
         pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
         pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
+        # Component menu
+        cls.__add_component_actions(root_menu, selected_control)
 
-        if selected_control.connected_component:
-            pm.menuItem(p=root_menu, l=str(selected_control.connected_component), en=0)
-            if hasattr(selected_control.connected_component, "actions_dict"):
-                for label, data_dict in selected_control.connected_component.actions_dict.items():
-                    pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
+    @classmethod
+    def __add_component_actions(cls, root_menu, selected_control):
+        if not selected_control.connected_component:
+            return
+        pm.menuItem(p=root_menu, l=str(selected_control.connected_component), en=0)
+        # Space switching
+        if selected_control.spaces:
+            spaces_menu = pm.subMenuItem(p=root_menu, l="Spaces")
+            for space_name in selected_control.spaces_dict.keys():
+                pm.menuItem(p=spaces_menu, l=space_name, c=lambda triggered=True, name=space_name, *args: selected_control.switch_space(selected_control.spaces_dict.get(name)))
+        # Actions callbacks
+        if hasattr(selected_control.connected_component, "actions_dict"):
+            for label, data_dict in selected_control.connected_component.actions_dict.items():
+                pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
 
     @ classmethod
     def __add_joint_actions(cls, root_menu, selection):
