@@ -13,6 +13,10 @@ class AnimBakerDialog(QtWidgets.QDialog):
     INSTANCE = None  # type: AnimBakerDialog
     GEOMETRY = None
 
+    def closeEvent(self, event):
+        AnimBakerDialog.GEOMETRY = self.saveGeometry()
+        super(AnimBakerDialog, self).closeEvent(event)
+
     def __init__(self, parent=pysisdeFn.maya_main_window()):
         super(AnimBakerDialog, self).__init__(parent)
         self.setWindowTitle("Animation baker")
@@ -22,13 +26,12 @@ class AnimBakerDialog(QtWidgets.QDialog):
         self.create_widgets()
         self.create_layouts()
         self.create_connections()
-        # Post init
-        self.restoreGeometry(AnimBakerDialog.GEOMETRY)
 
     @classmethod
     def display(cls):
         if not cls.INSTANCE:
             cls.INSTANCE = cls()
+        cls.INSTANCE.restoreGeometry(cls.GEOMETRY)
         if cls.INSTANCE.isHidden():
             cls.INSTANCE.show()
         else:
