@@ -166,6 +166,9 @@ class NumericFieldWidget(QtWidgets.QWidget):
     def value(self):
         return self.spin_box.value()
 
+    def set_value(self, value):
+        self.spin_box.setValue(value)
+
 
 class TimeRangeWidget(QtWidgets.QGroupBox):
     def __init__(self, parent=None, title="Time", mode=0, start_time=0, end_time=120, max_time=9999, min_time=-9999):
