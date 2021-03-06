@@ -252,27 +252,24 @@ class ComponentsTypesComboBox(QtWidgets.QComboBox):
     def update_items(self):
         self.clear()
         self.addItem("All", luna_rig.Component)
-        # for component_node in luna_rig.MetaNode.list_nodes(of_type=self.base_type):
-        #     self.addItem(str(component_node), type(component_node))
-        for meta_type, instances in luna_rig.MetaNode.get_existing_nodes().items():
-            self.addItem(meta_type.as_str(name_only=True), meta_type)
+        self.addItem("AnimComponent", luna_rig.AnimComponent)
+        for meta_node in luna_rig.MetaNode.list_nodes(of_type=self.base_type):
+            self.addItem(meta_node.as_str(name_only=True), type(meta_node))
 
 
 class ComponentsListing(QtWidgets.QWidget):
-    def __init__(self, parent=None):
+    update_started = QtCore.Signal()
+    update_finished = QtCore.Signal()
+
+    def __init__(self, parent=None, update_on_create=True):
         super(ComponentsListing, self).__init__(parent)
 
         self._create_widgets()
         self._create_layouts()
         self._create_connections()
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-
-    def showEvent(self, event):
-        try:
-            super(ComponentsListing, self).showEvent(event)
-        except TypeError:
-            pass
-        self.type_field.update_items()
+        if update_on_create:
+            self.update_items()
 
     def _create_widgets(self):
         self.type_field = ComponentsTypesComboBox()
@@ -295,12 +292,14 @@ class ComponentsListing(QtWidgets.QWidget):
         return components
 
     def update_items(self):
+        self.update_started.emit()
         self.list.clear()
         for component in luna_rig.MetaNode.list_nodes(of_type=self.type_field.currentData()):
             list_item = QtWidgets.QListWidgetItem(str(component))
             list_item.setData(1, component)
             list_item.setToolTip(component.pynode.name())
             self.list.addItem(list_item)
+        self.update_finished.emit()
 
     def show_context_menu(self, point):
         context_menu = QtWidgets.QMenu("Components menu", self)
