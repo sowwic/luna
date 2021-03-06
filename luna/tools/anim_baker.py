@@ -48,6 +48,7 @@ class AnimBakerDialog(QtWidgets.QDialog):
         self.bake_and_detach_btn = QtWidgets.QPushButton("Bake and detach")
         self.remove_rig_button = QtWidgets.QPushButton("Remove rig")
         self.remove_rig_button.setStyleSheet("background-color: rgb(144,0,0);")
+        self.status_bar = QtWidgets.QStatusBar()
 
     def create_layouts(self):
         components_layout = QtWidgets.QVBoxLayout()
@@ -78,9 +79,12 @@ class AnimBakerDialog(QtWidgets.QDialog):
         components = []
         if self.components_wgt.list.selectedItems():
             for item in self.components_wgt.list.selectedItems():
-                components.append(item.data(1))
+                if not item.data(1).is_animatable():
+                    Logger.warning("Non bakeable component selected {0}, skipping...".format(item.data(1)))
+                else:
+                    components.append(item.data(1))
         else:
-            components = [item.data(1) for item in pysisdeFn.qlist_all_items(self.components_wgt.list)]
+            components = [item.data(1) for item in pysisdeFn.qlist_all_items(self.components_wgt.list) if item.data(1).is_animatable()]
         return components
 
     def bake_to_skel(self):
