@@ -26,13 +26,11 @@ class ProjectVars:
 
 
 class BuildVars:
-    geometry_override = "build.geometry.overrideEnabled"
+    pass
 
 
 class UnrealVars:
     project = "unreal.project"
-    anim_dir = "unreal.animations"
-    mesh_dir = "unreal.meshes"
 
 
 class NamingVars:
