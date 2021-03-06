@@ -16,18 +16,6 @@ import luna_configer
 REGISTERED_CALLBACKS = []
 
 
-def open_port(lang="python"):
-    port = luna.Config.get(luna.LunaVars.command_port, stored=True)
-    if not port:
-        return
-    if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
-        try:
-            pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
-            luna.Logger.info("Command port opened: Python - {0}".format(port))
-        except Exception:
-            luna.Logger.exception("Failed to open command port")
-
-
 def initialize_callbacks():
     if luna.Config.get(luna.LunaVars.callback_licence, True, stored=True):
         try:
@@ -51,7 +39,7 @@ def initializePlugin(mobject):
     luna.Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
     luna.Logger.info("Current logging level: {0}".format(luna.Logger.get_level(name=1)))
     # Command port
-    open_port()
+    devFn.open_port()
 
     # Init core
     try:
@@ -77,13 +65,19 @@ def uninitializePlugin(mobject):
         luna.Logger.info("Removed marking menu")
 
         # Remove PySide2 windows
-        luna_builder.MainDialog.hide_and_delete()
-        luna_configer.MainDialog.hide_and_delete()
+        luna_builder.MainDialog.close_and_delete()
+        luna_configer.MainDialog.close_and_delete()
 
         # Callbacks
         for callback_id in REGISTERED_CALLBACKS:
             pma.MMessage.removeCallback(callback_id)
         luna.Logger.info("Removed callbacks")
+        # Environ vars
+        environFn.set_project_var(None)
+        environFn.set_asset_var(None)
+        environFn.set_character_var(None)
+        environFn.store_config(None)
+
         # Python modules
         devFn.unload_builder_modules()
         devFn.unload_configer_modules()

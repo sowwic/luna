@@ -12,6 +12,10 @@ class DrivenPoseExporter(QtWidgets.QDialog):
     INSTANCE = None  # type: DrivenPoseExporter
     GEOMETRY = None
 
+    def closeEvent(self, event):
+        DrivenPoseExporter.GEOMETRY = self.saveGeometry()
+        super(DrivenPoseExporter, self).closeEvent(event)
+
     def __init__(self, parent=pysideFn.maya_main_window()):
         super(DrivenPoseExporter, self).__init__(parent)
         self.setWindowTitle("Driven pose exporter")
@@ -28,6 +32,7 @@ class DrivenPoseExporter(QtWidgets.QDialog):
     def display(cls):
         if not cls.INSTANCE:
             cls.INSTANCE = cls()
+        cls.INSTANCE.restoreGeometry(cls.GEOMETRY)
         if cls.INSTANCE.isHidden():
             cls.INSTANCE.show()
         else:

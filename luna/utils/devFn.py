@@ -1,7 +1,7 @@
 import sys
 import pymel.core as pm
 
-from luna import Logger
+import luna
 from luna.test import maya_unit_test
 
 
@@ -13,29 +13,42 @@ def unload_builder_modules(*args):
     for mod_name in sys.modules.keys():
         if mod_name.startswith("luna_builder"):
             del sys.modules[mod_name]
-            Logger.debug("Unloaded module: {0}".format(mod_name))
-    Logger.info("Unloaded builder modules")
+            luna.Logger.debug("Unloaded module: {0}".format(mod_name))
+    luna.Logger.info("Unloaded builder modules")
 
 
 def unload_configer_modules(*args):
     for mod_name in sys.modules.keys():
         if mod_name.startswith("luna_configer"):
             del sys.modules[mod_name]
-            Logger.debug("Unloaded module: {0}".format(mod_name))
-    Logger.info("Unloaded configer modules")
+            luna.Logger.debug("Unloaded module: {0}".format(mod_name))
+    luna.Logger.info("Unloaded configer modules")
 
 
 def unload_rig_modules(*args):
     for mod_name in sys.modules.keys():
         if mod_name.startswith("luna_rig"):
             del sys.modules[mod_name]
-            Logger.debug("Unloaded module: {0}".format(mod_name))
-    Logger.info("Unloaded luna rig modules")
+            luna.Logger.debug("Unloaded module: {0}".format(mod_name))
+    luna.Logger.info("Unloaded luna rig modules")
 
 
 def unload_luna_modules(*args):
     for mod_name in sys.modules.keys():
         if mod_name.startswith("luna"):
             del sys.modules[mod_name]
-            Logger.debug("Unloaded module: {0}".format(mod_name))
-    Logger.info("Unloaded luna modules")
+            luna.Logger.debug("Unloaded module: {0}".format(mod_name))
+    luna.Logger.info("Unloaded luna modules")
+
+
+def open_port(lang="python", port=-1):
+    if not port:
+        port = luna.Config.get(luna.LunaVars.command_port, stored=True)
+    if port < 0:
+        return
+    if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
+        try:
+            pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
+            luna.Logger.info("Command port opened: Python - {0}".format(port))
+        except Exception:
+            luna.Logger.exception("Failed to open command port")

@@ -2,7 +2,7 @@
     "project.recent": [],
     "project.previous": "",
     "project.maxRecent": 3,
-    "python.commandPort": null,
+    "python.commandPort": -1,
     "logging.level": 20,
     "hud.block": 5,
     "hud.section": 7,
@@ -11,7 +11,6 @@
     "tests.tempDir": "",
     "tests.bufferOutput": true,
     "tests.newFile": true,
-    "build.geometry.overrideEnabled": true,
     "unreal.project": "",
     "naming.templates": {
         "default": "{side}_{name}_{suffix}",
@@ -23,7 +22,5 @@
     "naming.profile.startIndex": 0,
     "rig.export.skin.fileFormat": "pickle",
     "rig.io.nglayers.fileFormat": "pickle",
-    "unreal.animations": "{project}/Content/animations",
-    "unreal.meshes": "{project}/Content/models",
     "markingMenu.mode": 1
 }

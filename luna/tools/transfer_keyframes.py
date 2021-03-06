@@ -9,6 +9,10 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
     INSTANCE = None  # type: TransferKeyframesDialog
     GEOMETRY = None
 
+    def closeEvent(self, event):
+        TransferKeyframesDialog.GEOMETRY = self.saveGeometry()
+        super(TransferKeyframesDialog, self).closeEvent(event)
+
     def __init__(self, parent=pysideFn.maya_main_window()):
         super(TransferKeyframesDialog, self).__init__(parent)
         self.setWindowTitle("Transfer keyframes")
@@ -17,13 +21,12 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
         self.create_widgets()
         self.create_layouts()
         self.create_connections()
-        # Post init
-        self.restoreGeometry(TransferKeyframesDialog.GEOMETRY)
 
     @classmethod
     def display(cls):
         if not cls.INSTANCE:
             cls.INSTANCE = cls()
+        cls.INSTANCE.restoreGeometry(cls.GEOMETRY)
         if cls.INSTANCE.isHidden():
             cls.INSTANCE.show()
         else:
