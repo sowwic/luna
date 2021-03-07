@@ -143,7 +143,7 @@ class NumericFieldWidget(QtWidgets.QWidget):
         self.button = None
         if data_type == "int":
             self.spin_box = QtWidgets.QSpinBox()
-        elif data_type == "double":
+        elif data_type in ["double", "float"]:
             self.spin_box = QtWidgets.QDoubleSpinBox()
         self.spin_box.setValue(default_value)
         self.spin_box.setMinimum(min_value)
