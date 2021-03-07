@@ -246,6 +246,9 @@ class CharactersComboBox(QtWidgets.QComboBox):
 
 
 class ComponentsTypesComboBox(QtWidgets.QComboBox):
+    def __repr__(self):
+        return "ComponentsTypesCombobox"
+
     def __init__(self, parent=None, of_type=luna_rig.Component):
         super(ComponentsTypesComboBox, self).__init__(parent)
         self.base_type = of_type
@@ -256,8 +259,11 @@ class ComponentsTypesComboBox(QtWidgets.QComboBox):
         self.clear()
         self.addItem("All", luna_rig.Component)
         self.addItem("AnimComponent", luna_rig.AnimComponent)
-        for meta_node in luna_rig.MetaNode.list_nodes(of_type=self.base_type):
-            self.addItem(meta_node.as_str(name_only=True), type(meta_node))
+        try:
+            for type_name, meta_type in luna_rig.MetaNode.scene_types(of_type=self.base_type).items():
+                self.addItem(type_name, meta_type)
+        except Exception:
+            Logger.exception("{0}: Failed to update items".format(self))
 
 
 class ComponentsListing(QtWidgets.QWidget):
