@@ -43,6 +43,7 @@ class NamingVars:
 class RigVars:
     skin_export_format = "rig.io.skin.fileFormat"
     nglayers_export_format = "rig.io.nglayers.fileFormat"
+    line_width = "rig.display.lineWidth"
 
 
 class ToolVars:
