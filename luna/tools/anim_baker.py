@@ -6,6 +6,7 @@ import luna_rig
 from luna import Logger
 import luna.utils.pysideFn as pysisdeFn
 import luna.interface.shared_widgets as shared_widgets
+reload(shared_widgets)
 
 
 class AnimBakerDialog(QtWidgets.QDialog):
@@ -42,6 +43,36 @@ class AnimBakerDialog(QtWidgets.QDialog):
         pass
 
     def create_widgets(self):
+        self.mode_combobox = QtWidgets.QComboBox()
+        self.mode_combobox.addItems(("Skeleton", "FKIK", "Space"))
+        self.skel_baker = SkeletonBakerWidget()
+        self.fkik_baker = FKIKBakerWidget()
+        self.space_baker = SpaceBakerWidget()
+        self.stack = QtWidgets.QStackedWidget()
+        # self.stack.layout().setContentsMargins(0, 0, 0, 0)
+        self.stack.addWidget(self.skel_baker)
+        self.stack.addWidget(self.fkik_baker)
+        self.stack.addWidget(self.space_baker)
+
+    def create_layouts(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.mode_combobox)
+        self.main_layout.addWidget(self.stack)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.main_layout)
+
+    def create_connections(self):
+        self.mode_combobox.currentIndexChanged.connect(self.stack.setCurrentIndex)
+
+
+class SkeletonBakerWidget(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(SkeletonBakerWidget, self).__init__(parent)
+        self.create_widgets()
+        self.create_layouts()
+        self.create_connections()
+
+    def create_widgets(self):
         self.range_widget = shared_widgets.TimeRangeWidget()
         self.components_grp = QtWidgets.QGroupBox("Components")
         self.components_wgt = shared_widgets.ComponentsListing()
@@ -51,7 +82,6 @@ class AnimBakerDialog(QtWidgets.QDialog):
         self.bake_and_detach_btn = QtWidgets.QPushButton("Bake and detach")
         self.remove_rig_button = QtWidgets.QPushButton("Remove rig")
         self.remove_rig_button.setStyleSheet("background-color: rgb(144,0,0);")
-        self.status_bar = QtWidgets.QStatusBar()
 
     def create_layouts(self):
         components_layout = QtWidgets.QVBoxLayout()
@@ -121,6 +151,78 @@ class AnimBakerDialog(QtWidgets.QDialog):
         time_range = self.range_widget.get_range()
         character.remove(time_range=time_range)
         Logger.info("{0} rig successfully removed.".format(char_name))
+
+
+class FKIKBakerWidget(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(FKIKBakerWidget, self).__init__(parent)
+        self.create_widgets()
+        self.create_layouts()
+        self.create_connections()
+
+    def create_widgets(self):
+        self.range_widget = shared_widgets.TimeRangeWidget()
+        self.options_group = QtWidgets.QGroupBox("Options")
+        self.fk_source_radio = QtWidgets.QRadioButton("FK")
+        self.fk_source_radio.setChecked(True)
+        self.ik_source_radio = QtWidgets.QRadioButton("IK")
+        self.checkbox_pv_bake = QtWidgets.QCheckBox("Bake pole vector")
+        self.checkbox_pv_bake.setChecked(True)
+        self.checkbox_pv_bake.setEnabled(self.ik_source_radio.isEnabled())
+        self.step_field = shared_widgets.NumericFieldWidget("Step:", data_type="int", default_value=1)
+        self.components_wgt = shared_widgets.ComponentsListing(base_type=luna_rig.components.FKIKComponent, general_types_enabled=False)
+        self.bake_button = QtWidgets.QPushButton("Bake")
+
+    def create_layouts(self):
+        options_layout = QtWidgets.QHBoxLayout()
+        options_layout.addWidget(QtWidgets.QLabel("Source:"))
+        options_layout.addWidget(self.fk_source_radio)
+        options_layout.addWidget(self.ik_source_radio)
+        options_layout.addWidget(self.checkbox_pv_bake)
+        options_layout.addWidget(self.step_field)
+        self.options_group.setLayout(options_layout)
+
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.range_widget)
+        self.main_layout.addWidget(self.options_group)
+        self.main_layout.addWidget(self.components_wgt)
+        self.main_layout.addStretch()
+        self.main_layout.addWidget(self.bake_button)
+        # self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.main_layout)
+
+    def create_connections(self):
+        self.ik_source_radio.toggled.connect(self.checkbox_pv_bake.setEnabled)
+        self.bake_button.clicked.connect(self.do_baking)
+
+    def do_baking(self):
+        for fkik_component in self.components_wgt.get_selected_components():
+            source = "fk" if self.fk_source_radio.isChecked() else "ik"
+            fkik_component.bake_fkik(source=source,
+                                     time_range=self.range_widget.get_range(),
+                                     bake_pv=self.checkbox_pv_bake.isChecked(),
+                                     step=self.step_field.value())
+
+
+class SpaceBakerWidget(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super(SpaceBakerWidget, self).__init__(parent)
+        self.create_widgets()
+        self.create_layouts()
+        self.create_connections()
+
+    def create_widgets(self):
+        self.range_widget = shared_widgets.TimeRangeWidget()
+
+    def create_layouts(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.range_widget)
+        self.main_layout.addStretch()
+        # self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.main_layout)
+
+    def create_connections(self):
+        pass
 
 
 if __name__ == "__main__":

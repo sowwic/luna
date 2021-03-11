@@ -249,16 +249,18 @@ class ComponentsTypesComboBox(QtWidgets.QComboBox):
     def __repr__(self):
         return "ComponentsTypesCombobox"
 
-    def __init__(self, parent=None, of_type=luna_rig.Component):
+    def __init__(self, parent=None, of_type=luna_rig.Component, general_types_enabled=True):
         super(ComponentsTypesComboBox, self).__init__(parent)
         self.base_type = of_type
+        self.general_types_enabled = general_types_enabled
         self.setEditable(True)
         self.update_items()
 
     def update_items(self):
         self.clear()
-        self.addItem("All", luna_rig.Component)
-        self.addItem("AnimComponent", luna_rig.AnimComponent)
+        if self.general_types_enabled:
+            self.addItem("All", luna_rig.Component)
+            self.addItem("AnimComponent", luna_rig.AnimComponent)
         try:
             for type_name, meta_type in luna_rig.MetaNode.scene_types(of_type=self.base_type).items():
                 self.addItem(type_name, meta_type)
@@ -270,8 +272,33 @@ class ComponentsListing(QtWidgets.QWidget):
     update_started = QtCore.Signal()
     update_finished = QtCore.Signal()
 
-    def __init__(self, parent=None, update_on_create=True):
+    @property
+    def base_type(self):
+        return self._base_type
+
+    @base_type.setter
+    def base_type(self, classtype):
+        self._base_type = classtype
+        if hasattr(self, "type_field"):
+            self.type_field.base_type = self._base_type
+
+    @property
+    def general_types_enabled(self):
+        return self._general_types_enabled
+
+    @general_types_enabled.setter
+    def general_types_enabled(self, new_state):
+        self._general_types_enabled = new_state
+        if hasattr(self, "type_field"):
+            self.type_field.general_types_enabled = self._general_types_enabled
+
+    def __init__(self, parent=None,
+                 update_on_create=True,
+                 base_type=luna_rig.Component,
+                 general_types_enabled=True):
         super(ComponentsListing, self).__init__(parent)
+        self.base_type = base_type
+        self.general_types_enabled = general_types_enabled
 
         self._create_widgets()
         self._create_layouts()
@@ -281,7 +308,7 @@ class ComponentsListing(QtWidgets.QWidget):
             self.update_items()
 
     def _create_widgets(self):
-        self.type_field = ComponentsTypesComboBox()
+        self.type_field = ComponentsTypesComboBox(of_type=self.base_type, general_types_enabled=self.general_types_enabled)
         self.list = QtWidgets.QListWidget()
         self.list.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
