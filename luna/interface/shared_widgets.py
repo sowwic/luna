@@ -112,7 +112,7 @@ class StringFieldWidget(QtWidgets.QWidget):
         super(StringFieldWidget, self).__init__(parent)
         self.label = QtWidgets.QLabel(label_text)
         self.line_edit = QtWidgets.QLineEdit()
-        self.button = None
+        self.button = None  # type: QtWidgets.QPushButton
 
         self.main_layout = QtWidgets.QHBoxLayout()
         self.main_layout.setContentsMargins(0, 0, 0, 0)
