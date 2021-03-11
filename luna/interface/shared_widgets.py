@@ -1,3 +1,4 @@
+import pymel.core as pm
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from PySide2 import QtGui
@@ -249,6 +250,10 @@ class ComponentsTypesComboBox(QtWidgets.QComboBox):
     def __repr__(self):
         return "ComponentsTypesCombobox"
 
+    def showEvent(self, event):
+        self.update_items()
+        return super(ComponentsTypesComboBox, self).showEvent(event)
+
     def __init__(self, parent=None, of_type=luna_rig.Component, general_types_enabled=True):
         super(ComponentsTypesComboBox, self).__init__(parent)
         self.base_type = of_type
@@ -292,8 +297,8 @@ class ComponentsListing(QtWidgets.QWidget):
         if hasattr(self, "type_field"):
             self.type_field.general_types_enabled = self._general_types_enabled
 
-    def __init__(self, parent=None,
-                 update_on_create=True,
+    def __init__(self,
+                 parent=None,
                  base_type=luna_rig.Component,
                  general_types_enabled=True):
         super(ComponentsListing, self).__init__(parent)
@@ -304,8 +309,6 @@ class ComponentsListing(QtWidgets.QWidget):
         self._create_layouts()
         self._create_connections()
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        if update_on_create:
-            self.update_items()
 
     def _create_widgets(self):
         self.type_field = ComponentsTypesComboBox(of_type=self.base_type, general_types_enabled=self.general_types_enabled)
@@ -508,3 +511,22 @@ class ItemsListGroup(QtWidgets.QGroupBox):
 
     def create_connections(self):
         pass
+
+
+class AnimLayersComboBox(QtWidgets.QComboBox):
+    def __init__(self, parent=None):
+        super(AnimLayersComboBox, self).__init__(parent)
+        self.update_items()
+
+    def showEvent(self, event):
+        self.update_items()
+        return super(AnimLayersComboBox, self).showEvent(event)
+
+    def update_items(self):
+        self.clear()
+        base_layer = pm.animLayer(root=True, q=1)  # type: luna_rig.nt.AnimLayer
+        if not base_layer:
+            return
+        self.addItem(str(base_layer), base_layer)
+        for child_layer in base_layer.getChildren():
+            self.addItem(str(child_layer), child_layer)
