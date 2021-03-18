@@ -163,7 +163,6 @@ class FKIKBakerWidget(QtWidgets.QWidget):
 
     def create_widgets(self):
         self.range_widget = shared_widgets.TimeRangeWidget()
-        self.anim_layers_combobox = shared_widgets.AnimLayersComboBox()
         self.options_group = QtWidgets.QGroupBox("Options")
         self.fk_source_radio = QtWidgets.QRadioButton("FK")
         self.fk_source_radio.setChecked(True)
@@ -188,7 +187,6 @@ class FKIKBakerWidget(QtWidgets.QWidget):
 
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addWidget(self.range_widget)
-        self.main_layout.addWidget(self.anim_layers_combobox)
         self.main_layout.addWidget(self.options_group)
         self.main_layout.addWidget(self.components_wgt)
         self.main_layout.addStretch()
@@ -200,14 +198,12 @@ class FKIKBakerWidget(QtWidgets.QWidget):
         self.bake_button.clicked.connect(self.do_baking)
 
     def do_baking(self):
-        anim_layer = self.anim_layers_combobox.currentText()
         for fkik_component in self.components_wgt.get_selected_components():
             source = "fk" if self.fk_source_radio.isChecked() else "ik"
             fkik_component.bake_fkik(source=source,
                                      time_range=self.range_widget.get_range(),
                                      bake_pv=self.checkbox_pv_bake.isChecked(),
-                                     step=self.step_field.value(),
-                                     anim_layer=anim_layer)
+                                     step=self.step_field.value())
 
 
 class SpaceBakerWidget(QtWidgets.QWidget):
@@ -222,7 +218,6 @@ class SpaceBakerWidget(QtWidgets.QWidget):
         self.range_widget = shared_widgets.TimeRangeWidget()
         self.control_field = shared_widgets.StringFieldWidget(label_text="Control:", button=True, button_text="Set")
         self.spaces_combobox = QtWidgets.QComboBox()
-        self.anim_layer_combobox = shared_widgets.AnimLayersComboBox()
         self.custom_space_object_field = shared_widgets.StringFieldWidget(label_text="Custom object", button=True, button_text="Set")
         self.step_field = shared_widgets.NumericFieldWidget("Step:", data_type="int", default_value=1)
         self.bake_button = QtWidgets.QPushButton("Bake")
@@ -232,7 +227,6 @@ class SpaceBakerWidget(QtWidgets.QWidget):
 
         form_layout = QtWidgets.QFormLayout()
         form_layout.addRow("Target space:", self.spaces_combobox)
-        form_layout.addRow("Animation layer:", self.anim_layer_combobox)
         form_layout.addRow(self.control_field)
         form_layout.addRow(self.custom_space_object_field)
 
@@ -292,18 +286,16 @@ class SpaceBakerWidget(QtWidgets.QWidget):
             raise RuntimeError("Invalid control object")
 
         step = self.step_field.value()
-        anim_layer = self.anim_layer_combobox.currentText()
         if self.spaces_combobox.currentText() == self.custom_space_item_text:
             custom_object = self.custom_space_object_field.text()
             if not custom_object or not pm.objExists(custom_object):
                 pm.displayError("Invalid custom space object: {0}".format(custom_object))
                 return
-            ctl_instance.bake_custom_space(custom_object, time_range=self.range_widget.get_range(), step=step, anim_layer=anim_layer)
+            ctl_instance.bake_custom_space(custom_object, time_range=self.range_widget.get_range(), step=step)
         else:
             ctl_instance.bake_space(space_name=self.spaces_combobox.currentText(),
                                     time_range=self.range_widget.get_range(),
-                                    step=step,
-                                    anim_layer=anim_layer)
+                                    step=step)
 
 
 if __name__ == "__main__":
