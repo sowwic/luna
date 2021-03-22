@@ -28,5 +28,11 @@
         "command": "import texture_retargeter\ntexture_retargeter.MainDialog.display()",
         "icon": "",
         "useMayaIcon": false
+    },
+    "ds_playblast": {
+        "label": "ds_playblast",
+        "command": "import ds_playblast\nds_playblast.MainDialog.display()",
+        "icon": "",
+        "useMayaIcon": false
     }
 }
