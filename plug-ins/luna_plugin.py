@@ -1,3 +1,4 @@
+import os
 import pymel.core as pm
 import pymel.api as pma
 
@@ -14,6 +15,31 @@ import luna_builder
 import luna_configer
 
 REGISTERED_CALLBACKS = []
+
+
+def load_additional_plugins():
+    if pm.about(win64=True):
+        system_dir = "win64"
+    elif pm.about(li=True):
+        system_dir = "linux"
+    elif pm.about(macOS=True):
+        system_dir = "macOS"
+    else:
+        luna.Logger.error("Unable to load plugins for system: {0}".format(pm.about(os=True)))
+        return
+    maya_version = pm.about(version=True)
+    plugins_dir = os.path.join(directories.PLUGINS_DIR_PATH, maya_version, system_dir)
+    for file_name in os.listdir(plugins_dir):
+        if not file_name.endswith(".mll"):
+            continue
+        full_path = os.path.join(plugins_dir, file_name)
+        if pm.pluginInfo(file_name, q=True, loaded=True):
+            continue
+        try:
+            pm.loadPlugin(full_path)
+            luna.Logger.info("Loaded plugin: {0}".format(file_name))
+        except Exception:
+            luna.Logger.exception("Failed to load plugin: {0}".format(file_name))
 
 
 def initialize_callbacks():
@@ -38,6 +64,7 @@ def initializePlugin(mobject):
     luna.Logger.write_to_rotating_file(directories.LOG_FILE, level=40)
     luna.Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
     luna.Logger.info("Current logging level: {0}".format(luna.Logger.get_level(name=1)))
+    load_additional_plugins()
     # Command port
     devFn.open_port()
 
