@@ -29,6 +29,8 @@ def load_additional_plugins():
         return
     maya_version = pm.about(version=True)
     plugins_dir = os.path.join(directories.PLUGINS_DIR_PATH, maya_version, system_dir)
+    if not os.path.isdir(plugins_dir):
+        return
     for file_name in os.listdir(plugins_dir):
         if not file_name.endswith(".mll"):
             continue
