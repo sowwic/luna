@@ -1,3 +1,4 @@
 from luna.tools.transfer_keyframes import TransferKeyframesDialog
 from luna.tools.anim_baker import AnimBakerDialog
 from luna.tools.driven_pose_exporter import DrivenPoseExporter
+from luna.tools.sdk_corrective_exporter import SDKCorrectiveExporter

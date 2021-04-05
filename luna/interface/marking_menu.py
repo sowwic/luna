@@ -63,10 +63,8 @@ class MarkingMenu(object):
         pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
         pm.menuItem(p=root_menu, l="Key component controls", rp="W", c=lambda *args: selected_control.connected_component.key_controls())
         # Bind pose sub menu
-        bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="N")
-        pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
-        pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
-        pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
+        pose_menu = pm.subMenuItem(p=root_menu, l="Pose", rp="N")
+        cls.__add_pose_actions(pose_menu, selection)
         # Component actions
         cls.__add_component_actions(root_menu, selected_control)
 
@@ -100,14 +98,22 @@ class MarkingMenu(object):
 
     @classmethod
     def __add_pose_actions(cls, root_menu, selection):
+        selected_control = luna_rig.Control(selection[-1])
         pm.menuItem(p=root_menu,
                     l="Mirror pose (Behaviour)",
-                    rp="N",
+                    rp="SW",
                     c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=True, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
         pm.menuItem(p=root_menu,
                     l="Mirror pose (No behaviour)",
-                    rp="E",
+                    rp="S",
                     c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=False, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
+        pm.menuItem(p=root_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
+        pm.menuItem(p=root_menu, l="Component bind pose", rp="NE", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
+        pm.menuItem(p=root_menu,
+                    l="Control bind pose",
+                    rp="E",
+                    c=lambda *args: [luna_rig.Control(trs).to_bind_pose() for trs in selection if luna_rig.Control.is_control(trs)],
+                    i=fileFn.get_icon_path("control.png"))
 
     @classmethod
     def __add_shape_actions(cls, root_menu, selection):
