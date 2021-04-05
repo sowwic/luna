@@ -73,23 +73,13 @@ class MarkingMenu(object):
     @ classmethod
     def __add_rigger_control_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
-        pm.menuItem(p=root_menu, l="Load shape", rp="E", c=lambda *args: importexport.CtlShapeManager.load_shape_from_lib(), i=fileFn.get_icon_path("library.png"))
-        pm.menuItem(p=root_menu, l="Copy shape", rp="N", c=shape_manager.ShapeManager.copy_shape, i=fileFn.get_icon_path("copyCurve.png"))
-        pm.menuItem(p=root_menu, l="Paste shape", rp="NE", c=lambda *args: shape_manager.ShapeManager.paste_shape(selection), i=fileFn.get_icon_path("pasteCurve.png"))
-        pm.menuItem(p=root_menu, l="Copy color", rp="S", c=lambda *args: shape_manager.ShapeManager.copy_color(), i=fileFn.get_icon_path("copyColor.png"))
-        pm.menuItem(p=root_menu, l="Paste color", rp="SE", c=lambda *args: shape_manager.ShapeManager.paste_color(), i=fileFn.get_icon_path("pasteColor.png"))
+
         pm.menuItem(p=root_menu, l="Select CVs", rp="W", c=lambda *args: curveFn.select_cvs(), i=fileFn.get_icon_path("cvs.png"))
         # Adjust shape sub menu
-        adjust_shape_menu = pm.subMenuItem(p=root_menu, l="Adjust shape", rp="NW")
-        pm.menuItem(p=adjust_shape_menu, l="Mirror shape YZ", rp="N", c=lambda *args: selected_control.mirror_shape())
-        pm.menuItem(p=adjust_shape_menu, l="Flip shape YZ", rp="NE", c=lambda *args: curveFn.flip_shape(selected_control.transform))
-        pm.menuItem(p=adjust_shape_menu, l="Mirror shape to opposite control", rp="NW", c=lambda *args: selected_control.mirror_shape_to_opposite())
-        # Bind pose sub menu
-        bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="SW")
-        pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
-        pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
-        pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
-        pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
+        adjust_shape_menu = pm.subMenuItem(p=root_menu, l="Shape", rp="N")
+        cls.__add_shape_actions(adjust_shape_menu, selection)
+        pose_menu = pm.subMenuItem(p=root_menu, l="Pose", rp="E")
+        cls.__add_pose_actions(pose_menu, selection)
         # Component menu
         cls.__add_component_actions(root_menu, selected_control)
 
@@ -107,6 +97,35 @@ class MarkingMenu(object):
         if hasattr(selected_control.connected_component, "actions_dict"):
             for label, data_dict in selected_control.connected_component.actions_dict.items():
                 pm.menuItem(p=root_menu, l=label, c=lambda *args: data_dict.get("callback", cls.__null_cmd)(), i=fileFn.get_icon_path(data_dict.get("icon")))
+
+    @classmethod
+    def __add_pose_actions(cls, root_menu, selection):
+        pm.menuItem(p=root_menu,
+                    l="Mirror pose (Behaviour)",
+                    rp="N",
+                    c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=True, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
+        pm.menuItem(p=root_menu,
+                    l="Mirror pose (No behaviour)",
+                    rp="E",
+                    c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=False, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
+
+    @classmethod
+    def __add_shape_actions(cls, root_menu, selection):
+        selected_control = luna_rig.Control(selection[-1])
+        pm.menuItem(p=root_menu, l="Load shape", rp="E", c=lambda *args: importexport.CtlShapeManager.load_shape_from_lib(), i=fileFn.get_icon_path("library.png"))
+        pm.menuItem(p=root_menu, l="Copy shape", rp="N", c=shape_manager.ShapeManager.copy_shape, i=fileFn.get_icon_path("copyCurve.png"))
+        pm.menuItem(p=root_menu, l="Paste shape", rp="NE", c=lambda *args: shape_manager.ShapeManager.paste_shape(selection), i=fileFn.get_icon_path("pasteCurve.png"))
+        pm.menuItem(p=root_menu, l="Copy color", rp="S", c=lambda *args: shape_manager.ShapeManager.copy_color(), i=fileFn.get_icon_path("copyColor.png"))
+        pm.menuItem(p=root_menu, l="Paste color", rp="SE", c=lambda *args: shape_manager.ShapeManager.paste_color(), i=fileFn.get_icon_path("pasteColor.png"))
+        pm.menuItem(p=root_menu, l="Mirror shape YZ", rp="W", c=lambda *args: selected_control.mirror_shape())
+        pm.menuItem(p=root_menu, l="Flip shape YZ", rp="SW", c=lambda *args: curveFn.flip_shape(selected_control.transform))
+        pm.menuItem(p=root_menu, l="Mirror shape to opposite control", rp="NW", c=lambda *args: selected_control.mirror_shape_to_opposite())
+        # Bind pose sub menu
+        bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="SW")
+        pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
+        pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
+        pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
+        pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
 
     @ classmethod
     def __add_joint_actions(cls, root_menu, selection):
