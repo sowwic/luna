@@ -1,3 +1,5 @@
+# Modified from https://www.chadvernon.com/blog/unit-testing-in-maya/
+
 import os
 import shutil
 import unittest

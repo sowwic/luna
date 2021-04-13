@@ -28,7 +28,8 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "locatorsGroup"))
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
-        # Struct population
+        # Instance members
+        self.assertEqual(instance.tag, "character")
         self.assertEqual(str(instance.control_rig), static.CharacterMembers.control_rig.value)
         self.assertEqual(str(instance.deformation_rig), static.CharacterMembers.deformation_rig.value)
         self.assertEqual(str(instance.geometry_grp), static.CharacterMembers.geometry.value)
@@ -64,6 +65,7 @@ class CharacterTests(TestCase):
         # Data struct
         self.assertEqual(instance.side, "char")
         self.assertEqual(instance.name, "character")
+        self.assertEqual(instance.tag, "character")
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("character_component_test_instance_from_meta.ma"))

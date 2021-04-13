@@ -23,6 +23,9 @@ class AnimComponentTests(TestCase):
         self.assertEqual(str(new_component.group_ctls), "{0}_{1}_00_ctls".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_joints), "{0}_{1}_00_jnts".format(new_component.side, new_component.name))
         self.assertEqual(str(new_component.group_parts), "{0}_{1}_00_parts".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_noscale), "{0}_{1}_00_noscale".format(new_component.side, new_component.name))
+        self.assertEqual(str(new_component.group_out), "{0}_{1}_00_out".format(new_component.side, new_component.name))
+        self.assertEqual(new_component.tag, "")
 
         # Character connection
         self.assertEqual(new_component.character, test_character)
@@ -32,18 +35,29 @@ class AnimComponentTests(TestCase):
         self.assertTrue(pm.hasAttr(new_component.group_ctls, "metaParent"))
         self.assertTrue(pm.hasAttr(new_component.group_joints, "metaParent"))
         self.assertTrue(pm.hasAttr(new_component.group_parts, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_out, "metaParent"))
+        self.assertTrue(pm.hasAttr(new_component.group_noscale, "metaParent"))
 
         # Attributes on meta node
         self.assertTrue(pm.hasAttr(new_component.pynode, "rootGroup"))
         self.assertTrue(pm.hasAttr(new_component.pynode, "ctlsGroup"))
         self.assertTrue(pm.hasAttr(new_component.pynode, "jointsGroup"))
         self.assertTrue(pm.hasAttr(new_component.pynode, "partsGroup"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "noScaleGroup"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "outGroup"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "outHooks"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "inHook"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "bindJoints"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "ctlChain"))
+        self.assertTrue(pm.hasAttr(new_component.pynode, "controls"))
 
         # Connections to metanode
         self.assertTrue(pm.isConnected(new_component.root.metaParent, new_component.pynode.rootGroup))
         self.assertTrue(pm.isConnected(new_component.group_ctls.metaParent, new_component.pynode.ctlsGroup))
         self.assertTrue(pm.isConnected(new_component.group_joints.metaParent, new_component.pynode.jointsGroup))
         self.assertTrue(pm.isConnected(new_component.group_parts.metaParent, new_component.pynode.partsGroup))
+        self.assertTrue(pm.isConnected(new_component.group_out.metaParent, new_component.pynode.outGroup))
+        self.assertTrue(pm.isConnected(new_component.group_noscale.metaParent, new_component.pynode.noScaleGroup))
 
         # Name, side
         self.assertEqual(new_component.name, "anim_component")
@@ -74,6 +88,7 @@ class AnimComponentTests(TestCase):
         # Assertions
         self.assertTrue(pm.isConnected(component2.pynode.metaParent, component1.pynode.metaChildren[0]))
         self.assertEqual(component2.meta_parent, component1)
+        self.assertIsNone(component2.in_hook)
 
         # Save test scene
         pm.renameFile(self.get_temp_filename("anim_component_test_attach_to_component.ma"))

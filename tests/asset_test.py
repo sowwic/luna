@@ -1,10 +1,7 @@
 import os
 import unittest
-import pymel.core as pm
 from luna.workspace.asset import Asset
 from luna.workspace.project import Project
-from luna.utils import environFn
-from luna.utils import fileFn
 from luna.static import directories
 from luna.test import TestCase
 
@@ -50,6 +47,9 @@ class AssetTests(TestCase):
         self.assertTrue(os.path.isdir(test_asset.data.mocap))
         self.assertTrue(os.path.isdir(test_asset.data.driven_poses))
         self.assertTrue(os.path.isdir(test_asset.data.xgen))
+        self.assertTrue(os.path.isdir(test_asset.data.sdk_correctives))
+        self.assertTrue(os.path.isdir(test_asset.data.psd))
+
         # Template files creation
         self.assertTrue(os.path.isfile(os.path.join(test_asset.skeleton, "{0}_skeleton.0000.ma".format(test_asset.name))))
         self.assertTrue(os.path.isfile(os.path.join(test_asset.rig, "{0}_rig.0000.ma".format(test_asset.name))))

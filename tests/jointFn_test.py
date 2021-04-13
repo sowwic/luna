@@ -2,7 +2,6 @@ import unittest
 import pymel.core as pm
 from luna.test import TestCase
 from luna_rig.functions import jointFn
-reload(jointFn)
 
 
 class JointFnTests(TestCase):
