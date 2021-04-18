@@ -154,7 +154,7 @@ def get_versioned_files(path, extension="", split_char="."):
             files_dict[each_file.split(split_char)[0]].append(each_file)
 
     # Sort items for each key
-    for key, value in files_dict.iteritems():
+    for key, value in files_dict.items():
         files_dict[key] = sorted(value)
 
     return files_dict

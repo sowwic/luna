@@ -1,8 +1,8 @@
 import pymel.core as pm
+import luna
 from luna import Logger
 from luna import Config
 from luna import HudVars
-from luna.utils import environFn
 
 
 class LunaHUD:
@@ -52,8 +52,8 @@ class LunaHUD:
     @staticmethod
     def get_hud_text():
         stringToDraw = ""
-        current_project = environFn.get_project_var()
-        current_asset = environFn.get_asset_var()
+        current_project = luna.workspace.Project.get()
+        current_asset = luna.workspace.Asset.get()
         if current_project:
             stringToDraw += current_project.name
             if current_asset:

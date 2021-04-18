@@ -9,7 +9,6 @@ from luna.interface.hud import LunaHUD
 from luna.interface.menu import LunaMenu
 import luna.utils.devFn as devFn
 import luna.interface.marking_menu as marking_menu
-import luna.utils.environFn as environFn
 import luna.core.callbacks as callbacks
 import luna_builder
 import luna_configer
@@ -45,7 +44,7 @@ def load_additional_plugins():
 
 
 def initialize_callbacks():
-    if luna.Config.get(luna.LunaVars.callback_licence, True, stored=True):
+    if luna.Config.get(luna.LunaVars.callback_licence, True):
         try:
             callback_id = callbacks.remove_licence_popup_callback()
             REGISTERED_CALLBACKS.append(callback_id)
@@ -59,8 +58,7 @@ def initializePlugin(mobject):
     vendor = "Dmitrii Shevchenko"
     version = luna.__version__
     # Init luna.Config
-    environFn.store_config(luna.Config.load())
-    luna.Logger.set_level(luna.Config.get(luna.LunaVars.logging_level, default=10, stored=True))
+    luna.Logger.set_level(luna.Config.get(luna.LunaVars.logging_level, default=10))
 
     # Init logging
     luna.Logger.write_to_rotating_file(directories.LOG_FILE, level=40)
@@ -85,6 +83,8 @@ def initializePlugin(mobject):
 def uninitializePlugin(mobject):
     pma.MFnPlugin(mobject)
     try:
+        luna.workspace.Project.exit()
+
         # Remove UI elements
         LunaMenu._delete_old()
         luna.Logger.info("Removed menu")
@@ -101,11 +101,6 @@ def uninitializePlugin(mobject):
         for callback_id in REGISTERED_CALLBACKS:
             pma.MMessage.removeCallback(callback_id)
         luna.Logger.info("Removed callbacks")
-        # Environ vars
-        environFn.set_project_var(None)
-        environFn.set_asset_var(None)
-        environFn.set_character_var(None)
-        environFn.store_config(None)
 
         # Python modules
         devFn.unload_builder_modules()

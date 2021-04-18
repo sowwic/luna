@@ -3,9 +3,9 @@ from collections import deque
 from datetime import datetime
 
 from luna import Logger
+import luna
 try:
     import luna.utils.fileFn as fileFn
-    import luna.utils.environFn as environFn
     from luna import Config
     from luna import ProjectVars
     from luna.interface.hud import LunaHUD
@@ -18,6 +18,7 @@ class Project(object):
     Base project class. Represents rigging project
     """
     TAG_FILE = "luna.proj"
+    _INSTANCE = None  # type: Project
 
     def __repr__(self):
         return "{0}({1}): {2}".format(self.name, self.path, self.meta_data)
@@ -88,9 +89,8 @@ class Project(object):
         new_project.set_data("created", creation_date)
 
         # Set enviroment variables and refresh HUD
-        environFn.set_project_var(new_project)
-        environFn.set_asset_var(None)
-        environFn.set_character_var(None)
+        cls._INSTANCE = new_project
+        luna.workspace.Asset._INSTANCE = None
         Config.set(ProjectVars.previous_project, new_project.path)
         new_project.add_to_recent()
         LunaHUD.refresh()
@@ -111,24 +111,21 @@ class Project(object):
         project_instance = cls(path)
         project_instance.update_meta()
         # Set enviroment variables and refresh HUD
-        environFn.set_project_var(project_instance)
-        environFn.set_asset_var(None)
-        environFn.set_character_var(None)
+        cls._INSTANCE = project_instance
+        luna.workspace.Asset._INSTANCE = None
         Config.set(ProjectVars.previous_project, project_instance.path)
         project_instance.add_to_recent()
         LunaHUD.refresh()
         return project_instance
 
-    @staticmethod
-    def get():
-        project_instance = environFn.get_project_var()  # type: Project
-        return project_instance
+    @classmethod
+    def get(cls):
+        return cls._INSTANCE
 
-    @ staticmethod
-    def exit():
-        environFn.set_asset_var(None)
-        environFn.set_project_var(None)
-        environFn.set_character_var(None)
+    @classmethod
+    def exit(cls):
+        cls._INSTANCE = None
+        luna.workspace.Asset._INSTANCE = None
         LunaHUD.refresh()
 
     @staticmethod

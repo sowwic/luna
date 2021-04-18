@@ -1,9 +1,6 @@
 import os
 import unittest
-from luna.workspace.project import Project
-from luna import ProjectVars
-from luna import Config
-from luna.utils import environFn
+import luna
 from luna.test import TestCase
 
 
@@ -11,40 +8,40 @@ class ProjectTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         super(ProjectTests, cls).tearDownClass()
-        Project.exit()
-        Project.refresh_recent()
+        luna.workspace.Project.exit()
+        luna.workspace.Project.refresh_recent()
 
     def test_create_project(self):
         creation_path = ProjectTests.get_temp_dirname("testProject")
-        test_project = Project.create(creation_path)
+        test_project = luna.workspace.Project.create(creation_path)
 
         # Assertions
         self.assertTrue(os.path.exists(test_project.path))
-        self.assertEqual(environFn.get_project_var(), test_project)
+        self.assertEqual(luna.workspace.Project.get(), test_project)
         self.assertTrue(os.path.exists(test_project.tag_path))
         self.assertTrue(os.path.exists(test_project.meta_path))
-        self.assertEqual(Config.get(ProjectVars.previous_project), test_project.path)
-        self.assertIn([test_project.name, test_project.path], Config.get(ProjectVars.recent_projects))
+        self.assertEqual(luna.Config.get(luna.ProjectVars.previous_project), test_project.path)
+        self.assertIn([test_project.name, test_project.path], luna.Config.get(luna.ProjectVars.recent_projects))
 
     def test_isProject(self):
         creation_path = ProjectTests.get_temp_dirname("testProject")
-        test_project = Project.create(creation_path)
-        self.assertTrue(Project.is_project(test_project.path))
-        self.assertFalse(Project.is_project(test_project.path + "/newFolder"))
+        test_project = luna.workspace.Project.create(creation_path)
+        self.assertTrue(luna.workspace.Project.is_project(test_project.path))
+        self.assertFalse(luna.workspace.Project.is_project(test_project.path + "/newFolder"))
 
     def test_set_project(self):
         creation_path = ProjectTests.get_temp_dirname("testProject")
-        Project.create(creation_path)
-        Project.exit()
-        test_project = Project.set(creation_path)
+        luna.workspace.Project.create(creation_path)
+        luna.workspace.Project.exit()
+        test_project = luna.workspace.Project.set(creation_path)
 
         # Assertions
         self.assertTrue(os.path.exists(test_project.path))
-        self.assertEqual(environFn.get_project_var(), test_project)
+        self.assertEqual(luna.workspace.Project.get(), test_project)
         self.assertTrue(os.path.exists(test_project.tag_path))
         self.assertTrue(os.path.exists(test_project.meta_path))
-        self.assertEqual(Config.get(ProjectVars.previous_project), test_project.path)
-        self.assertIn([test_project.name, test_project.path], Config.get(ProjectVars.recent_projects))
+        self.assertEqual(luna.Config.get(luna.ProjectVars.previous_project), test_project.path)
+        self.assertIn([test_project.name, test_project.path], luna.Config.get(luna.ProjectVars.recent_projects))
 
 
 if __name__ == "__main__":

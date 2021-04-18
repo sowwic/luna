@@ -14,12 +14,12 @@ import luna_rig.core.shape_manager as shape_manager
 
 
 class MarkingMenu(object):
-
-    NAME = "luna_marking_menu"
-
     class Modes(enumFn.Enum):
         ANIMATOR = 0
         RIGGER = 1
+
+    NAME = "luna_marking_menu"
+    MODE = Config.get(LunaVars.marking_menu_mode, default=Modes.RIGGER.value)
 
     @staticmethod
     def __null_cmd():
@@ -45,8 +45,8 @@ class MarkingMenu(object):
         selection = pm.selected()
         if not selection:
             return
-        is_rigging_mode = Config.get(LunaVars.marking_menu_mode, default=1, stored=True)
-        if is_rigging_mode:
+
+        if cls.MODE == cls.Modes.RIGGER.value:
             if luna_rig.Control.is_control(selection[-1]):
                 cls.__add_rigger_control_actions(root_menu, selection)
             elif isinstance(selection[-1], luna_rig.nt.Joint):

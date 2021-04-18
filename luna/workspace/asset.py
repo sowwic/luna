@@ -1,21 +1,25 @@
 import os
 from datetime import datetime
 from luna import Logger
-import luna.utils.environFn as environFn
 import luna.utils.fileFn as fileFn
 from luna.interface.hud import LunaHUD
 
 
 class Asset:
 
+    _INSTANCE = None  # type: Asset
+
+    @classmethod
+    def get(cls):
+        return cls._INSTANCE
+
     def __repr__(self):
         return "Asset: {0}({1}), Model: {2}".format(self.name, self.type, self.meta_data.get("model"))
 
-    def __init__(self, name, typ):
+    def __init__(self, project, name, typ):
         self.name = name
         self.type = typ.lower()
-
-        self.current_project = environFn.get_project_var()
+        self.current_project = project
         if not self.current_project:
             raise Exception("Project is not set!")
 
@@ -37,7 +41,7 @@ class Asset:
         fileFn.copy_empty_scene(os.path.join(self.rig, "{0}_rig.0000.ma".format(self.name)))
 
         # Set env variables and update hud
-        environFn.set_asset_var(self)
+        Asset._INSTANCE = self
         self.current_project.update_meta()
         self.update_meta()
         # Update hude
