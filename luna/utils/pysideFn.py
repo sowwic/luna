@@ -1,10 +1,12 @@
 import os
+import pymel.core as pm
 import pymel.api as pma
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from luna.static import directories
 from shiboken2 import wrapInstance
+from shiboken2 import getCppPointer
 
 
 def save_pixmap(path, pixmap, quality=-1):
@@ -22,7 +24,21 @@ def get_QIcon(name, maya_icon=False):
 
 def maya_main_window():
     mainWindowPtr = pma.MQtUtil_mainWindow()
-    return wrapInstance(long(mainWindowPtr), QtWidgets.QWidget)
+    if os.sys.version_info[0] >= 3:
+        return wrapInstance(int(mainWindowPtr), QtWidgets.QWidget)
+    else:
+        return wrapInstance(long(mainWindowPtr), QtWidgets.QWidget)
+
+
+def add_widget_to_layout(widget, control_name):
+    if pm.workspaceControl(control_name, q=1, ex=1):
+        workspaceControlPtr = long(pma.MQtUtil.findControl(control_name))
+        if os.sys.version_info[0] >= 3:
+            widgetPtr = int(getCppPointer(widget)[0])
+        else:
+            widgetPtr = long(getCppPointer(widget)[0])
+
+        pma.MQtUtil.addWidgetToMayaLayout(widgetPtr, workspaceControlPtr)
 
 
 def qlist_all_items(qlist):

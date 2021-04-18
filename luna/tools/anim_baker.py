@@ -7,7 +7,6 @@ import luna_rig
 from luna import Logger
 import luna.utils.pysideFn as pysisdeFn
 import luna.interface.shared_widgets as shared_widgets
-reload(shared_widgets)
 
 
 class AnimBakerDialog(QtWidgets.QDialog):

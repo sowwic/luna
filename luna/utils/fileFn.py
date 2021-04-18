@@ -2,7 +2,6 @@
 import json
 import os
 import pickle
-import cPickle
 import shutil
 import pymel.core as pm
 from luna import Logger
@@ -49,51 +48,29 @@ def load_json(path, string_data=False):
 
 # Pickle
 def write_pickle(path, data):
-    backup_data = {}
-    if os.path.isfile(path):
-        backup_data = load_pickle(path)
-
     try:
-        with open(path, "w") as new_file:
+        with open(path, "wb") as new_file:
             pickle.dump(data, new_file)
         return True
     except IOError:
         Logger.exception("Failed to saved file: {0}".format(path))
-        if backup_data:
-            pickle.dump(backup_data, new_file)
-            Logger.warning("Reverted backup data for {0}".format(0))
         return False
 
 
 def load_pickle(path):
+    data = None
     try:
-        with open(path, "r") as read_file:
+        with open(path, "rb") as read_file:
             data = pickle.load(read_file)
-    except IOError as e:
-        Logger.exception("Failed to load file {0}".format(path), exc_info=e)
-        return None
+    except IOError:
+        Logger.exception("Failed to open file {0}".format(path))
+    except Exception:
+        Logger.exception("Failed to load file {0}".format(path))
 
     return data
 
 
-def write_cpickle(path, data):
-    try:
-        with open(path, "wb") as new_file:
-            cPickle.dump(data, new_file, cPickle.HIGHEST_PROTOCOL)
-    except IOError:
-        Logger.exception("Failed to write file: {0}".format(path))
-        # File
-
-
-def load_cpickle(path):
-    try:
-        with open(path, "rb") as pck_file:
-            data = cPickle.load(pck_file)
-        return data
-    except IOError:
-        Logger.exception("Failed to open file: {0}".format(path))
-
-
+# File
 def create_file(path, data=""):
     if not os.path.isfile(path):
         with open(path, "w") as f:

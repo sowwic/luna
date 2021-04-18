@@ -1,4 +1,5 @@
 import pymel.core as pm
+import imp
 from functools import partial
 
 from luna import Logger
@@ -17,10 +18,10 @@ except Exception as e:
 
 if DEBUG_MODE:
     try:
-        reload(tool_cmds)
-        reload(help_cmds)
-        reload(devFn)
-        reload(luna.tools)
+        imp.reload(tool_cmds)
+        imp.reload(help_cmds)
+        imp.reload(devFn)
+        imp.reload(luna.tools)
         Logger.debug("Menu - reloaded command modules")
     except ImportError:
         Logger.exception("Failed to reload command modules")
