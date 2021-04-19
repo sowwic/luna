@@ -32,10 +32,11 @@ def maya_main_window():
 
 def add_widget_to_layout(widget, control_name):
     if pm.workspaceControl(control_name, q=1, ex=1):
-        workspaceControlPtr = long(pma.MQtUtil.findControl(control_name))
         if os.sys.version_info[0] >= 3:
+            workspaceControlPtr = int(pma.MQtUtil.findControl(control_name))
             widgetPtr = int(getCppPointer(widget)[0])
         else:
+            workspaceControlPtr = long(pma.MQtUtil.findControl(control_name))
             widgetPtr = long(getCppPointer(widget)[0])
 
         pma.MQtUtil.addWidgetToMayaLayout(widgetPtr, workspaceControlPtr)
