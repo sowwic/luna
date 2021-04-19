@@ -41,12 +41,12 @@ def unload_luna_modules(*args):
     luna.Logger.info("Unloaded luna modules")
 
 
-def open_port(lang="python", port=-1):
+def open_port(lang="python", port=None):
     if not port:
         port = luna.Config.get(luna.LunaVars.command_port)
     if port < 0:
         return
-    if not pm.commandPort("127.0.0.1:{0}".format(port), n=1, q=1):
+    if not pm.commandPort("127.0.0.1:{0}".format(port), q=1):
         try:
             pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
             luna.Logger.info("Command port opened: Python - {0}".format(port))

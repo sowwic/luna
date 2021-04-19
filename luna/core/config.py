@@ -8,6 +8,7 @@ from luna.static import directories
 class Config:
     DEFAULT_CONFIG_PATH = directories.DEFAULT_CONFIG_PATH
     FILE_PATH = directories.CONFIG_PATH
+    CACHED_DATA = {}  # type:dict
 
     @classmethod
     def load(cls):
@@ -22,10 +23,11 @@ class Config:
     def update(cls, new_config_dict):
         current_config = cls.load()  # type: dict
         current_config.update(new_config_dict)
+        cls.CACHED_DATA.update(new_config_dict)
         fileFn.write_json(cls.get_config_path(), current_config, sort_keys=True)
 
     @classmethod
-    def get(cls, key, default=None):
+    def get(cls, key, default=None, cached=False):
         """Get setting by key
 
         Args:
@@ -35,7 +37,14 @@ class Config:
         Returns:
             any: Value for requested setting
         """
-        current_config = cls.load()  # type:dict
+        if cached:
+            if cls.CACHED_DATA:
+                current_config = cls.CACHED_DATA
+            else:
+                current_config = cls.load()  # type:dict
+        else:
+            current_config = cls.load()  # type:dict
+
         if key not in current_config.keys():
             current_config[key] = default
             cls.update(current_config)

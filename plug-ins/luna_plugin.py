@@ -57,8 +57,9 @@ def initialize_callbacks():
 def initializePlugin(mobject):
     vendor = "Dmitrii Shevchenko"
     version = luna.__version__
-    # Init luna.Config
-    luna.Logger.set_level(luna.Config.get(luna.LunaVars.logging_level, default=10))
+    # Init Config, Logger
+    luna.Config.CACHED_DATA = luna.Config.load()
+    luna.Logger.set_level(luna.Config.get(luna.LunaVars.logging_level, default=10, cached=True))
 
     # Init logging
     luna.Logger.write_to_rotating_file(directories.LOG_FILE, level=40)
