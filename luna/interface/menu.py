@@ -103,6 +103,9 @@ class LunaMenu:
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
                              label="Animation baker",
                              command=lambda *args: luna.tools.AnimBakerDialog.display())
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID,
+                             label="Custom space tool",
+                             command=lambda *args: luna.tools.CustomSpaceTool.display())
         cls._add_external_tools()
 
         # Developer tools
