@@ -30,6 +30,7 @@ class Asset:
         fileFn.create_missing_dir(self.path)
         self.controls = fileFn.create_missing_dir(os.path.join(self.path, "controls"))  # type:str
         self.skeleton = fileFn.create_missing_dir(os.path.join(self.path, "skeleton"))  # type:str
+        self.build = fileFn.create_missing_dir(os.path.join(self.path, "build"))  # type:str
         self.rig = fileFn.create_missing_dir(os.path.join(self.path, "rig"))  # type:str
         self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))  # type:str
         self.weights = _weightsDirectorySctruct(self.path)
@@ -78,6 +79,16 @@ class Asset:
     @property
     def new_rig_path(self):
         path = fileFn.get_new_versioned_file("{0}_rig".format(self.name), self.rig, extension="ma", full_path=True, split_char=".")  # type: str
+        return path
+
+    @property
+    def latest_build_path(self):
+        path = fileFn.get_latest_file(self.name, self.build, extension="rig", full_path=True, split_char=".")  # type: str
+        return path
+
+    @property
+    def new_build_path(self):
+        path = fileFn.get_new_versioned_file(self.name, self.build, extension="rig", full_path=True, split_char=".")  # type: str
         return path
 
     @property
