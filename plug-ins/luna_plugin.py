@@ -10,8 +10,9 @@ from luna.interface.menu import LunaMenu
 import luna.utils.devFn as devFn
 import luna.interface.marking_menu as marking_menu
 import luna.core.callbacks as callbacks
-import luna_builder
 import luna_configer
+import luna_builder
+import luna_builder.editor.editor_conf as editor_conf
 
 REGISTERED_CALLBACKS = []
 
@@ -66,6 +67,7 @@ def initializePlugin(mobject):
     luna.Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
     luna.Logger.info("Current logging level: {0}".format(luna.Logger.get_level(name=1)))
     load_additional_plugins()
+    editor_conf.load_plugins()
     # Command port
     devFn.open_port()
 
