@@ -18,3 +18,7 @@ EXTERNAL_TOOLS_REGISTER = os.path.join(LUNA_ROOT_PATH, "configs", "external_tool
 TEST_DIR_PATH = os.path.join(LUNA_ROOT_PATH, "tests")  # type:str
 PLUGINS_DIR_PATH = os.path.join(LUNA_ROOT_PATH, "plug-ins")  # type:str
 EDITOR_PLUGINS_PATH = os.path.join(LUNA_ROOT_PATH, "luna_builder", "rig_nodes")
+
+
+def get_icon_path(*path_parts):
+    return os.path.join(ICONS_PATH, *path_parts)
