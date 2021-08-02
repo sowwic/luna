@@ -6,7 +6,7 @@
 3. Add the following lines to it:
 
 ```python
-+ Luna 0.0.3 YourPathHere/Luna
++ Luna 0.1.0 YourPathHere/Luna
 scripts: YourPathHere/Luna
 ```
 
