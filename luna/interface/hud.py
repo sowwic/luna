@@ -42,7 +42,7 @@ class LunaHUD:
         try:
             pm.headsUpDisplay(cls.HUD_NAME, r=1)
         except BaseException:
-            Logger.exception("Failed to refresh {0}".format(cls.HUD_NAME))
+            Logger.warning("Failed to refresh {0}".format(cls.HUD_NAME))
 
     @classmethod
     def remove(cls):
