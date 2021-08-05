@@ -28,13 +28,13 @@ def write_json(path, data={}, as_string=False, sort_keys=True):
     return path
 
 
-def load_json(path, string_data=False):
+def load_json(path, string_data=False, object_pairs_hook=None):
     try:
         with open(path, "r") as json_file:
             if string_data:
                 data = json.loads(json_file)  # type:str
             else:
-                data = json.load(json_file)  # type:dict
+                data = json.load(json_file, object_pairs_hook=object_pairs_hook)  # type:dict
 
     except IOError:
         Logger.exception("{0} is not a valid file path".format(path))
