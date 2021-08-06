@@ -3,6 +3,7 @@ class LunaVars:
     command_port = "python.commandPort"
     callback_licence = "callback.license"
     marking_menu_mode = "markingMenu.mode"
+    asset_types = "assetTypes"
 
 
 class HudVars:

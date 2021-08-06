@@ -1,4 +1,11 @@
 {
+    "assetTypes": [
+        "character",
+        "prop",
+        "vehicle",
+        "enviroment",
+        "other"
+    ],
     "project.recent": [],
     "project.previous": "",
     "project.maxRecent": 3,
