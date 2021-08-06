@@ -5,4 +5,4 @@ def luna_configer(*args):
 
 def luna_builder(*args):
     import luna_builder
-    luna_builder.MainDialog.display()
+    luna_builder.BuilderMainWindow.display()

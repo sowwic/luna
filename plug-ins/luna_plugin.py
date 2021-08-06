@@ -97,7 +97,7 @@ def uninitializePlugin(mobject):
         luna.Logger.info("Removed marking menu")
 
         # Remove PySide2 windows
-        luna_builder.MainDialog.close_and_delete()
+        luna_builder.BuilderMainWindow.close_and_delete()
         luna_configer.MainDialog.close_and_delete()
 
         # Callbacks
