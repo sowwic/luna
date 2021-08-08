@@ -26,8 +26,9 @@ class ProjectVars:
     recent_max = "project.maxRecent"
 
 
-class BuildVars:
-    pass
+class BuilderVars:
+    title_font = "builder.titleFont"
+    socket_font = "builder.socketFont"
 
 
 class UnrealVars:

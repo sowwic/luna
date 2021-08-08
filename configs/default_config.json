@@ -30,5 +30,13 @@
     "rig.export.skin.fileFormat": "pickle",
     "rig.io.nglayers.fileFormat": "pickle",
     "rig.display.lineWidth": 2.0,
-    "markingMenu.mode": 1
+    "markingMenu.mode": 1,
+    "builder.titleFont": [
+        "Roboto",
+        10
+    ],
+    "builder.socketFont": [
+        "Roboto",
+        10
+    ]
 }
