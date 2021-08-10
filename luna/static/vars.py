@@ -29,6 +29,8 @@ class ProjectVars:
 class BuilderVars:
     title_font = "builder.titleFont"
     socket_font = "builder.socketFont"
+    history_enabled = "builder.historyEnabled"
+    history_size = "builder.historySize"
 
 
 class UnrealVars:

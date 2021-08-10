@@ -38,5 +38,7 @@
     "builder.socketFont": [
         "Roboto",
         10
-    ]
+    ],
+    "builder.historyEnabled": true,
+    "builder.historySize": 32
 }
