@@ -35,7 +35,7 @@ class Asset:
         self.settings = fileFn.create_missing_dir(os.path.join(self.path, "settings"))  # type:str
         self.weights = _weightsDirectorySctruct(self.path)
         self.data = _dataDirectoryStruct(self.path)
-        self.mapping = _mappingFiles(self.weights, self.data)
+        self.mapping = _mappingFiles(self.data)
 
         # Copy empty scenes
         fileFn.copy_empty_scene(os.path.join(self.skeleton, "{0}_skeleton.0000.ma".format(self.name)))
@@ -143,5 +143,5 @@ class _dataDirectoryStruct:
 
 
 class _mappingFiles:
-    def __init__(self, weights_struct, data_struct):
+    def __init__(self, data_struct):
         self.blendshapes = fileFn.create_file(os.path.join(data_struct.blendshapes, "mapping.json"), data=r"{}")
