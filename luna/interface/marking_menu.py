@@ -126,12 +126,6 @@ class MarkingMenu(object):
         pm.menuItem(p=root_menu, l="Mirror shape YZ", rp="W", c=lambda *args: selected_control.mirror_shape())
         pm.menuItem(p=root_menu, l="Flip shape YZ", rp="SW", c=lambda *args: curveFn.flip_shape(selected_control.transform))
         pm.menuItem(p=root_menu, l="Mirror shape to opposite control", rp="NW", c=lambda *args: selected_control.mirror_shape_to_opposite())
-        # Bind pose sub menu
-        bind_pose_menu = pm.subMenuItem(p=root_menu, l="Bind pose", rp="SW")
-        pm.menuItem(p=bind_pose_menu, l="Asset bind pose", rp="N", c=lambda *args: selected_control.character.to_bind_pose(), i=fileFn.get_icon_path("bindpose.png"))
-        pm.menuItem(p=bind_pose_menu, l="Component bind pose", rp="E", c=lambda *args: selected_control.connected_component.to_bind_pose(), i=fileFn.get_icon_path("bodyPart.png"))
-        pm.menuItem(p=bind_pose_menu, l="Control bind pose", rp="W", c=lambda *args: selected_control.to_bind_pose(), i=fileFn.get_icon_path("control.png"))
-        pm.menuItem(p=root_menu, l="Select component controls", rp="E", c=lambda *args: selected_control.connected_component.select_controls())
 
     @ classmethod
     def __add_joint_actions(cls, root_menu, selection):
