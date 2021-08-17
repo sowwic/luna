@@ -1,16 +1,22 @@
 # Luna
+Component-based rigging system that allows to create rigs via Python or node based editor.
+[Samples files](https://github.com/S0nic014/luna_sample_files) - Python and graph based rig builds.
 
+---
 ## Installation
 1. Clone repository using command
 ``` git clone --recurse-submodules -j8```
-3. Create **luna.mod** in *documents/maya/modules*
-4. Add the following lines to it:
+2. Create **luna.mod** in *documents/maya/modules*
+3. Add the following lines to it:
 
 ```python
 + luna 0.2.1 YourPathHere/luna
 scripts: YourPathHere/luna
 ```
-[Samples files](https://github.com/S0nic014/luna_sample_files) - Python and graph based rig builds.
+4. Load plugin via Maya's plug-in manager
+   
+
+   
 
 ### Rig Builder
 ---
