@@ -1,5 +1,5 @@
 # Luna
-Component-based rigging system that allows to create rigs via Python or node based editor.
+Rigging system that allows to create rigs via Python or node based editor. <br>
 [Samples files](https://github.com/S0nic014/luna_sample_files) - Python and graph based rig builds.
 
 ---
