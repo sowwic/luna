@@ -1,9 +1,10 @@
 # Luna
 
 ## Installation
-1. Clone/download repo to anywhere on your machine
-2. Create **luna.mod** in *documents/maya/modules*
-3. Add the following lines to it:
+1. Clone repository using command
+``` git clone --recurse-submodules -j8```
+3. Create **luna.mod** in *documents/maya/modules*
+4. Add the following lines to it:
 
 ```python
 + luna 0.2.1 YourPathHere/luna
