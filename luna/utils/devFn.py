@@ -10,7 +10,7 @@ def run_unit_tests(*args):
 
 
 def unload_builder_modules(*args):
-    for mod_name in sys.modules.keys():
+    for mod_name in list(sys.modules):
         if mod_name.startswith("luna_builder"):
             del sys.modules[mod_name]
             luna.Logger.debug("Unloaded module: {0}".format(mod_name))
@@ -18,7 +18,7 @@ def unload_builder_modules(*args):
 
 
 def unload_configer_modules(*args):
-    for mod_name in sys.modules.keys():
+    for mod_name in list(sys.modules):
         if mod_name.startswith("luna_configer"):
             del sys.modules[mod_name]
             luna.Logger.debug("Unloaded module: {0}".format(mod_name))
@@ -26,7 +26,7 @@ def unload_configer_modules(*args):
 
 
 def unload_rig_modules(*args):
-    for mod_name in sys.modules.keys():
+    for mod_name in list(sys.modules):
         if mod_name.startswith("luna_rig"):
             del sys.modules[mod_name]
             luna.Logger.debug("Unloaded module: {0}".format(mod_name))
@@ -34,7 +34,7 @@ def unload_rig_modules(*args):
 
 
 def unload_luna_modules(*args):
-    for mod_name in sys.modules.keys():
+    for mod_name in list(sys.modules):
         if mod_name.startswith("luna"):
             del sys.modules[mod_name]
             luna.Logger.debug("Unloaded module: {0}".format(mod_name))
