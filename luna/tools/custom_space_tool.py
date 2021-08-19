@@ -43,8 +43,12 @@ class CustomSpaceTool(QtWidgets.QDialog):
         self.space_obj_field = shared_widgets.StringFieldWidget("Space object:", button_text="Set")
         self.space_name_field = shared_widgets.StringFieldWidget("Name:", button=False)
         self.add_space_button = QtWidgets.QPushButton("Add")
-        self.method_combobox = QtWidgets.QComboBox()
-        self.update_methods_list()
+        # Options
+        self.use_offset_matrix_checkbox = QtWidgets.QCheckBox('Use offset matrix')
+        if int(pm.about(version=True)) < 2020:
+            self.use_offset_matrix_checkbox.setChecked(False)
+            self.use_offset_matrix_checkbox.setEnabled(False)
+            self.use_offset_matrix_checkbox.setText('Use offset matrix (Maya 2020+)')
 
     def create_layouts(self):
         spaces_layout = QtWidgets.QVBoxLayout()
@@ -52,14 +56,12 @@ class CustomSpaceTool(QtWidgets.QDialog):
         spaces_layout.addWidget(self.control_field)
         spaces_layout.addWidget(self.space_obj_field)
 
-        methods_layout = QtWidgets.QHBoxLayout()
-        methods_layout.addWidget(QtWidgets.QLabel("Method:"))
-        methods_layout.addWidget(self.method_combobox)
-        methods_layout.addStretch()
+        options_layout = QtWidgets.QFormLayout()
+        options_layout.addRow(self.use_offset_matrix_checkbox)
 
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addLayout(spaces_layout)
-        self.main_layout.addLayout(methods_layout)
+        self.main_layout.addLayout(options_layout)
         self.main_layout.addStretch()
         self.main_layout.addWidget(self.add_space_button)
         self.setLayout(self.main_layout)
@@ -68,13 +70,6 @@ class CustomSpaceTool(QtWidgets.QDialog):
         self.control_field.button.clicked.connect(self.set_control)
         self.space_obj_field.button.clicked.connect(self.set_space_object)
         self.add_space_button.clicked.connect(self.add_space)
-
-    def update_methods_list(self):
-        self.method_combobox.clear()
-        if int(pm.about(version=True)) < 2020:
-            self.method_combobox.addItem("constr")
-        else:
-            self.method_combobox.addItems(["matrix", "constr"])
 
     @QtCore.Slot()
     def set_control(self):
@@ -103,7 +98,7 @@ class CustomSpaceTool(QtWidgets.QDialog):
             return
 
         ctl = luna_rig.Control(control_name)
-        ctl.add_space(space_object, space_name, method=self.method_combobox.currentText())
+        ctl.add_space(space_object, space_name, via_matrix=self.use_offset_matrix_checkbox.isChecked())
 
 
 if __name__ == "__main__":
