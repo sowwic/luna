@@ -10,7 +10,7 @@ Rigging system that allows to create rigs via Python or node based editor. <br>
 3. Add the following lines to it:
 
 ```python
-+ luna 0.2.2 YourPathHere/luna
++ luna 0.2.3 YourPathHere/luna
 scripts: YourPathHere/luna
 ```
 4. Load plugin via Maya's plug-in manager

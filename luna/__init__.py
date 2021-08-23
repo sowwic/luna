@@ -4,4 +4,4 @@ from luna.core.logger import Logger
 from luna.core.config import Config
 import luna.workspace
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
