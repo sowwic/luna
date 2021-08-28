@@ -11,16 +11,15 @@ class AssetTests(TestCase):
     def tearDownClass(cls):
         super(AssetTests, cls).tearDownClass()
         Project.exit()
-        Project.refresh_recent()
 
     def test_asset_ctor(self):
         asset_type = "character"
 
         creation_path = AssetTests.get_temp_dirname("testProject")
-        test_project = Project.create(creation_path)
+        test_project = Project.create(creation_path, silent=True)
         test_asset = Asset(test_project, "testAsset", typ=asset_type)
         dummy_model_path = os.path.join(directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
-        test_asset.meta_data = ("model", dummy_model_path)
+        test_asset.set_data("model", dummy_model_path)
 
         # Base Assertions
         self.assertTrue(os.path.isdir(test_asset.path))  # Asset folder created

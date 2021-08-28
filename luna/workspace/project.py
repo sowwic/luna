@@ -54,6 +54,11 @@ class Project(object):
                 meta_dict[category] = [os.path.basename(asset) for asset in asset_dirs]
         return meta_dict
 
+    def __on_creation(self):
+        Config.set(ProjectVars.previous_project, self.path)
+        self.add_to_recent()
+        LunaHUD.refresh()
+
     def set_data(self, key, value):
         data_dict = self.meta_data
         data_dict[key] = value
@@ -76,7 +81,7 @@ class Project(object):
         Config.set(ProjectVars.recent_projects, list(project_queue))
 
     @classmethod
-    def create(cls, path):
+    def create(cls, path, silent=False):
         if cls.is_project(path):
             Logger.error("Already a project: {0}".format(path))
             return
@@ -91,9 +96,8 @@ class Project(object):
         # Set enviroment variables and refresh HUD
         cls._INSTANCE = new_project
         luna.workspace.Asset._INSTANCE = None
-        Config.set(ProjectVars.previous_project, new_project.path)
-        new_project.add_to_recent()
-        LunaHUD.refresh()
+        if not silent:
+            new_project.__on_creation()
         return new_project
 
     @classmethod
@@ -103,7 +107,7 @@ class Project(object):
         return os.path.isfile(search_file)
 
     @classmethod
-    def set(cls, path):
+    def set(cls, path, silent=False):
         if not cls.is_project(path):
             Logger.error("Not a project: {0}".format(path))
             return
@@ -113,9 +117,8 @@ class Project(object):
         # Set enviroment variables and refresh HUD
         cls._INSTANCE = project_instance
         luna.workspace.Asset._INSTANCE = None
-        Config.set(ProjectVars.previous_project, project_instance.path)
-        project_instance.add_to_recent()
-        LunaHUD.refresh()
+        if not silent:
+            project_instance.__on_creation()
         return project_instance
 
     @classmethod
