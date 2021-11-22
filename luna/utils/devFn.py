@@ -1,5 +1,6 @@
 import sys
 import pymel.core as pm
+from maya import cmds
 
 import luna
 from luna.test import maya_unit_test
@@ -41,14 +42,14 @@ def unload_luna_modules(*args):
     luna.Logger.info("Unloaded luna modules")
 
 
-def open_port(lang="python", port=None):
+def open_port(port=None):
     if not port:
         port = luna.Config.get(luna.LunaVars.command_port)
     if port < 0:
         return
-    if not pm.commandPort("127.0.0.1:{0}".format(port), q=1):
+    if not cmds.commandPort(":{0}".format(port), q=1):
         try:
-            pm.commandPort(name="127.0.0.1:{0}".format(port), stp="python", echoOutput=True)
+            cmds.commandPort(name=":{0}".format(port))
             luna.Logger.info("Command port opened: Python - {0}".format(port))
         except Exception:
             luna.Logger.exception("Failed to open command port")
