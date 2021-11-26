@@ -1,5 +1,6 @@
 # Luna
 Rigging system that allows to create rigs via Python or node based editor. <br>
+[Demo video](https://www.youtube.com/watch?v=0FLPQ91r0To&) <br>
 [Sample files](https://github.com/S0nic014/luna_sample_files) - Python and graph based rig builds.
 
 ---
