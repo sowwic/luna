@@ -2,12 +2,11 @@
 //Name: EmptyScene_Maya2022.ma
 //Last modified: Mon, Apr 19, 2021 02:37:33 PM
 //Codeset: 1252
-requires maya "2019";
-requires "mtoa" "3.1.2";
+requires maya "2022";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
-fileInfo "product" "Maya 2019";
-fileInfo "version" "2019";
+fileInfo "product" "Maya 2022";
+fileInfo "version" "2022";
 fileInfo "cutIdentifier" "201812112215-434d8d9c04";
 fileInfo "osv" "Microsoft Windows 10 Technical Preview  (Build 19042)\n";
 createNode transform -s -n "persp";
