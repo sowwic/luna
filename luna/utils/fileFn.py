@@ -9,11 +9,14 @@ from luna.static import directories
 
 
 # Json
-def write_json(path, data={}, as_string=False, sort_keys=True):
+def write_json(path, data=None, as_string=False, sort_keys=True):
+    # type: (str, dict, bool, bool) -> str
+    data = data if data is not None else dict()
     try:
         with open(path, "w") as json_file:
             if as_string:
-                json_file.write(json.dumps(data, sort_keys=sort_keys, indent=4, separators=(",", ":")))
+                json_file.write(json.dumps(data, sort_keys=sort_keys,
+                                indent=4, separators=(",", ":")))
             else:
                 json.dump(data, json_file, indent=4)
 
@@ -29,6 +32,7 @@ def write_json(path, data={}, as_string=False, sort_keys=True):
 
 
 def load_json(path, string_data=False, object_pairs_hook=None):
+    # type: (str, bool, object) -> dict
     try:
         with open(path, "r") as json_file:
             if string_data:
@@ -43,7 +47,7 @@ def load_json(path, string_data=False, object_pairs_hook=None):
         Logger.exception("Failed to load file {0}".format(path))
         return None
 
-    return data  # type:dict
+    return data
 
 
 # Pickle
@@ -118,7 +122,8 @@ def copy_empty_scene(new_path):
     if os.path.isfile(new_path):
         return
 
-    source_path = os.path.join(directories.EMPTY_SCENES_PATH, "EmptyScene_Maya{0}.ma".format(pm.about(v=1)))
+    source_path = os.path.join(directories.EMPTY_SCENES_PATH,
+                               "EmptyScene_Maya{0}.ma".format(pm.about(v=1)))
     Logger.debug("Copying file {0} to {1}".format(source_path, new_path))
     if not os.path.isfile(source_path):
         raise IOError
@@ -186,8 +191,10 @@ def get_new_versioned_file(name, dir_path, extension="", split_char=".", full_pa
 
 def get_latest_from_sub_name(sub_name, dir_path, extension="", sub_index=0, sub_split="-", full_path=True, split_char="."):
     files_dict = get_versioned_files(dir_path, extension, split_char)
-    related_names = [name for name in files_dict.keys() if name.split(sub_split)[sub_index] == sub_name]
+    related_names = [name for name in files_dict.keys() if name.split(sub_split)
+                     [sub_index] == sub_name]
     latest_versions = []
     for full_name in related_names:
-        latest_versions.append(get_latest_file(full_name, dir_path, extension=extension, full_path=full_path, split_char=split_char))
+        latest_versions.append(get_latest_file(full_name, dir_path,
+                               extension=extension, full_path=full_path, split_char=split_char))
     return latest_versions
