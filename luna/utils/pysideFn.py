@@ -42,6 +42,13 @@ def add_widget_to_layout(widget, control_name):
         pma.MQtUtil.addWidgetToMayaLayout(widgetPtr, workspaceControlPtr)
 
 
+def move_window_to_center(qtwindow):
+    # type: (QtWidgets.QWidget) -> None
+    center_position = qtwindow.pos() + QtWidgets.QApplication.primaryScreen().geometry().center() - \
+        qtwindow.geometry().center()
+    qtwindow.move(center_position)
+
+
 def qlist_all_items(qlist):
     if not isinstance(qlist, QtWidgets.QListWidget):
         raise TypeError("Invalid widget type. Must be QListWidget")
