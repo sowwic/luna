@@ -26,7 +26,8 @@ class HandComponent(luna_rig.AnimComponent):
                name="hand",
                hook=None,
                tag="body"):
-        instance = super(HandComponent, cls).create(meta_parent=meta_parent, side=side, name=name, hook=hook, character=character, tag=tag)  # type: HandComponent
+        instance = super(HandComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                    name=name, hook=hook, character=character, tag=tag)  # type: HandComponent
         instance.pynode.addAttr("fingers", at="message", multi=True, im=False)
 
         instance.connect_to_character(parent=True)
@@ -59,7 +60,8 @@ class HandComponent(luna_rig.AnimComponent):
         names = ['thumb', 'index', 'middle', 'ring', 'pinky']
         out_fingers = []
         for name, joint_name in zip(names, (thumb_start, index_start, middle_start, ring_start, pinky_start)):
-            out_fingers.append(self.add_fk_finger(joint_name, end_control=None, name='{0}_finger'.format(name), end_joint=tip_control))
+            out_fingers.append(self.add_fk_finger(joint_name, end_joint=None,
+                               name='{0}_finger'.format(name), end_control=tip_control))
         return out_fingers
 
     def attach_to_component(self, other_comp, hook_index=None):
