@@ -2,16 +2,22 @@
 
 # Built-in
 import os
+import re
 
 # External
 from maya import cmds
 
 ROOT_DIR = os.path.dirname(__file__)
-VERSION = "0.2.5"  # TODO: Replace with latest from changelog
+CHANGELOG_FILE = os.path.join(ROOT_DIR, "CHANGELOG.rst")
 
 
 def get_version_str_from_changelog():
-    return VERSION
+    with open(CHANGELOG_FILE, "r") as versions_file:
+        data = versions_file.read().rstrip()
+    version = "0.0.0"
+    version = re.search(r'v\s*([\d.]+)', data).group(1)
+    print("Latest version from changelog: {}".format(version))
+    return version
 
 
 def onMayaDroppedPythonFile(*args):
@@ -40,13 +46,4 @@ def onMayaDroppedPythonFile(*args):
     with open(chosen_mod_path, 'w+') as fp:
         fp.write(mod_content)
     print("Placed luna mod file at {}".format(chosen_mod_path))
-
-    # Load module
-    cmds.loadModule(scan=True)
-    cmds.loadModule(load="luna")
-    for mod_name in cmds.moduleInfo(listModules=True):
-        if mod_name == "luna":
-            print("Successfully loaded luna module.")
-            break
-    else:
-        print("Failed to load luna module!")
+    print("Please restart Maya and enable luna_plugin.py using from plugin manager.")
