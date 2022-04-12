@@ -5,19 +5,10 @@ Rigging system that allows to create rigs via Python or node based editor. <br>
 
 ---
 ## Installation
-1. Clone repository using command
-``` git clone --recurse-submodules -j8```
-2. Create **luna.mod** in *documents/maya/modules*
-3. Add the following lines to it:
-
-```python
-+ luna 0.2.3 YourPathHere/luna
-scripts: YourPathHere/luna
-```
-4. Load plugin via Maya's plug-in manager
-   
-
-   
+1. Clone repository.
+2. Launch maya and drag and drop **drag_drop_installer.py** into Maya's main window.
+3. Confirm modules directory path.
+4. Restart Maya and enable **luna_plugin.py** in plugin manager.
 
 ### Rig Builder
 ---

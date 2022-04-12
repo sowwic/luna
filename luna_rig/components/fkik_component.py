@@ -115,7 +115,8 @@ class FKIKComponent(luna_rig.AnimComponent):
                param_locator=None,
                tag=""):
         # Create instance and add attrs
-        instance = super(FKIKComponent, cls).create(meta_parent=meta_parent, side=side, name=name, character=character, tag=tag)  # type: FKIKComponent
+        instance = super(FKIKComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                    name=name, character=character, tag=tag)  # type: FKIKComponent
         instance.pynode.addAttr("fkChain", at="message", multi=1, im=0)
         instance.pynode.addAttr("ikChain", at="message", multi=1, im=0)
         instance.pynode.addAttr("fkControls", at="message", multi=1, im=0)
@@ -132,8 +133,10 @@ class FKIKComponent(luna_rig.AnimComponent):
         # Create control chain
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
-        jnt_offset_grp = nodeFn.create("transform", [instance.indexed_name, "constr"], instance.side, suffix="grp", p=instance.group_joints)
+        ctl_chain = jointFn.duplicate_chain(
+            original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+        jnt_offset_grp = nodeFn.create(
+            "transform", [instance.indexed_name, "constr"], instance.side, suffix="grp", p=instance.group_joints)
         attrFn.add_meta_attr(jnt_offset_grp)
         pm.matchTransform(jnt_offset_grp, ctl_chain[0])
         ctl_chain[0].setParent(jnt_offset_grp)
@@ -173,7 +176,8 @@ class FKIKComponent(luna_rig.AnimComponent):
 
         # Matching helper
         matching_helper = pm.createNode("transform",
-                                        n=nameFn.generate_name([instance.indexed_name, "matching_helper"], side=instance.side, suffix="grp"),
+                                        n=nameFn.generate_name(
+                                            [instance.indexed_name, "matching_helper"], side=instance.side, suffix="grp"),
                                         p=ik_control.transform)  # type: luna_rig.nt.Transform
         matching_helper.setParent(fk_controls[-1].transform)
         attrFn.add_meta_attr(matching_helper)
@@ -210,8 +214,10 @@ class FKIKComponent(luna_rig.AnimComponent):
         pm.parentConstraint(ctl_chain[-1], param_control.group, mo=1)
 
         # Create blend
-        param_control.transform.addAttr("fkik", nn="FK/IK", at="float", min=0.0, max=1.0, dv=default_state, k=True)
-        reverse_fkik = pm.createNode("reverse", n=nameFn.generate_name([instance.indexed_name, "fkik"], side=instance.side, suffix="rev"))
+        param_control.transform.addAttr("fkik", nn="FK/IK", at="float",
+                                        min=0.0, max=1.0, dv=default_state, k=True)
+        reverse_fkik = pm.createNode("reverse", n=nameFn.generate_name(
+            [instance.indexed_name, "fkik"], side=instance.side, suffix="rev"))
         param_control.transform.fkik.connect(reverse_fkik.inputX)
         param_control.transform.fkik.connect(ik_control.group.visibility)
         param_control.transform.fkik.connect(pv_control.group.visibility)
@@ -220,7 +226,8 @@ class FKIKComponent(luna_rig.AnimComponent):
 
         # Add proxy attributes on fk/ik controls
         for ctl in fk_controls + [ik_control, pv_control]:
-            ctl.transform.addAttr("fkik", nn="FK/IK", at="float", min=0.0, max=1.0, dv=default_state, k=True, usedAsProxy=True)
+            ctl.transform.addAttr("fkik", nn="FK/IK", at="float", min=0.0,
+                                  max=1.0, dv=default_state, k=True, usedAsProxy=True)
             param_control.transform.fkik.connect(ctl.transform.fkik)
 
         # End joint orient
@@ -229,7 +236,8 @@ class FKIKComponent(luna_rig.AnimComponent):
                                            instance.side,
                                            "grp",
                                            p=fk_controls[-1].transform)
-        last_orient_constr = pm.orientConstraint(fk_controls[-1].transform, ikfk_orient_offset, ctl_chain[-1], mo=1)  # type:  luna_rig.nt.OrientConstraint
+        last_orient_constr = pm.orientConstraint(
+            fk_controls[-1].transform, ikfk_orient_offset, ctl_chain[-1], mo=1)  # type:  luna_rig.nt.OrientConstraint
         ikfk_orient_offset.setParent(ik_control.transform)
         reverse_fkik.outputX.connect(last_orient_constr.getWeightAliasList()[0])
         param_control.transform.fkik.connect(last_orient_constr.getWeightAliasList()[1])
@@ -268,7 +276,8 @@ class FKIKComponent(luna_rig.AnimComponent):
 
         # Move param control shape
         if not param_locator:
-            param_locator = rigFn.get_param_ctl_locator(instance.side, joint_chain[-1], move_axis="x")
+            param_locator = rigFn.get_param_ctl_locator(
+                instance.side, joint_chain[-1], move_axis="x")
         param_move_vector = transformFn.get_vector(param_control.transform, param_locator)
         param_control.move_shape(param_move_vector)
         pm.delete(param_locator)
@@ -314,7 +323,8 @@ class FKIKComponent(luna_rig.AnimComponent):
                 self.fkik_state = 0
 
     def bake_fkik(self, source="fk", time_range=None, bake_pv=True, step=1):
-        Logger.info("{0}: baking {1} to {2} {3}...".format(self, source.upper(), "IK" if source.lower() == "fk" else "FK", time_range))
+        Logger.info("{0}: baking {1} to {2} {3}...".format(self, source.upper(),
+                    "IK" if source.lower() == "fk" else "FK", time_range))
         if not time_range:
             time_range = animFn.get_playback_range()
         for frame in range(time_range[0], time_range[1] + 1, step):
@@ -335,3 +345,9 @@ class FKIKComponent(luna_rig.AnimComponent):
         for child in self.meta_children:
             if hasattr(child, "bake_fkik"):
                 child.bake_fkik(source=source, time_range=time_range, step=step)
+
+    def add_fk_orient_switch(self):
+        if not (self.character and self.in_hook):
+            Logger.error("Can't add orient attr without character and parent component hook!")
+            return
+        self.fk_controls[0].add_orient_switch(self.character.world_locator, self.in_hook.transform)
