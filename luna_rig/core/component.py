@@ -61,12 +61,14 @@ class Component(luna_rig.MetaNode):
         instance.pynode.addAttr("settings", at="message", multi=1, im=0)
         instance.pynode.addAttr("utilNodes", at="message", multi=1, im=0)
         instance.set_tag(tag)
+
         return instance
 
     @classmethod
     def verify_parent_type(cls, parent, valid_types):
         if not isinstance(parent, valid_types):
-            Logger.exception("{0}: Invalid meta parent type - {1}. Valid types: {2}".format(cls.as_str(name_only=True), parent, valid_types))
+            Logger.exception(
+                "{0}: Invalid meta parent type - {1}. Valid types: {2}".format(cls.as_str(name_only=True), parent, valid_types))
             raise TypeError
 
     @classmethod
@@ -74,10 +76,12 @@ class Component(luna_rig.MetaNode):
         for plugin_name in cls.required_plugins:
             if not pm.pluginInfo(plugin_name, q=True, loaded=True):
                 try:
-                    Logger.info('Loading plugin {0} required by {1}'.format(plugin_name, cls.as_str(name_only=True)))
+                    Logger.info('Loading plugin {0} required by {1}'.format(
+                        plugin_name, cls.as_str(name_only=True)))
                     pm.loadPlugin(plugin_name, quiet=True)
                 except Exception:
-                    Logger.exception('Failed to load plugin {0} required by {1}'.format(plugin_name, cls))
+                    Logger.exception(
+                        'Failed to load plugin {0} required by {1}'.format(plugin_name, cls))
                     raise
 
     def remove(self):
@@ -132,7 +136,8 @@ class Component(luna_rig.MetaNode):
                     try:
                         util_node.childAtIndex(0).setParent(util_node.getParent())
                     except RuntimeError:
-                        Logger.warning("Failed to parent {0} children ({1}) to {2}".format(util_node, util_node.getChildren(), util_node.getParent()))
+                        Logger.warning("Failed to parent {0} children ({1}) to {2}".format(
+                            util_node, util_node.getChildren(), util_node.getParent()))
             pm.delete(util_node)
             Logger.debug("{0}: Deleted util node {1}".format(self, util_node))
 
@@ -165,15 +170,22 @@ class AnimComponent(Component):
         """
         if not side:
             side = meta_parent.side
-        instance = super(AnimComponent, cls).create(meta_parent, side, name, tag=tag)  # type: AnimComponent
+        instance = super(AnimComponent, cls).create(
+            meta_parent, side, name, tag=tag)  # type: AnimComponent
         # Create hierarchy
-        root_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="comp"), em=1)
-        ctls_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="ctls"), em=1, p=root_grp)
-        joints_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="jnts"), em=1, p=root_grp)
-        parts_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="parts"), em=1, p=root_grp)
-        noscale_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="noscale"), em=1, p=parts_grp)
+        root_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="comp"), em=1)
+        ctls_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="ctls"), em=1, p=root_grp)
+        joints_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="jnts"), em=1, p=root_grp)
+        parts_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="parts"), em=1, p=root_grp)
+        noscale_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="noscale"), em=1, p=parts_grp)
         noscale_grp.inheritsTransform.set(0)
-        out_grp = pm.group(n=nameFn.generate_name(instance.name, instance.side, suffix="out"), em=1, p=root_grp)
+        out_grp = pm.group(n=nameFn.generate_name(
+            instance.name, instance.side, suffix="out"), em=1, p=root_grp)
         out_grp.visibility.set(0)
         for node in [root_grp, ctls_grp, joints_grp, parts_grp, noscale_grp, out_grp]:
             node.addAttr("metaParent", at="message")
@@ -237,7 +249,8 @@ class AnimComponent(Component):
 
     @ property
     def controls(self):
-        connected_nodes = self.pynode.controls.listConnections()  # type: list[luna_rig.nt.Transform]
+        # type: list[luna_rig.nt.Transform]
+        connected_nodes = self.pynode.controls.listConnections()
         all_ctls = [luna_rig.Control(node) for node in connected_nodes]
         return all_ctls
 
@@ -254,7 +267,8 @@ class AnimComponent(Component):
     @ property
     def character(self):
         connections = self.pynode.character.listConnections()
-        result = luna_rig.MetaNode(connections[0]) if connections else None  # type: luna_rig.components.Character
+        # type: luna_rig.components.Character
+        result = luna_rig.MetaNode(connections[0]) if connections else None
         return result
 
     @ property
@@ -474,7 +488,8 @@ class AnimComponent(Component):
                 hook = other_comp.get_hook(index=hook_index)  # type: Hook
                 hook.add_output(self)
             except Exception:
-                Logger.error("Failed to connect {0} to {1} at point {2}".format(self, other_comp, hook_index))
+                Logger.error("Failed to connect {0} to {1} at point {2}".format(
+                    self, other_comp, hook_index))
                 raise
 
     def connect_to_character(self, character_component=None, character_name=None, parent=False):
@@ -559,7 +574,8 @@ class Hook(object):
 
     @property
     def component(self):
-        comp_node = luna_rig.MetaNode(self.transform.metaParent.listConnections(s=1)[0])  # type: luna_rig.AnimComponent
+        comp_node = luna_rig.MetaNode(self.transform.metaParent.listConnections(s=1)[
+                                      0])  # type: luna_rig.AnimComponent
         return comp_node
 
     @property
