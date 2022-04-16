@@ -14,8 +14,7 @@ CHANGELOG_FILE = os.path.join(ROOT_DIR, "CHANGELOG.rst")
 def get_version_str_from_changelog():
     with open(CHANGELOG_FILE, "r") as versions_file:
         data = versions_file.read().rstrip()
-    version = "0.0.0"
-    version = re.search(r'v\s*([\d.]+)', data).group(1)
+    version = re.search(r'v\s*([\d.]+)', data).group(1) or "0.0.0"
     print("Latest version from changelog: {}".format(version))
     return version
 
@@ -46,4 +45,4 @@ def onMayaDroppedPythonFile(*args):
     with open(chosen_mod_path, 'w+') as fp:
         fp.write(mod_content)
     print("Placed luna mod file at {}".format(chosen_mod_path))
-    print("Please restart Maya and enable luna_plugin.py using from plugin manager.")
+    print("Please restart Maya and enable luna_plugin.py from plugin manager.")
