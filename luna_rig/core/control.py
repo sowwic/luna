@@ -30,7 +30,8 @@ class Control(object):
 
         # Find transform
         if isinstance(node, luna_rig.nt.Controller):
-            self.transform = node.controllerObject.listConnections()[0]  # type: luna_rig.nt.Transform
+            # type: luna_rig.nt.Transform
+            self.transform = node.controllerObject.listConnections()[0]
         elif isinstance(node, luna_rig.nt.Transform):
             self.transform = pm.PyNode(node)  # type: luna_rig.nt.Transform
         elif isinstance(node, luna_rig.nt.Shape):
@@ -111,7 +112,8 @@ class Control(object):
         else:
             temp_parent = parent
 
-        group_node = pm.createNode('transform', n=nameFn.generate_name(name, side, suffix="grp"), p=temp_parent)
+        group_node = pm.createNode('transform', n=nameFn.generate_name(
+            name, side, suffix="grp"), p=temp_parent)
         temp_parent = group_node
         if guide:
             pm.matchTransform(group_node, guide, pos=match_pos, rot=match_orient, piv=match_pivot)
@@ -119,16 +121,19 @@ class Control(object):
                 pm.delete(guide)
         # Offset
         if offset_grp:
-            offset_node = pm.createNode('transform', n=nameFn.generate_name(name, side, suffix="ofs"), p=temp_parent)
+            offset_node = pm.createNode('transform', n=nameFn.generate_name(
+                name, side, suffix="ofs"), p=temp_parent)
             temp_parent = offset_node
 
         # Transform
-        transform_node = pm.createNode('transform', n=nameFn.generate_name(name, side, suffix="ctl"), p=temp_parent)
+        transform_node = pm.createNode('transform', n=nameFn.generate_name(
+            name, side, suffix="ctl"), p=temp_parent)
         temp_parent = transform_node
 
         # Joint
         if joint:
-            ctl_joint = pm.createNode('joint', n=nameFn.generate_name(name, side, suffix="cjnt"), p=temp_parent)
+            ctl_joint = pm.createNode('joint', n=nameFn.generate_name(
+                name, side, suffix="cjnt"), p=temp_parent)
             ctl_joint.visibility.set(0)
 
         # Tag node
@@ -137,11 +142,28 @@ class Control(object):
         tag_node.addAttr("group", at="message")
         tag_node.addAttr("offset", at="message", multi=1, im=0)
         tag_node.addAttr("joint", at="message")
+
+        # Metadata
+        tag_node.addAttr("side", dt="string")
+        tag_node.addAttr("name", dt="string")
         tag_node.addAttr("tag", dt="string")
+        tag_node.addAttr("index", dt="string")
+        tag_node.addAttr("indexedName", dt="string")
+        tag_node.tag.set(tag)
+
+        # Bindpose
         tag_node.addAttr("bindPose", dt="string", keyable=False)
         tag_node.bindPose.set(json.dumps({}))
         tag_node.bindPose.lock()
-        tag_node.tag.set(tag)
+
+        name_struct = nameFn.deconstruct_name(transform_node)
+        tag_node.attr("name").set(name_struct.name)
+        tag_node.attr("side").set(name_struct.side)
+        tag_node.attr("index").set(name_struct.index)
+        tag_node.attr("indexedName").set(name_struct.indexed_name)
+        for attr_name in ("side", "name", "tag", "index", "indexedName"):
+            tag_node.attr(attr_name).lock()
+
         # Add meta parent attribs
         for node in [group_node, offset_node, transform_node, ctl_joint]:
             if node:
@@ -162,7 +184,8 @@ class Control(object):
         instance.shape = shape
         instance.color = color
         instance.set_outliner_color(27)
-        ShapeManager.set_line_width(instance.transform, Config.get(RigVars.line_width, default=2.0, cached=True))
+        ShapeManager.set_line_width(instance.transform, Config.get(
+            RigVars.line_width, default=2.0, cached=True))
         # Attributes
         instance.lock_attrib(exclude_attr=attributes, channel_box=False)
 
@@ -186,11 +209,11 @@ class Control(object):
         :return: Name
         :rtype: str
         """
-        return nameFn.deconstruct_name(self.transform).name
+        return self.tag_node.attr("name").get()
 
     @property
     def indexed_name(self):
-        return nameFn.deconstruct_name(self.transform).indexed_name
+        return self.tag_node.attr("indexedName").get()
 
     @property
     def side(self):
@@ -199,7 +222,7 @@ class Control(object):
         :return: Side
         :rtype: str
         """
-        return nameFn.deconstruct_name(self.transform).side
+        return self.tag_node.side.get()
 
     @property
     def index(self):
@@ -208,7 +231,7 @@ class Control(object):
         :return: Index
         :rtype: str
         """
-        return nameFn.deconstruct_name(self.transform).index
+        return self.tag_node.attr("index").get()
 
     @property
     def tag(self):
@@ -391,7 +414,8 @@ class Control(object):
         if not comp:
             Logger.warning("{0}: Failed to find connected component!".format(self))
             return None
-        char = comp if isinstance(comp, luna_rig.components.Character) else comp.character  # type: luna_rig.components.Character
+        # type: luna_rig.components.Character
+        char = comp if isinstance(comp, luna_rig.components.Character) else comp.character
         return char
 
     # ======== Getter methods ============ #
@@ -453,7 +477,8 @@ class Control(object):
         if scale == 1.0 and factor == 1.0:
             return
         for each in self.transform.getShapes():
-            pm.scale(each + ".cv[0:1000]", [factor * scale, factor * scale, factor * scale], objectSpace=True)
+            pm.scale(each + ".cv[0:1000]", [factor * scale, factor *
+                     scale, factor * scale], objectSpace=True)
 
     def move_shape(self, vector):
         for each in self.transform.getShapes():
@@ -522,7 +547,8 @@ class Control(object):
             parent = self.group
         if extra_name:
             new_name = "_".join([self.indexed_name, extra_name])
-        new_offset = pm.createNode("transform", n=nameFn.generate_name(new_name, side=self.side, suffix="ofs"), p=parent)  # type: luna_rig.nt.Transform
+        new_offset = pm.createNode("transform", n=nameFn.generate_name(
+            new_name, side=self.side, suffix="ofs"), p=parent)  # type: luna_rig.nt.Transform
         pm.parent(self.transform, new_offset)
         new_offset.addAttr("metaParent", at="message")
         new_offset.metaParent.connect(self.tag_node.offset, na=1)
@@ -554,7 +580,8 @@ class Control(object):
     def add_space(self, target, name, via_matrix=True):
         # Process inputs
         if pm.about(api=1) < 20200100 and via_matrix:
-            Logger.warning("Matrix space method requires Maya 2020+. Using constraint method instead.")
+            Logger.warning(
+                "Matrix space method requires Maya 2020+. Using constraint method instead.")
             via_matrix = False
 
         # Add divider if matrix
@@ -617,14 +644,17 @@ class Control(object):
             self.transform.addAttr("spaceUseScale", at="bool", dv=True, k=1)
 
         # Get offset matrix
-        mult_mtx = pm.createNode("multMatrix", n=nameFn.generate_name([self.indexed_name, name.lower()], side=self.side, suffix="mmtx"))
-        offset_mtx = transformFn.matrix_to_list(self.transform.worldMatrix.get() * self.transform.matrix.get().inverse() * target.worldInverseMatrix.get())
+        mult_mtx = pm.createNode("multMatrix", n=nameFn.generate_name(
+            [self.indexed_name, name.lower()], side=self.side, suffix="mmtx"))
+        offset_mtx = transformFn.matrix_to_list(self.transform.worldMatrix.get(
+        ) * self.transform.matrix.get().inverse() * target.worldInverseMatrix.get())
         mult_mtx.matrixIn[0].set(offset_mtx)
         target.worldMatrix.connect(mult_mtx.matrixIn[1])
         self.transform.getParent().worldInverseMatrix.connect(mult_mtx.matrixIn[2])
         index = len(self.spaces) - 1
         # Condition
-        condition = pm.createNode("condition", n=nameFn.generate_name([self.indexed_name, name.lower()], side=self.side, suffix="cond"))
+        condition = pm.createNode("condition", n=nameFn.generate_name(
+            [self.indexed_name, name.lower()], side=self.side, suffix="cond"))
         condition.secondTerm.set(index)
         condition.colorIfTrueR.set(1)
         condition.colorIfFalseR.set(0)
@@ -650,11 +680,13 @@ class Control(object):
         if not space_offset:
             space_offset = self.insert_offset(extra_name="space")
         # Create space transforms
-        space_node = pm.createNode("transform", n=nameFn.generate_name([self.indexed_name, name.lower()], side=self.side, suffix="space"), p=self.transform)
+        space_node = pm.createNode("transform", n=nameFn.generate_name(
+            [self.indexed_name, name.lower()], side=self.side, suffix="space"), p=self.transform)
         pm.parent(space_node, world=True)
         parent_constr = pm.parentConstraint(space_node, space_offset)
         # Condition node
-        condition = pm.createNode("condition", n=nameFn.generate_name([self.indexed_name, name.lower()], side=self.side, suffix="cond"))
+        condition = pm.createNode("condition", n=nameFn.generate_name(
+            [self.indexed_name, name.lower()], side=self.side, suffix="cond"))
         self.transform.space.connect(condition.firstTerm)
         condition.secondTerm.set(len(parent_constr.getTargetList()) - 1)
         condition.colorIfTrueR.set(1)
@@ -685,16 +717,23 @@ class Control(object):
         :type source: str or luna_rig.nt.Transform
         """
         # Curve
-        curve_points = [source.getTranslation(space="world"), self.transform.getTranslation(space="world")]
-        wire_curve = curveFn.curve_from_points(name=nameFn.generate_name([self.indexed_name, "wire"], side=self.side, suffix="crv"), degree=1, points=curve_points)
+        curve_points = [source.getTranslation(
+            space="world"), self.transform.getTranslation(space="world")]
+        wire_curve = curveFn.curve_from_points(name=nameFn.generate_name(
+            [self.indexed_name, "wire"], side=self.side, suffix="crv"), degree=1, points=curve_points)
         wire_curve.inheritsTransform.set(0)
         # Clusters
-        src_cluster = pm.cluster(wire_curve.getShape().controlPoints[0], n=nameFn.generate_name([self.indexed_name, "wire", "src"], side=self.side, suffix="clst"))
-        dest_cluster = pm.cluster(wire_curve.getShape().controlPoints[1], n=nameFn.generate_name([self.indexed_name, "wire", "dest"], side=self.side, suffix="clst"))
-        pm.pointConstraint(source, src_cluster, n=nameFn.generate_name([self.indexed_name, "wire", "src"], side=self.side, suffix="ptcon"))
-        pm.pointConstraint(self.transform, dest_cluster, n=nameFn.generate_name([self.indexed_name, "wire", "dest"], side=self.side, suffix="ptcon"))
+        src_cluster = pm.cluster(wire_curve.getShape().controlPoints[0], n=nameFn.generate_name(
+            [self.indexed_name, "wire", "src"], side=self.side, suffix="clst"))
+        dest_cluster = pm.cluster(wire_curve.getShape().controlPoints[1], n=nameFn.generate_name(
+            [self.indexed_name, "wire", "dest"], side=self.side, suffix="clst"))
+        pm.pointConstraint(source, src_cluster, n=nameFn.generate_name(
+            [self.indexed_name, "wire", "src"], side=self.side, suffix="ptcon"))
+        pm.pointConstraint(self.transform, dest_cluster, n=nameFn.generate_name(
+            [self.indexed_name, "wire", "dest"], side=self.side, suffix="ptcon"))
         # Grouping
-        wire_grp = pm.group(src_cluster, dest_cluster, n=nameFn.generate_name([self.indexed_name, "wire"], side=self.side, suffix="grp"))
+        wire_grp = pm.group(src_cluster, dest_cluster, n=nameFn.generate_name(
+            [self.indexed_name, "wire"], side=self.side, suffix="grp"))
         pm.parent(wire_curve, wire_grp)
         pm.parent(wire_grp, self.group)
         # Housekeeping
@@ -761,7 +800,8 @@ class Control(object):
         template = nameFn.get_template()
         if self.side not in ["l", "r"]:
             return None
-        opposite_transform = template.format(side=static.OppositeSide[self.side].value, name=self.indexed_name, suffix="ctl")
+        opposite_transform = template.format(
+            side=static.OppositeSide[self.side].value, name=self.indexed_name, suffix="ctl")
         # Handle namespaces
         opposite_transform = ":".join(self.transform.namespaceList() + [opposite_transform])
         if pm.objExists(opposite_transform):
@@ -818,7 +858,8 @@ class Control(object):
             return
 
         # Create temp transform and parent shapes to it
-        temp_transform = pm.createNode("transform", n="temp_transform", p=self.transform)  # type: luna_rig.nt.Transform
+        temp_transform = pm.createNode("transform", n="temp_transform",
+                                       p=self.transform)  # type: luna_rig.nt.Transform
         for each in self.transform.getShapes():
             pm.parent(each, temp_transform, s=1, r=1)
 
@@ -848,19 +889,24 @@ class Control(object):
         if not local_parent and self.connected_component:
             local_parent = self.connected_component.in_hook.transform
         # Crete orient transforms
-        space_group = pm.createNode("transform", n=nameFn.generate_name([self.name, "orient_space"], side=self.side, suffix="grp"), p=self.group)  # type: luna_rig.nt.Transform
-        local_group = pm.createNode("transform", n=nameFn.generate_name([self.name, "orient_local"], side=self.side, suffix="grp"), p=self.group)  # type: luna_rig.nt.Transform
+        space_group = pm.createNode("transform", n=nameFn.generate_name(
+            [self.name, "orient_space"], side=self.side, suffix="grp"), p=self.group)  # type: luna_rig.nt.Transform
+        local_group = pm.createNode("transform", n=nameFn.generate_name(
+            [self.name, "orient_local"], side=self.side, suffix="grp"), p=self.group)  # type: luna_rig.nt.Transform
         space_group.setParent(None)
         local_group.setParent(None)
         # Add orient offset
         offset = self.insert_offset(extra_name="orient")
-        orient_contstr = pm.orientConstraint(local_group, space_group, offset)  # type: luna_rig.nt.OrientConstraint
+        # type: luna_rig.nt.OrientConstraint
+        orient_contstr = pm.orientConstraint(local_group, space_group, offset)
         # pm.pointConstraint(local_group, self.group)
         local_group.setParent(local_parent)
         space_group.setParent(space_target)
         # Connections
-        self.transform.addAttr("localOrient", at="float", k=True, dv=default_state, min=0.0, max=1.0)
-        reverse_node = pm.createNode("reverse", n=nameFn.generate_name([self.name, "orient"], side=self.side, suffix="rev"))
+        self.transform.addAttr("localOrient", at="float", k=True,
+                               dv=default_state, min=0.0, max=1.0)
+        reverse_node = pm.createNode("reverse", n=nameFn.generate_name(
+            [self.name, "orient"], side=self.side, suffix="rev"))
         self.transform.localOrient.connect(orient_contstr.getWeightAliasList()[0])
         self.transform.localOrient.connect(reverse_node.inputX)
         reverse_node.outputX.connect(orient_contstr.getWeightAliasList()[1])
@@ -873,14 +919,17 @@ class Control(object):
         if not sdk_offset:
             sdk_offset = self.insert_offset(extra_name="sdk")
         for attr_name, value in driven_dict.items():
-            pm.setDrivenKeyframe(sdk_offset.attr(attr_name), cd=driver_attr, v=sdk_offset.attr(attr_name).get(), dv=0)
-            pm.setDrivenKeyframe(sdk_offset.attr(attr_name), cd=driver_attr, v=value, dv=driver_value)
+            pm.setDrivenKeyframe(sdk_offset.attr(attr_name), cd=driver_attr,
+                                 v=sdk_offset.attr(attr_name).get(), dv=0)
+            pm.setDrivenKeyframe(sdk_offset.attr(attr_name),
+                                 cd=driver_attr, v=value, dv=driver_value)
         return sdk_offset
 
     def copy_keyframes(self, time_range, target_control, time_offset=0.0):
         copiedKeys = pm.copyKey(self.transform, time=time_range)
         if copiedKeys:
-            pm.pasteKey(target_control.transform, time=time_range, option="fitReplace", timeOffset=time_offset)
+            pm.pasteKey(target_control.transform, time=time_range,
+                        option="fitReplace", timeOffset=time_offset)
 
     def constrain_geometry(self, geometry, scale=True, inherit_transforms=True):
         if not isinstance(geometry, pm.PyNode):
@@ -917,11 +966,13 @@ class Control(object):
             except IndexError:
                 Logger.error("{0}: Invalid space name '{1}'".format(self, space_name))
         else:
-            Logger.error("{0}Bake space requires space index int or space name str, got index: {1}, name{2}".format(self, space_index, space_name))
+            Logger.error("{0}Bake space requires space index int or space name str, got index: {1}, name{2}".format(
+                self, space_index, space_name))
             raise ValueError
         # Check against current
         if new_space_tuple[0] == self.space_name or new_space_tuple[1] == self.space_index:
-            pm.warning("{0}: Can't bake space {1} to identical {2}".format(self, (self.space_name, self.space_index), new_space_tuple))
+            pm.warning("{0}: Can't bake space {1} to identical {2}".format(
+                self, (self.space_name, self.space_index), new_space_tuple))
             return
 
         # Time range
@@ -930,7 +981,8 @@ class Control(object):
 
         # Baking
         src_space_index = self.space_index
-        Logger.info("{0}: Baking space {1} ->> {2} {3}".format(self, self.space_name, new_space_tuple[0], time_range))
+        Logger.info("{0}: Baking space {1} ->> {2} {3}".format(self,
+                    self.space_name, new_space_tuple[0], time_range))
         # Bake to locator
         Logger.info("Baking to locator...")
         self.switch_space(src_space_index)
@@ -997,7 +1049,8 @@ class Control(object):
             source_plug = self.transform.attr(source_plug)  # type: pm.Attribute
         if isinstance(dest_plug, str):
             dest_plug = pm.PyNode(dest_plug)  # type: pm.Attribute
-        remap_node = nodeFn.create("remapValue", [self.indexed_name, remap_name], self.side, suffix="rmv")
+        remap_node = nodeFn.create(
+            "remapValue", [self.indexed_name, remap_name], self.side, suffix="rmv")
         remap_node.inputMin.set(input_min)
         remap_node.inputMax.set(input_max)
         remap_node.outputMin.set(output_min)

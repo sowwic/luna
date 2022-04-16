@@ -119,7 +119,8 @@ class Character(luna_rig.Component):
         :rtype: Character
         """
         # Add message attrs to meta node
-        instance = super(Character, cls).create(meta_parent, name=name, side="char", tag=tag)  # type: Character
+        instance = super(Character, cls).create(meta_parent, name=name,
+                                                side="char", tag=tag)  # type: Character
         instance.pynode.addAttr("characterName", dt="string")
         instance.pynode.addAttr("rootCtl", at="message")
         instance.pynode.addAttr("controlRig", at="message")
@@ -131,24 +132,30 @@ class Character(luna_rig.Component):
         instance.pynode.addAttr("rootMotionJoint", at="message")
 
         # Create main members
-        root_control = luna_rig.Control.create(name="character_node",
+        root_control = luna_rig.Control.create(name="character",
                                                side="c",
                                                offset_grp=False,
                                                attributes="trs",
-                                               shape="character_node",
+                                               shape="character",
                                                tag="root",
                                                orient_axis="y")
-        root_control.rename(index="")
-        control_rig = pm.createNode('transform', n=static.CharacterMembers.control_rig.value, p=root_control.transform)  # type: luna_rig.nt.Transform
-        deformation_rig = pm.createNode('transform', n=static.CharacterMembers.deformation_rig.value, p=root_control.transform)  # type: luna_rig.nt.Transform
-        locators_grp = pm.createNode('transform', n=static.CharacterMembers.locators.value, p=root_control.transform)  # type: luna_rig.nt.Transform
-        world_locator = pm.spaceLocator(n=static.CharacterMembers.world_space.value)  # type: luna_rig.nt.Locator
-        util_grp = pm.createNode('transform', n=static.CharacterMembers.util_group.value, p=root_control.transform)  # type: luna_rig.nt.Transform
+        root_control.group.rename("rig")
+        control_rig = pm.createNode('transform', n=static.CharacterMembers.control_rig.value,
+                                    p=root_control.transform)  # type: luna_rig.nt.Transform
+        deformation_rig = pm.createNode('transform', n=static.CharacterMembers.deformation_rig.value,
+                                        p=root_control.transform)  # type: luna_rig.nt.Transform
+        locators_grp = pm.createNode('transform', n=static.CharacterMembers.locators.value,
+                                     p=root_control.transform)  # type: luna_rig.nt.Transform
+        world_locator = pm.spaceLocator(
+            n=static.CharacterMembers.world_space.value)  # type: luna_rig.nt.Locator
+        util_grp = pm.createNode('transform', n=static.CharacterMembers.util_group.value,
+                                 p=root_control.transform)  # type: luna_rig.nt.Transform
         pm.parent(world_locator, locators_grp)
 
         # Handle geometry group
         if not pm.objExists(static.CharacterMembers.geometry.value):
-            geometry_grp = pm.createNode('transform', n=static.CharacterMembers.geometry.value, p=root_control.transform)
+            geometry_grp = pm.createNode(
+                'transform', n=static.CharacterMembers.geometry.value, p=root_control.transform)
         else:
             geometry_grp = pm.PyNode(static.CharacterMembers.geometry.value)
             pm.parent(geometry_grp, root_control.transform)
@@ -174,7 +181,8 @@ class Character(luna_rig.Component):
 
         # Edit attributes
         # Merge scale to make uniform
-        root_control.transform.addAttr("Scale", defaultValue=1.0, shortName="us", at="float", keyable=1)
+        root_control.transform.addAttr("Scale", defaultValue=1.0,
+                                       shortName="us", at="float", keyable=1)
         root_control.transform.Scale.connect(root_control.transform.scaleX)
         root_control.transform.Scale.connect(root_control.transform.scaleY)
         root_control.transform.Scale.connect(root_control.transform.scaleZ)
@@ -305,7 +313,8 @@ class Character(luna_rig.Component):
         name = nameFn.add_namespaces(name, self.namespace_list)
         result = None
         if not pm.objExists(name):
-            result = pm.sets([ctl.transform for ctl in self.list_controls(tag)], n=name)  # type: luna_rig.nt.ObjectSet
+            result = pm.sets([ctl.transform for ctl in self.list_controls(tag)],
+                             n=name)  # type: luna_rig.nt.ObjectSet
         else:
             result = pm.PyNode(name)
         return result
@@ -332,7 +341,8 @@ class Character(luna_rig.Component):
     def create_geometry_set(self, name="geometry_set"):
         name = nameFn.add_namespaces(name, self.namespace_list)
         result = None
-        polygon_objects = [node for node in self.geometry_grp.listRelatives() if isinstance(node.getShape(), luna_rig.nt.Mesh)]
+        polygon_objects = [node for node in self.geometry_grp.listRelatives(
+        ) if isinstance(node.getShape(), luna_rig.nt.Mesh)]
         if not pm.objExists(name):
             result = pm.sets(polygon_objects, n=name)  # type: luna_rig.nt.ObjectSet
         else:

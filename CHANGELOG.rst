@@ -1,6 +1,10 @@
 luna
 =========================
 
+v 0.2.7
+-------
+* Store control name parts on tag node attributes. Rename top character node to "rig" #16
+
 v 0.2.6
 -------
 * Add drag in installer for maya.
