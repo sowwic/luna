@@ -1,6 +1,10 @@
 luna
 =========================
 
+v 0.2.9
+-------
+* Added scene history widget.
+
 v 0.2.8
 -------
 * Added implementation for script node.
