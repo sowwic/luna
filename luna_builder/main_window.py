@@ -14,12 +14,7 @@ import luna_builder.menus as menus
 import luna_builder.editor.node_editor as node_editor
 import luna_builder.editor.node_nodes_palette as node_nodes_palette
 import luna_builder.editor.node_scene_vars as node_scene_vars
-
-imp.reload(node_scene_vars)
-imp.reload(node_editor)
-imp.reload(attributes_editor)
-imp.reload(workspace_widget)
-imp.reload(node_nodes_palette)
+from luna_builder.editor.node_scene_history import SceneHistoryWidget
 
 
 class BuilderMainWindow(QtWidgets.QMainWindow):
@@ -113,6 +108,7 @@ class BuilderMainWindow(QtWidgets.QMainWindow):
         # Right tabs
         self.workspace_wgt = workspace_widget.WorkspaceWidget()
         self.attrib_editor = attributes_editor.AttributesEditor(self)
+        self.history_widget = SceneHistoryWidget(self)
 
         # Nodes palette, vars widget
         self.nodes_palette = node_nodes_palette.NodesPalette()
@@ -147,12 +143,18 @@ class BuilderMainWindow(QtWidgets.QMainWindow):
         self.vars_dock = QtWidgets.QDockWidget('Variables')
         self.vars_dock.setWidget(self.vars_widget)
         self.vars_dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea)
+        # History
+        self.history_dock = QtWidgets.QDockWidget("History")
+        self.history_dock.setWidget(self.history_widget)
+        self.history_dock.setAllowedAreas(
+            QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
 
         # Add docks right
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.workspace_dock)
         self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.attrib_editor_dock)
         self.tabifyDockWidget(self.workspace_dock, self.attrib_editor_dock)
         self.workspace_dock.raise_()
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.history_dock)
         # Add docks left
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.nodes_palette_dock)
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.vars_dock)
@@ -170,6 +172,7 @@ class BuilderMainWindow(QtWidgets.QMainWindow):
         self.update_button.clicked.connect(self.nodes_palette.update_node_tree)
         self.mdi_area.subWindowActivated.connect(self.update_title)
         self.mdi_area.subWindowActivated.connect(self.vars_widget.update_var_list)
+        self.mdi_area.subWindowActivated.connect(self.history_widget.update_history_connection)
         self.vars_widget.var_list.itemClicked.connect(self.attrib_editor.update_current_var_widget)
 
     @property
