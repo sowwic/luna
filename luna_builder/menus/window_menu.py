@@ -29,13 +29,15 @@ class WindowMenu(QtWidgets.QMenu):
         self.close_all_action.triggered.connect(self.main_window.mdi_area.closeAllSubWindows)
         self.tile_action.triggered.connect(self.main_window.mdi_area.tileSubWindows)
         self.next_wnd_action.triggered.connect(self.main_window.mdi_area.activateNextSubWindow)
-        self.previous_wnd_action.triggered.connect(self.main_window.mdi_area.activatePreviousSubWindow)
+        self.previous_wnd_action.triggered.connect(
+            self.main_window.mdi_area.activatePreviousSubWindow)
 
     def populate(self):
         self.addAction(self.main_window.nodes_palette_dock.toggleViewAction())
         self.addAction(self.main_window.vars_dock.toggleViewAction())
         self.addAction(self.main_window.workspace_dock.toggleViewAction())
         self.addAction(self.main_window.attrib_editor_dock.toggleViewAction())
+        self.addAction(self.main_window.history_dock.toggleViewAction())
 
         self.addSeparator()
         self.addAction(self.close_current_action)
