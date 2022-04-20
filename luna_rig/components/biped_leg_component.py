@@ -4,7 +4,6 @@ from luna import Logger
 from luna_rig.components import FKIKComponent
 from luna_rig.functions import attrFn
 from luna_rig.functions import jointFn
-from luna_rig.functions import nameFn
 
 
 class BipedLegComponent(FKIKComponent):
@@ -67,7 +66,7 @@ class BipedLegComponent(FKIKComponent):
                                                         tag=self.tag)
         return foot
 
-    def create_twist(self, mirrored_chain=False, hip_joints_count=2, shin_joints_count=2, add_hooks=False):
+    def create_twist(self, hip_joints_count=2, shin_joints_count=2,  mirrored_chain=False,  add_hooks=False):
         upper_twist = luna_rig.components.TwistComponent.create(self,
                                                                 name="upper_twist",
                                                                 start_joint=self.ctl_chain[0],

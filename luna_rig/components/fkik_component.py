@@ -344,8 +344,13 @@ class FKIKComponent(luna_rig.AnimComponent):
                 self.switch_fkik(matching=True)
                 for fk_control in self.fk_controls:
                     fk_control.transform.rotate.setKey()
+        self.bake_fkik_children(source, time_range, step)
+
+    def bake_fkik_children(self, source, time_range, step):
         # Bake children
         for child in self.meta_children:
+            if isinstance(child, FKIKComponent):
+                continue
             if hasattr(child, "bake_fkik"):
                 child.bake_fkik(source=source, time_range=time_range, step=step)
 
