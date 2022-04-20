@@ -117,8 +117,6 @@ class FKIKComponent(luna_rig.AnimComponent):
         # Create instance and add attrs
         instance = super(FKIKComponent, cls).create(meta_parent=meta_parent, side=side,
                                                     name=name, character=character, tag=tag)  # type: FKIKComponent
-        instance.pynode.addAttr("fkChain", at="message", multi=1, im=0)
-        instance.pynode.addAttr("ikChain", at="message", multi=1, im=0)
         instance.pynode.addAttr("fkControls", at="message", multi=1, im=0)
         instance.pynode.addAttr("ikControl", at="message")
         instance.pynode.addAttr("poleVectorControl", at="message")
