@@ -308,19 +308,24 @@ class FKIKComponent(luna_rig.AnimComponent):
 
         else:
             if not self.fkik_state:
-                pm.matchTransform(self.ik_control.transform, self.matching_helper)
-                # Pole vector
-                pole_locator = jointFn.get_pole_vector(self.ctl_chain)
-                pm.matchTransform(self.pv_control.transform, pole_locator)
-                pm.delete(pole_locator)
-                pm.select(self.ik_control.transform, r=1)
+                self.match_ik_to_fk()
                 self.fkik_state = 1
             else:
-                # If in IK -> match FK to IK and switch to FK
-                for ctl_jnt, fk_ctl in zip(self.ctl_chain, self.fk_controls):
-                    pm.matchTransform(fk_ctl.transform, ctl_jnt, rot=1)
-                pm.select(self.fk_controls[-1].transform, r=1)
+                self.match_fk_to_ik()
                 self.fkik_state = 0
+
+    def match_ik_to_fk(self):
+        pm.matchTransform(self.ik_control.transform, self.matching_helper)
+        # Pole vector
+        pole_locator = jointFn.get_pole_vector(self.ctl_chain)
+        pm.matchTransform(self.pv_control.transform, pole_locator)
+        pm.delete(pole_locator)
+        pm.select(self.ik_control.transform, r=1)
+
+    def match_fk_to_ik(self):
+        for ctl_jnt, fk_ctl in zip(self.ctl_chain, self.fk_controls):
+            pm.matchTransform(fk_ctl.transform, ctl_jnt, rot=1)
+        pm.select(self.fk_controls[-1].transform, r=1)
 
     def bake_fkik(self, source="fk", time_range=None, bake_pv=True, step=1):
         Logger.info("{0}: baking {1} to {2} {3}...".format(self, source.upper(),
