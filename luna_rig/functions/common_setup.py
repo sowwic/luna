@@ -38,7 +38,7 @@ def basic_limbs_spaces(arm_components=None,  # type: list[luna_rig.components.FK
     for leg in leg_components:
         character = character if character else leg.character
         leg.pv_control.add_world_space(via_matrix=MATRIX_NODES_AVAILABLE)
-        leg.pv_control.add_space(arm.ik_control, "IK", via_matrix=MATRIX_NODES_AVAILABLE)
+        leg.pv_control.add_space(leg.ik_control, "IK", via_matrix=MATRIX_NODES_AVAILABLE)
         if spine:
             leg.pv_control.add_space(spine.hips_control, "Hips", via_matrix=MATRIX_NODES_AVAILABLE)
         leg.ik_control.add_world_space(via_matrix=MATRIX_NODES_AVAILABLE)

@@ -45,9 +45,8 @@ class FootComponent(luna_rig.AnimComponent):
         side = side if side else meta_parent.side
         foot_locators_grp = pm.PyNode(foot_locators_grp)  # type: luna_rig.nt.Transform
         # Create instance and add attrs
-        instance = super(FootComponent, cls).create(meta_parent=meta_parent, side=side, name=name, character=character, tag=tag)  # type: FootComponent
-        instance.pynode.addAttr("fkChain", at="message", multi=1, im=0)
-        instance.pynode.addAttr("ikChain", at="message", multi=1, im=0)
+        instance = super(FootComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                    name=name, character=character, tag=tag)  # type: FootComponent
         instance.pynode.addAttr("fkControl", at="message")
         instance.pynode.addAttr("rollAxis", dt="string")
         instance.pynode.rollAxis.set(roll_axis)
@@ -81,7 +80,8 @@ class FootComponent(luna_rig.AnimComponent):
             elif "heel" in child.name():
                 heel_locator = child
         # Tap transform
-        toe_tap_transform = pm.createNode("transform", n=nameFn.generate_name([instance.indexed_name, "tap"], side=instance.side, suffix="grp"), p=rv_chain[2])
+        toe_tap_transform = pm.createNode("transform", n=nameFn.generate_name(
+            [instance.indexed_name, "tap"], side=instance.side, suffix="grp"), p=rv_chain[2])
         toe_tap_transform.setParent(rv_chain[1])
         # Parent handles
         pm.parent(meta_parent.handle, rv_chain[-1])
@@ -122,7 +122,8 @@ class FootComponent(luna_rig.AnimComponent):
         meta_parent.ik_control.transform.heelTwist.connect(heel_locator.rotateY)
         meta_parent.ik_control.transform.toeTwist.connect(toe_locator.rotateY)
         # Bank logic
-        bank_condition = pm.createNode("condition", n=nameFn.generate_name([instance.indexed_name, "bank"], side=instance.side, suffix="cond"))
+        bank_condition = pm.createNode("condition", n=nameFn.generate_name(
+            [instance.indexed_name, "bank"], side=instance.side, suffix="cond"))
         if instance.side == "r":
             bank_condition.operation.set(4)
         else:
@@ -156,7 +157,8 @@ class FootComponent(luna_rig.AnimComponent):
         # Delete chains
         pm.delete(self.ctl_chain[0])
         if self.fk_control.transform.numChildren():
-            self.fk_control.transform.childAtIndex(0).setParent(self.fk_control.transform.getParent())
+            self.fk_control.transform.childAtIndex(0).setParent(
+                self.fk_control.transform.getParent())
         pm.delete(self.fk_control.group)
 
         # Delete attrs
@@ -176,5 +178,6 @@ class FootComponent(luna_rig.AnimComponent):
         for frame in range(time_range[0], time_range[1] + 1, step):
             pm.setCurrentTime(frame)
             if source == "ik":
-                self.fk_control.transform.attr(self.roll_axis).set(self.meta_parent.ik_control.transform.footRoll.get() * -1.0)
+                self.fk_control.transform.attr(self.roll_axis).set(
+                    self.meta_parent.ik_control.transform.footRoll.get() * -1.0)
                 self.fk_control.transform.attr(self.roll_axis).setKey()
