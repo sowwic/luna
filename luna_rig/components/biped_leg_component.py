@@ -1,3 +1,4 @@
+import pymel.core as pm
 import luna_rig
 from luna import Logger
 from luna_rig.components import FKIKComponent
@@ -8,19 +9,20 @@ from luna_rig.functions import nameFn
 
 class BipedLegComponent(FKIKComponent):
 
+    ROLL_ATTRS = ["footRoll", "toeRoll", "heelRoll", "bank", "heelTwist", "toeTwist", "toeTap"]
+
     @classmethod
     def create(cls,
+               start_joint,
                meta_parent=None,
                hook=0,
                character=None,
                side="c",
                name="leg",
-               start_joint=None,
                end_joint=None,
+               tag="body",
                ik_world_orient=True,
-               default_fkik_state=1,
-               foot_roll_axis="y",
-               tag="body"):
+               default_fkik_state=1):
 
         full_input_chain = jointFn.joint_chain(start_joint, end_joint)
         if not len(full_input_chain) == 5:
@@ -43,11 +45,12 @@ class BipedLegComponent(FKIKComponent):
                                                             param_locator=None,
                                                             tag=tag)  # type: BipedLegComponent
 
-        leg_instance._build_foot(foot_chain, foot_roll_axis=foot_roll_axis)
+        attrFn.add_meta_attr(foot_chain)
+        leg_instance._store_bind_joints(foot_chain)
         return leg_instance
 
-    def _build_foot(self, joint_chain, foot_roll_axis="y"):
-        # type: (list[luna_rig.nt.Joint], str) -> None
+    def build_foot(self, reverse_chain, foot_locators_grp, foot_roll_axis="ry"):
+        # type: (luna_rig.nt.Joint | str, str, str) -> None
         """Build reverse foot rig
 
         Args:
@@ -55,16 +58,14 @@ class BipedLegComponent(FKIKComponent):
             foot_roll_axis (str, optional): axis used for foot roll. Defaults to "y".
         """
         # Create control joint chain.
-        self.pynode.addAttr("footCtlChain", at="message", multi=1, im=0)
-        attrFn.add_meta_attr(joint_chain)
-        foot_ctl_chain = jointFn.duplicate_chain(joint_chain, add_name="ctl")
-        foot_ctl_chain[0].setParent(self.ctl_chain[-1])
-        for jnt in foot_ctl_chain:
-            jnt.metaParent.connect(self.pynode.footCtlChain, na=1)
-
-        # Breakdown chain into variables
-        ankle_ctl_jnt = self.ctl_chain[-1]
-        foot_ctl_jnt, toe_ctl_jnt = foot_ctl_chain
+        foot = luna_rig.components.FootComponent.create(self,
+                                                        start_joint=self.bind_joints[3],
+                                                        end_joint=self.bind_joints[4],
+                                                        rv_chain=reverse_chain,
+                                                        foot_locators_grp=foot_locators_grp,
+                                                        roll_axis=foot_roll_axis,
+                                                        tag=self.tag)
+        return foot
 
     def create_twist(self, mirrored_chain=False, hip_joints_count=2, shin_joints_count=2, add_hooks=False):
         upper_twist = luna_rig.components.TwistComponent.create(self,
@@ -87,14 +88,6 @@ class BipedLegComponent(FKIKComponent):
                                                                 tag=self.tag)  # type: luna_rig.components.TwistComponent
         return upper_twist, lower_twist
 
-    @property
-    def foot_ik_chain(self):
-        return [joint for joint in self.pynode.footIkChain.listConnections(d=1)]
-
-    @property
-    def foot_fk_chain(self):
-        return [joint for joint in self.pynode.footFkChain.listConnections(d=1)]
-
-    @property
-    def foot_ctl_chain(self):
-        return [joint for joint in self.pynode.footCtlChain.listConnections(d=1)]
+    def get_foot(self):
+        # type: () -> luna_rig.components.FootComponent | None
+        return next(iter([self.get_meta_children(of_type=luna_rig.components.FootComponent)]), None)
