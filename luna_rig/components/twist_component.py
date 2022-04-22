@@ -89,7 +89,8 @@ class TwistComponent(luna_rig.AnimComponent):
         name = "_".join([meta_parent.indexed_name, name])
 
         # Create instance and add attrs to metanode
-        instance = super(TwistComponent, cls).create(meta_parent=meta_parent, side=side, name=name, hook=None, character=character, tag=tag)  # type: TwistComponent
+        instance = super(TwistComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                     name=name, hook=None, character=character, tag=tag)  # type: TwistComponent
         instance.pynode.addAttr("twistStartObject", at="message")
         instance.pynode.addAttr("twistEndObject", at="message")
         instance.pynode.addAttr("startJoint", at="message")
@@ -111,7 +112,8 @@ class TwistComponent(luna_rig.AnimComponent):
         skel_end_joint.message.connect(instance.pynode.skelEndJoint)
 
         # Create IK curve
-        curve_points = [jnt.getTranslation(space="world") for jnt in [instance.start_joint, instance.end_joint]]
+        curve_points = [jnt.getTranslation(space="world")
+                        for jnt in [instance.start_joint, instance.end_joint]]
         ik_curve = curveFn.curve_from_points(nameFn.generate_name(instance.indexed_name, side=instance.side, suffix="crv"),
                                              degree=1,
                                              points=curve_points,
@@ -144,11 +146,15 @@ class TwistComponent(luna_rig.AnimComponent):
         ik_handle.setParent(instance.group_parts)
         # Curve bind joint
         pm.select(instance.start_joint, r=1)
-        crv_ik_joint = pm.joint(n=nameFn.generate_name([instance.indexed_name, "ik"], side=instance.side, suffix="jnt"))
-        pm.skinCluster([crv_ik_joint], ik_curve, n=nameFn.generate_name(instance.indexed_name, side=instance.side, suffix="skin"))
+        crv_ik_joint = pm.joint(n=nameFn.generate_name(
+            [instance.indexed_name, "ik"], side=instance.side, suffix="jnt"))
+        pm.skinCluster([crv_ik_joint], ik_curve, n=nameFn.generate_name(
+            instance.indexed_name, side=instance.side, suffix="skin"))
         # Twist locators
-        start_locator = pm.spaceLocator(n=nameFn.generate_name([instance.indexed_name, "start"], side=instance.side, suffix="loc"))
-        end_locator = pm.spaceLocator(n=nameFn.generate_name([instance.indexed_name, "end"], side=instance.side, suffix="loc"))
+        start_locator = pm.spaceLocator(n=nameFn.generate_name(
+            [instance.indexed_name, "start"], side=instance.side, suffix="loc"))
+        end_locator = pm.spaceLocator(n=nameFn.generate_name(
+            [instance.indexed_name, "end"], side=instance.side, suffix="loc"))
         pm.matchTransform(start_locator, ctl_chain[0])
         pm.matchTransform(end_locator, ctl_chain[-1])
         start_locator.setParent(instance.twist_start_object)
@@ -159,11 +165,12 @@ class TwistComponent(luna_rig.AnimComponent):
         instance.pynode.negativeX.connect(ik_handle.dForwardAxis)
         start_locator.worldMatrix.connect(ik_handle.dWorldUpMatrix)
         end_locator.worldMatrix.connect(ik_handle.dWorldUpMatrixEnd)
-        # Create output joints
-        output_joints = jointFn.duplicate_chain(start_joint=ctl_chain[1],
+        output_joints = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "out"],
+                                                new_joint_side=instance.side,
+                                                start_joint=ctl_chain[1],
                                                 end_joint=ctl_chain[-2],
-                                                add_name="out",
                                                 new_parent=instance.group_joints)
+
         for ctl_jnt, out_jnt in zip(ctl_chain[1:-1], output_joints):
             pm.parentConstraint(ctl_jnt, out_jnt)
 
