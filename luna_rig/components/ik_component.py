@@ -22,7 +22,8 @@ class IKComponent(luna_rig.AnimComponent):
 
     @property
     def pv_control(self):
-        transform = self.pynode.poleVectorControl.listConnections(d=1)  # type: luna_rig.nt.Transform
+        transform = self.pynode.poleVectorControl.listConnections(
+            d=1)  # type: luna_rig.nt.Transform
         return luna_rig.Control(transform[0]) if transform else None
 
     @property
@@ -63,7 +64,8 @@ class IKComponent(luna_rig.AnimComponent):
                control_world_orient=False,
                tag=""):
         # Create instance and add attrs
-        instance = super(IKComponent, cls).create(meta_parent=meta_parent, side=side, name=name, character=character, tag=tag)  # type: IKComponent
+        instance = super(IKComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                  name=name, character=character, tag=tag)  # type: IKComponent
         instance.pynode.addAttr("ikControl", at="message")
         instance.pynode.addAttr("poleVectorControl", at="message")
         instance.pynode.addAttr("ikHandle", at="message")
@@ -75,8 +77,14 @@ class IKComponent(luna_rig.AnimComponent):
         # Create control chain
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
-        jnt_offset_grp = nodeFn.create("transform", [instance.indexed_name, "constr"], instance.side, suffix="grp", p=instance.group_joints)
+        # ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=instance.group_joints)
+
+        jnt_offset_grp = nodeFn.create(
+            "transform", [instance.indexed_name, "constr"], instance.side, suffix="grp", p=instance.group_joints)
         attrFn.add_meta_attr(jnt_offset_grp)
         pm.matchTransform(jnt_offset_grp, ctl_chain[0])
         ctl_chain[0].setParent(jnt_offset_grp)
@@ -198,13 +206,15 @@ class IKSplineComponent(luna_rig.AnimComponent):
         num_controls = int(num_controls) if not isinstance(num_controls, int) else num_controls
 
         # Create instance and add attributes
-        instance = super(IKSplineComponent, cls).create(meta_parent=meta_parent, side=side, name=name, hook=hook, character=character, tag=tag)  # type: IKSplineComponent
+        instance = super(IKSplineComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                        name=name, hook=hook, character=character, tag=tag)  # type: IKSplineComponent
         instance.pynode.addAttr("ikCurve", at="message")
         instance.pynode.addAttr("rootControl", at="message")
         instance.pynode.addAttr("shapeControls", at="message", multi=True, im=False)
 
         if not start_joint and not ik_curve:
-            Logger.error("{0}: Requires start joint or curve to build on. Got neither".format(instance))
+            Logger.error(
+                "{0}: Requires start joint or curve to build on. Got neither".format(instance))
             raise ValueError
 
         # Create joint chain if not provided
@@ -213,7 +223,10 @@ class IKSplineComponent(luna_rig.AnimComponent):
         else:
             joint_chain = jointFn.joint_chain(start_joint=start_joint, end_joint=end_joint)
         attrFn.add_meta_attr(joint_chain)
-        ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=instance.group_joints)
 
         # Build curve if not provided
         if not ik_curve:
@@ -266,19 +279,23 @@ class IKSplineComponent(luna_rig.AnimComponent):
                                           joint=True)
             shape_controls.append(ctl)
         pm.delete(ctl_locator)
-        pm.skinCluster([each.joint for each in shape_controls], ik_curve, n=nameFn.generate_name([instance.indexed_name, "curve"], instance.side, "skin"))
+        pm.skinCluster([each.joint for each in shape_controls], ik_curve, n=nameFn.generate_name(
+            [instance.indexed_name, "curve"], instance.side, "skin"))
 
         if control_lines:
             for ctl in shape_controls:
                 if ctl is shape_controls[-1]:
                     ctl.add_wire(ctl_chain[-1])
                 else:
-                    nearest_locator = pm.spaceLocator(n=nameFn.generate_name([ctl.indexed_name, "nearest"], ctl.side, suffix="loc"))
+                    nearest_locator = pm.spaceLocator(n=nameFn.generate_name(
+                        [ctl.indexed_name, "nearest"], ctl.side, suffix="loc"))
                     nearest_locator.setParent(ctl.group)
                     nearest_locator.inheritsTransform.set(False)
                     nearest_locator.visibility.set(False)
-                    nearest_pt_crv = nodeFn.create("nearestPointOnCurve", [ctl.indexed_name, "wire"], ctl.side, "nrpt")
-                    decomp_mtx = nodeFn.create("decomposeMatrix", [ctl.indexed_name, "wire"], ctl.side, "decomp")
+                    nearest_pt_crv = nodeFn.create("nearestPointOnCurve", [
+                                                   ctl.indexed_name, "wire"], ctl.side, "nrpt")
+                    decomp_mtx = nodeFn.create(
+                        "decomposeMatrix", [ctl.indexed_name, "wire"], ctl.side, "decomp")
                     ctl.joint.worldMatrix.connect(decomp_mtx.inputMatrix)
                     ik_curve.getShape().local.connect(nearest_pt_crv.inputCurve)
                     decomp_mtx.outputTranslate.connect(nearest_pt_crv.inPosition)

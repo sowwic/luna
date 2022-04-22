@@ -1,5 +1,10 @@
 luna
 =========================
+
+v 0.2.11
+-------
+* Decoupled duplicated rig control joints from input skeleton joint names.
+
 v 0.2.10
 -------
 * Add BipedLeg class and node.

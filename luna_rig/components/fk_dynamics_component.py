@@ -11,7 +11,8 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
 
     @property
     def hair_system(self):
-        node = self.pynode.hairSystem.listConnections(d=1)[0].getShape()  # type: luna_rig.nt.HairSystem
+        node = self.pynode.hairSystem.listConnections(
+            d=1)[0].getShape()  # type: luna_rig.nt.HairSystem
         return node
 
     @property
@@ -29,12 +30,12 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
         cls.verify_parent_type(meta_parent, luna_rig.components.FKComponent)
 
         # Create instance and add attrs
-        instance = super(FKDynamicsComponent, cls).create(meta_parent=meta_parent, side=meta_parent.side, name=name, character=character, tag=tag)  # type: FKDynamicsComponent
+        instance = super(FKDynamicsComponent, cls).create(meta_parent=meta_parent, side=meta_parent.side,
+                                                          name=name, character=character, tag=tag)  # type: FKDynamicsComponent
         instance.pynode.addAttr("hairSystem", at="message")
-
-        # Joint chain
-        ctl_chain = jointFn.duplicate_chain(original_chain=meta_parent.ctl_chain,
-                                            replace_name=name,
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, name],
+                                            new_joint_side=instance.side,
+                                            original_chain=meta_parent.ctl_chain,
                                             new_parent=instance.group_joints)
 
         # Create input curve:
@@ -51,9 +52,11 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
 
         # Gather created nodes
         follicle = input_curve.getParent()  # type: luna_rig.nt.Transform
-        hair_system = follicle.getShape().listConnections(type="hairSystem")[0]  # type:  luna_rig.nt.Transform
+        hair_system = follicle.getShape().listConnections(type="hairSystem")[
+            0]  # type:  luna_rig.nt.Transform
         nucleus = hair_system.getShape().listConnections(type="nucleus")[0]
-        output_curve = follicle.getShape().outCurve.listConnections()[0]  # type: luna_rig.nt.NurbsCurve
+        output_curve = follicle.getShape().outCurve.listConnections()[
+            0]  # type: luna_rig.nt.NurbsCurve
         output_grp = output_curve.getParent()  # type:  luna_rig.nt.Transform
 
         # Assign nucleus
@@ -69,7 +72,8 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
                 nucleus.rename("{0}_nucl".format(meta_parent.character.name))
         else:
             old_nucleus = nucleus
-            nucleus = pm.createNode("nucleus", n="{0}_nucl".format(instance.indexed_name))  # type: luna_rig.nt.Nucleus
+            nucleus = pm.createNode("nucleus", n="{0}_nucl".format(
+                instance.indexed_name))  # type: luna_rig.nt.Nucleus
             pm.select(hair_system, r=1)
             pm.mel.eval("assignNSolver {0}".format(nucleus))
             pm.select(cl=1)
@@ -78,10 +82,13 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
         pm.parent(nucleus, meta_parent.character.root_control.transform)
 
         # Rename hair system objects
-        hair_system.rename(nameFn.generate_name([instance.name, "hair"], side=instance.side, suffix="sys"))
+        hair_system.rename(nameFn.generate_name(
+            [instance.name, "hair"], side=instance.side, suffix="sys"))
         follicle.rename(nameFn.generate_name([instance.name], side=instance.side, suffix="fol"))
-        output_grp.rename(nameFn.generate_name([instance.name, "output"], side=instance.side, suffix="grp"))
-        output_curve.rename(nameFn.generate_name([instance.name, "out"], side=instance.side, suffix="crv"))
+        output_grp.rename(nameFn.generate_name(
+            [instance.name, "output"], side=instance.side, suffix="grp"))
+        output_curve.rename(nameFn.generate_name(
+            [instance.name, "out"], side=instance.side, suffix="crv"))
         attrFn.add_meta_attr(hair_system.getShape())
 
         # Adjust dynamics
@@ -122,7 +129,8 @@ class FKDynamicsComponent(luna_rig.AnimComponent):
         # Add dynamics attributes
         attrFn.add_divider(self.meta_parent.controls[0].transform, attr_name="DYNAMICS")
         # TODO: Use proxy attr instead of copying
-        attr_dict = attrFn.transfer_attr(self.hair_system, self.meta_parent.controls[0].transform, connect=True)
+        attr_dict = attrFn.transfer_attr(
+            self.hair_system, self.meta_parent.controls[0].transform, connect=True)
         for added_attr in attr_dict.values():
             self._store_settings(added_attr)
         # Create dynamics offsets

@@ -131,8 +131,11 @@ class FKIKComponent(luna_rig.AnimComponent):
         # Create control chain
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(
-            original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=instance.group_joints)
+
         jnt_offset_grp = nodeFn.create(
             "transform", [instance.indexed_name, "constr"], instance.side, suffix="grp", p=instance.group_joints)
         attrFn.add_meta_attr(jnt_offset_grp)
