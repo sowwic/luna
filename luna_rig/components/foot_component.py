@@ -55,7 +55,10 @@ class FootComponent(luna_rig.AnimComponent):
         joint_chain = jointFn.joint_chain(start_joint, end_joint)
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(joint_chain, add_name="ctl")
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain)
+
         rv_chain = jointFn.joint_chain(rv_chain)
         ctl_chain[0].setParent(meta_parent.ctl_chain[-1])
 

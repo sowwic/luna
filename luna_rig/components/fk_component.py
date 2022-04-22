@@ -21,13 +21,18 @@ class FKComponent(luna_rig.AnimComponent):
                add_end_ctl=True,
                lock_translate=True,
                tag=""):
-        instance = super(FKComponent, cls).create(meta_parent=meta_parent, side=side, name=name, character=character, tag=tag)  # type: FKComponent
+        instance = super(FKComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                  name=name, character=character, tag=tag)  # type: FKComponent
         # Joint chain
         joint_chain = jointFn.joint_chain(start_joint, end_joint)
         jointFn.validate_rotations(joint_chain)
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+
+        ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "fk", "ctl"],
+                                            instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=instance.group_joints)
 
         # Create control
         fk_controls = []
@@ -96,14 +101,20 @@ class FKComponent(luna_rig.AnimComponent):
             aim_vector = [1, 0, 0]
 
         # Create aim setup
-        pm.aimConstraint(target_grp, aim_grp, wut="object", wuo=self.controls[0].group, aim=aim_vector)
-        pm.delete(pm.aimConstraint(target_grp, no_aim_grp, wut="object", wuo=self.controls[0].group, aim=aim_vector))
-        orient_constr = pm.orientConstraint(aim_grp, no_aim_grp, constr_grp)  # type: luna_rig.nt.OrientConstraint
+        pm.aimConstraint(target_grp, aim_grp, wut="object",
+                         wuo=self.controls[0].group, aim=aim_vector)
+        pm.delete(pm.aimConstraint(target_grp, no_aim_grp, wut="object",
+                  wuo=self.controls[0].group, aim=aim_vector))
+        # type: luna_rig.nt.OrientConstraint
+        orient_constr = pm.orientConstraint(aim_grp, no_aim_grp, constr_grp)
         pm.parent(self.controls[0].offset_list[0], constr_grp)
         # Add attr to control
-        self.controls[0].transform.addAttr("autoAim", at="float", dv=default_value, min=0.0, max=10.0, k=1)
-        mdl_node = pm.createNode("multDoubleLinear", n=nameFn.generate_name([self.indexed_name, "auto_aim"], side=self.side, suffix="mdl"))
-        rev_node = pm.createNode("reverse", n=nameFn.generate_name([self.indexed_name, "auto_aim"], side=self.side, suffix="rev"))
+        self.controls[0].transform.addAttr(
+            "autoAim", at="float", dv=default_value, min=0.0, max=10.0, k=1)
+        mdl_node = pm.createNode("multDoubleLinear", n=nameFn.generate_name(
+            [self.indexed_name, "auto_aim"], side=self.side, suffix="mdl"))
+        rev_node = pm.createNode("reverse", n=nameFn.generate_name(
+            [self.indexed_name, "auto_aim"], side=self.side, suffix="rev"))
         mdl_node.input2.set(0.1)
         # Attr connections
         self.controls[0].transform.autoAim.connect(mdl_node.input1)
@@ -154,7 +165,8 @@ class HeadComponent(FKComponent):
         instance.pynode.addAttr("headJointIndex", at="long", k=False, dv=head_joint_index)
         instance.pynode.headJointIndex.lock()
         # Adjust head control shape
-        head_ctl_move_vector = transformFn.get_vector(instance.ctl_chain[-2], instance.ctl_chain[-1])
+        head_ctl_move_vector = transformFn.get_vector(
+            instance.ctl_chain[-2], instance.ctl_chain[-1])
         instance.head_control.shape = "circle_pointed"
         scale_dict = {instance.head_control: 0.4}
         instance.scale_controls(scale_dict)
