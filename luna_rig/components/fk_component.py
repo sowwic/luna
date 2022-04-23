@@ -133,8 +133,7 @@ class HeadComponent(FKComponent):
 
     @property
     def neck_controls(self):
-        head_control_index = self.controls.index(self.head_control)
-        return self.controls[:head_control_index]
+        return self.controls[:-1]
 
     class Hooks:
         HEAD = -1
