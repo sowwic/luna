@@ -9,6 +9,7 @@ from luna_rig.functions import jointFn
 class BipedLegComponent(FKIKComponent):
 
     ROLL_ATTRS = ["footRoll", "toeRoll", "heelRoll", "bank", "heelTwist", "toeTwist", "toeTap"]
+    FOOT_CLASS = luna_rig.components.FootComponent
 
     @classmethod
     def create(cls,
@@ -57,13 +58,13 @@ class BipedLegComponent(FKIKComponent):
             foot_roll_axis (str, optional): axis used for foot roll. Defaults to "y".
         """
         # Create control joint chain.
-        foot = luna_rig.components.FootComponent.create(self,
-                                                        start_joint=self.bind_joints[3],
-                                                        end_joint=self.bind_joints[4],
-                                                        rv_chain=reverse_chain,
-                                                        foot_locators_grp=foot_locators_grp,
-                                                        roll_axis=foot_roll_axis,
-                                                        tag=self.tag)
+        foot = self.FOOT_CLASS.create(self,
+                                      start_joint=self.bind_joints[3],
+                                      end_joint=self.bind_joints[4],
+                                      rv_chain=reverse_chain,
+                                      foot_locators_grp=foot_locators_grp,
+                                      roll_axis=foot_roll_axis,
+                                      tag=self.tag)
         return foot
 
     def create_twist(self, hip_joints_count=2, shin_joints_count=2,  mirrored_chain=False,  add_hooks=False):
