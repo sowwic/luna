@@ -42,7 +42,8 @@ class DeltaMushManager(manager_base.AbstractManager):
         new_file_name = self.get_new_file(node, full=False)
         deformerFn.init_painted(deformer)
         try:
-            pm.deformerWeights(new_file_name, fm='JSON', path=self.path, deformer=deformer, attribute=self.EXTRA_ATTRIBS, ex=1, wp=5, wt=0.00001)
+            pm.deformerWeights(new_file_name, fm='JSON', path=self.path,
+                               deformer=deformer, attribute=self.EXTRA_ATTRIBS, ex=1, wp=5, wt=0.00001)
         except Exception:
             Logger.exception('Failed to export deltaMush weights for {0}'.format(node))
 
@@ -56,7 +57,8 @@ class DeltaMushManager(manager_base.AbstractManager):
         if not deformer:
             try:
                 geo_name_parts = nameFn.deconstruct_name(node_name)
-                deformer_name = "{0}_{1}_dms".format(geo_name_parts.side, geo_name_parts.indexed_name)
+                deformer_name = "{0}_{1}_dms".format(
+                    geo_name_parts.side, geo_name_parts.indexed_name)
             except Exception:
                 deformer_name = node_name + "_dms"
             deformer = pm.deltaMush(node_name, n=deformer_name)
@@ -64,17 +66,19 @@ class DeltaMushManager(manager_base.AbstractManager):
         # Set deformer attributes a nd import weights
         for attr_name, attr_value in deformer_attribs.items():
             pm.setAttr('{0}.{1}'.format(deformer, attr_name), attr_value)
-        pm.deformerWeights(self.get_latest_file(node_name, full=False), path=self.path, deformer=deformer, im=1, wp=5, wt=0.00001)
+        pm.deformerWeights(self.get_latest_file(node_name, full=False),
+                           path=self.path, deformer=deformer, im=1, wp=5, wt=0.00001)
         # Connect to character scale
         for axis in 'XYZ':
             if not pm.isConnected(character.root_control.transform.Scale, '{0}.scale{1}'.format(deformer, axis)):
-                character.root_control.transform.Scale.connect('{0}.scale{1}'.format(deformer, axis))
+                character.root_control.transform.Scale.connect(
+                    '{0}.scale{1}'.format(deformer, axis))
         Logger.info('Imported {0} deltaMush weights: {1}'.format(node_name, latest_file))
 
     @classmethod
     def export_all(cls):
         manager = cls()
-        for deformer in deformerFn.list_deformers(cls.DATA_TYPE, under_group=None):
+        for deformer in deformerFn.list_deformers(cls.DATA_TYPE, under_group=manager.character.geometry_grp):
             for geometry in deformer.getGeometry():
                 manager.export_single(pm.PyNode(geometry).getTransform())
 

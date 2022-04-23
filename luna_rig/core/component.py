@@ -266,8 +266,8 @@ class AnimComponent(Component):
 
     @ property
     def character(self):
+        # type: () -> luna_rig.components.Character
         connections = self.pynode.character.listConnections()
-        # type: luna_rig.components.Character
         result = luna_rig.MetaNode(connections[0]) if connections else None
         return result
 
@@ -389,12 +389,12 @@ class AnimComponent(Component):
         """Override: attach to skeleton"""
         Logger.info("{0}: Attaching to skeleton...".format(self))
         for ctl_jnt, bind_jnt in zip(self.ctl_chain, self.bind_joints):
-            if bind_jnt.listConnections(type="parentConstraint"):
+            if not self.character.IGNORE_EXISTING_CONSTRAINTS_ON_SKELETON_ATTACHMENT and bind_jnt.listConnections(type="parentConstraint"):
                 Logger.info("Replacing {0} attachment to {1}".format(bind_jnt, ctl_jnt))
                 pm.delete(bind_jnt.listConnections(type="parentConstraint"))
             pm.parentConstraint(ctl_jnt, bind_jnt, mo=1)
 
-    def detach_from_sekelton(self):
+    def detach_from_skeleton(self):
         for skel_jnt in self.bind_joints:
             pconstr = skel_jnt.listConnections(type="parentConstraint")
             pm.delete(pconstr)
@@ -411,7 +411,7 @@ class AnimComponent(Component):
 
     def bake_and_detach(self, time_range=None):
         self.bake_to_skeleton(time_range)
-        self.detach_from_sekelton()
+        self.detach_from_skeleton()
 
     def bake_to_rig(self, time_range):
         """Override: reverse bake to rig"""
@@ -424,7 +424,7 @@ class AnimComponent(Component):
 
     def remove(self):
         """Delete component from scene"""
-        self.detach_from_sekelton()
+        self.detach_from_skeleton()
         for child in self.meta_children:
             child.remove()
         pm.delete(self.root)

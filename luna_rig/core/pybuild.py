@@ -9,7 +9,13 @@ import luna_rig.functions.asset_files as asset_files
 
 
 class PyBuild(object):
-    def __init__(self, asset_type, asset_name, existing_character=None):
+
+    CHARACTER_CLASS = luna_rig.components.Character
+
+    def __init__(self,
+                 asset_type,
+                 asset_name,
+                 existing_character=None):
 
         # Get project instance
         self.project = luna.workspace.Project.get()
@@ -29,9 +35,9 @@ class PyBuild(object):
         asset_files.import_skeleton()
         # Setup character
         if existing_character:
-            self.character = luna_rig.components.Character(existing_character)
+            self.character = self.CHARACTER_CLASS(existing_character)
         else:
-            self.character = luna_rig.components.Character.create(name=asset_name)
+            self.character = self.CHARACTER_CLASS.create(name=asset_name)
 
         # Override methods
         self.run()
