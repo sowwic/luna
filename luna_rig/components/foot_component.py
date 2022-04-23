@@ -7,7 +7,7 @@ from luna_rig.functions import nameFn
 import luna_rig.functions.animFn as animFn
 
 
-class FootComponent(luna_rig.AnimComponent):
+class AbstractReverseFootComponent(luna_rig.AnimComponent):
     ROLL_ATTRS = ["footRoll", "toeRoll", "heelRoll", "bank", "heelTwist", "toeTwist", "toeTap"]
 
     @property
@@ -17,14 +17,54 @@ class FootComponent(luna_rig.AnimComponent):
 
     @property
     def fk_control(self):
-        return luna_rig.Control(self.pynode.fkControl.listConnections(d=1)[0])
+        return luna_rig.Control(self.pynode.fkControl.get())
 
-    # ============= Getter methods =============== #
     def get_roll_axis(self):
         return self.roll_axis
 
     def get_fk_control(self):
         return self.fk_control
+
+    @classmethod
+    def create(cls,
+               meta_parent=None,  # type: luna_rig.components.FKIKComponent
+               character=None,  # type: luna_rig.components.Character
+               side=None,  # type: str | None
+               name="foot",  # type: str
+               start_joint=None,  # type: str | luna_rig.nt.Joint
+               end_joint=None,  # type: str | luna_rig.nt.Joint | None
+               roll_axis="ry",  # type: str
+               tag="body"  # type: str
+               ):
+        # type: (...) -> AbstractReverseFootComponent
+
+        # Validate arguments
+        if not isinstance(meta_parent, luna_rig.components.FKIKComponent):
+            Logger.error("{0}: Invalid meta_parent type. Should be FKIKComponent.")
+            raise TypeError
+        side = side if side else meta_parent.side
+        # Create instance and add attrs
+        instance = super(AbstractReverseFootComponent, cls).create(meta_parent=meta_parent, side=side,
+                                                                   name=name, character=character, tag=tag)  # type: AbstractReverseFootComponent
+
+        instance.pynode.addAttr("fkControl", at="message")
+        instance.pynode.addAttr("rollAxis", dt="string")
+        instance.pynode.rollAxis.set(roll_axis)
+
+        joint_chain = jointFn.joint_chain(start_joint=start_joint, end_joint=end_joint)
+        attrFn.add_meta_attr(joint_chain)
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=meta_parent.ctl_chain[-1])
+
+        instance._store_bind_joints(joint_chain)
+        instance._store_ctl_chain(ctl_chain)
+
+        return instance
+
+
+class FootComponent(AbstractReverseFootComponent):
 
     @classmethod
     def create(cls,
@@ -39,37 +79,28 @@ class FootComponent(luna_rig.AnimComponent):
                roll_axis="ry",
                tag="body"):
         # Validate arguments
-        if not isinstance(meta_parent, luna_rig.components.FKIKComponent):
-            Logger.error("{0}: Invalid meta_parent type. Should be FKIKComponent.")
-            raise TypeError
-        side = side if side else meta_parent.side
-        foot_locators_grp = pm.PyNode(foot_locators_grp)  # type: luna_rig.nt.Transform
         # Create instance and add attrs
-        instance = super(FootComponent, cls).create(meta_parent=meta_parent, side=side,
-                                                    name=name, character=character, tag=tag)  # type: FootComponent
-        instance.pynode.addAttr("fkControl", at="message")
-        instance.pynode.addAttr("rollAxis", dt="string")
-        instance.pynode.rollAxis.set(roll_axis)
+        instance = super(FootComponent, cls).create(meta_parent=meta_parent,
+                                                    character=character,
+                                                    side=side,
+                                                    name=name,
+                                                    start_joint=start_joint,
+                                                    end_joint=end_joint,
+                                                    roll_axis=roll_axis,
+                                                    tag=tag)  # type: FootComponent
 
         # Chains
-        joint_chain = jointFn.joint_chain(start_joint, end_joint)
-        for jnt in joint_chain:
-            attrFn.add_meta_attr(jnt)
-        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
-                                            new_joint_side=instance.side,
-                                            original_chain=joint_chain)
-
+        foot_locators_grp = pm.PyNode(foot_locators_grp)  # type: luna_rig.nt.Transform
         rv_chain = jointFn.joint_chain(rv_chain)
-        ctl_chain[0].setParent(meta_parent.ctl_chain[-1])
 
         # Foot handles
         ball_handle = pm.ikHandle(n=nameFn.generate_name([instance.indexed_name, "ball"], side=instance.side, suffix="ikh"),
-                                  sj=ctl_chain[0].getParent(),
-                                  ee=ctl_chain[0],
+                                  sj=instance.ctl_chain[0].getParent(),
+                                  ee=instance.ctl_chain[0],
                                   sol="ikSCsolver")[0]
         toe_handle = pm.ikHandle(n=nameFn.generate_name([instance.indexed_name, "toe"], side=instance.side, suffix="ikh"),
-                                 sj=ctl_chain[0],
-                                 ee=ctl_chain[1],
+                                 sj=instance.ctl_chain[0],
+                                 ee=instance.ctl_chain[1],
                                  sol="ikSCsolver")[0]
 
         # Foot locators
@@ -102,13 +133,13 @@ class FootComponent(luna_rig.AnimComponent):
         meta_parent.param_control.transform.fkik.connect(instance.group_ctls.visibility)
         fk_control = luna_rig.Control.create(side=instance.side,
                                              name="{0}_fk".format(instance.indexed_name),
-                                             guide=ctl_chain[0],
+                                             guide=instance.ctl_chain[0],
                                              parent=meta_parent.fk_controls[-1],
                                              delete_guide=False,
                                              attributes="r",
                                              shape="circleCrossed",
                                              tag="fk")
-        pm.orientConstraint(fk_control.transform, ctl_chain[0])
+        pm.orientConstraint(fk_control.transform, instance.ctl_chain[0])
 
         # Fkik blend
         meta_parent.param_control.transform.fkik.connect(ball_handle.ikBlend)
@@ -139,8 +170,6 @@ class FootComponent(luna_rig.AnimComponent):
         bank_condition.outColorR.connect(inner_locator.rotateZ)
 
         # Store objects
-        instance._store_bind_joints(joint_chain)
-        instance._store_ctl_chain(ctl_chain)
         instance._store_controls([fk_control])
         # Store chains
         fk_control.transform.metaParent.connect(instance.pynode.fkControl)

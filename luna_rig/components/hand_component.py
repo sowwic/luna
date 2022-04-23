@@ -1,6 +1,5 @@
 import pymel.core as pm
 import luna_rig
-from luna_rig.importexport.driven_pose import DrivenPoseManager
 
 
 class HandComponent(luna_rig.AnimComponent):

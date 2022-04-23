@@ -2,6 +2,7 @@ import pymel.core as pm
 import luna_rig
 from luna import Logger
 from luna_rig.components import FKIKComponent
+from luna_rig.components import FootComponent
 from luna_rig.functions import attrFn
 from luna_rig.functions import jointFn
 
@@ -9,7 +10,7 @@ from luna_rig.functions import jointFn
 class BipedLegComponent(FKIKComponent):
 
     ROLL_ATTRS = ["footRoll", "toeRoll", "heelRoll", "bank", "heelTwist", "toeTwist", "toeTap"]
-    FOOT_CLASS = luna_rig.components.FootComponent
+    FOOT_CLASS = FootComponent
 
     @classmethod
     def create(cls,
@@ -25,7 +26,7 @@ class BipedLegComponent(FKIKComponent):
                default_fkik_state=1):
 
         full_input_chain = jointFn.joint_chain(start_joint, end_joint)
-        if not len(full_input_chain) == 5:
+        if not len(full_input_chain) >= 4:
             Logger.error("{0}: joint chain must be of length 5. Got {1}".format(
                 cls.as_str(name_only=True), full_input_chain))
             raise ValueError("Invalid joint chain length.")
@@ -67,7 +68,7 @@ class BipedLegComponent(FKIKComponent):
                                       tag=self.tag)
         return foot
 
-    def create_twist(self, hip_joints_count=2, shin_joints_count=2,  mirrored_chain=False,  add_hooks=False):
+    def create_twist(self, hip_joints_count=2, shin_joints_count=2, mirrored_chain=False, add_hooks=False):
         upper_twist = luna_rig.components.TwistComponent.create(self,
                                                                 name="upper_twist",
                                                                 start_joint=self.ctl_chain[0],
