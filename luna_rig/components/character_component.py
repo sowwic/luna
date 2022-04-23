@@ -307,7 +307,7 @@ class Character(luna_rig.Component):
             for connected_node in ctl.transform.listConnections():
                 connected_node.ihi.set(value)
 
-    def add_root_motion(self, follow_object, root_joint=None, children=[]):
+    def add_root_motion(self, follow_object, root_joint=None, children=[], up_axis="y"):
         # Process arguments
         if isinstance(follow_object, luna_rig.Control):
             follow_object = follow_object.transform
@@ -316,7 +316,7 @@ class Character(luna_rig.Component):
         elif not isinstance(root_joint, pm.PyNode):
             root_joint = pm.PyNode(root_joint)  # type: luna_rig.nt.Joint
             root_joint.setParent(self.deformation_rig)
-        pm.pointConstraint(follow_object, root_joint, mo=1, skip="y")
+        pm.pointConstraint(follow_object, root_joint, mo=1, skip=up_axis)
         attrFn.add_meta_attr(root_joint)
         root_joint.metaParent.connect(self.pynode.rootMotionJoint)
         return root_joint
