@@ -533,7 +533,7 @@ class AnimComponent(Component):
             self.root.setParent(character_component.control_rig)
 
     def scale_controls(self, scale_dict):
-        if self.character:
+        if self.character and self.character.geometry_grp.listRelatives(children=True):
             clamped_size = self.character.clamped_size
         else:
             clamped_size = 1.0
