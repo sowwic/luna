@@ -395,9 +395,23 @@ class AnimComponent(Component):
             pm.parentConstraint(ctl_jnt, bind_jnt, mo=1)
 
     def detach_from_skeleton(self):
+        bind_joints_parent_constraints = set()
+        ctl_joints_parent_constraints = set()
+
         for skel_jnt in self.bind_joints:
-            pconstr = skel_jnt.listConnections(type="parentConstraint")
-            pm.delete(pconstr)
+            bind_joints_parent_constraints.update(skel_jnt.listConnections(
+                type="parentConstraint", destination=True))
+
+        for ctl_joint in self.ctl_chain:
+            ctl_joints_parent_constraints.update(
+                ctl_joint.listConnections(type="parentConstraint", source=True))
+
+        common_constraints = bind_joints_parent_constraints.intersection(
+            ctl_joints_parent_constraints)
+        Logger.debug("Deleting constraints: {}".format(common_constraints))
+        for constr_node in common_constraints:
+            pm.delete(constr_node)
+
         Logger.info("{0}: Detached from skeleton.".format(self))
 
     def bake_to_skeleton(self, time_range=None):
