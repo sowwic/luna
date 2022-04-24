@@ -78,7 +78,6 @@ class FootComponent(AbstractReverseFootComponent):
                foot_locators_grp=None,
                roll_axis="ry",
                tag="body"):
-        # Validate arguments
         # Create instance and add attrs
         instance = super(FootComponent, cls).create(meta_parent=meta_parent,
                                                     character=character,
@@ -213,3 +212,29 @@ class FootComponent(AbstractReverseFootComponent):
                 self.fk_control.transform.attr(self.roll_axis).set(
                     self.meta_parent.ik_control.transform.footRoll.get() * -1.0)
                 self.fk_control.transform.attr(self.roll_axis).setKey()
+
+
+class AdvancedFootComponent(AbstractReverseFootComponent):
+
+    @classmethod
+    def create(cls,
+               meta_parent=None,
+               character=None,
+               side=None,
+               name="foot",
+               start_joint=None,
+               end_joint=None,
+               rv_chain=None,
+               roll_axis="ry",
+               tag="body"):
+        # Create instance and add attrs
+        instance = super(AdvancedFootComponent, cls).create(meta_parent=meta_parent,
+                                                            character=character,
+                                                            side=side,
+                                                            name=name,
+                                                            start_joint=start_joint,
+                                                            end_joint=end_joint,
+                                                            roll_axis=roll_axis,
+                                                            tag=tag)  # type: AdvancedFootComponent
+
+        return instance
