@@ -33,14 +33,23 @@ class FKIKSpineNode(SpineNode):
         self.out_self.data_type = editor_conf.DataType.FKIK_SPINE_COMPONENT
 
         # Add inputs
-        self.in_start_joint = self.add_input(editor_conf.DataType.STRING, label='Start Joint', value=None)
-        self.in_end_joint = self.add_input(editor_conf.DataType.STRING, label='End Joint', value=None)
+        self.in_start_joint = self.add_input(
+            editor_conf.DataType.STRING, label='Start Joint', value=None)
+        self.in_end_joint = self.add_input(
+            editor_conf.DataType.STRING, label='End Joint', value=None)
+        self.in_up_axis = self.add_input(editor_conf.DataType.STRING, label="Up Axis", value="y")
+        self.in_forward_axis = self.add_input(
+            editor_conf.DataType.STRING, label="Forward Axis", value="x")
         self.mark_input_as_required(self.in_start_joint)
 
-        self.out_hook_root = self.add_output(editor_conf.DataType.NUMERIC, label='Hook Root', value=self.COMPONENT_CLASS.Hooks.ROOT.value)
-        self.out_hook_hips = self.add_output(editor_conf.DataType.NUMERIC, label='Hook Hips', value=self.COMPONENT_CLASS.Hooks.HIPS.value)
-        self.out_hook_mid = self.add_output(editor_conf.DataType.NUMERIC, label='Hook Mid', value=self.COMPONENT_CLASS.Hooks.MID.value)
-        self.out_hook_chest = self.add_output(editor_conf.DataType.NUMERIC, label='Hook Chest', value=self.COMPONENT_CLASS.Hooks.CHEST.value)
+        self.out_hook_root = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook Root', value=self.COMPONENT_CLASS.Hooks.ROOT.value)
+        self.out_hook_hips = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook Hips', value=self.COMPONENT_CLASS.Hooks.HIPS.value)
+        self.out_hook_mid = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook Mid', value=self.COMPONENT_CLASS.Hooks.MID.value)
+        self.out_hook_chest = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook Chest', value=self.COMPONENT_CLASS.Hooks.CHEST.value)
 
     def execute(self):
         self.component_instance = self.COMPONENT_CLASS.create(meta_parent=self.in_meta_parent.value(),
@@ -50,6 +59,8 @@ class FKIKSpineNode(SpineNode):
                                                               name=self.in_name.value(),
                                                               start_joint=self.in_start_joint.value(),
                                                               end_joint=self.in_end_joint.value(),
+                                                              up_axis=self.in_up_axis.value(),
+                                                              forward_axis=self.in_forward_axis.value(),
                                                               tag=self.in_tag.value())
         # Set outputs
         self.out_self.set_value(self.component_instance)

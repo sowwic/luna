@@ -7,7 +7,7 @@ class OppositeSide(Enum):
 
 
 class CharacterMembers(Enum):
-    node = "character_grp"
+    top_node = "rig"
     control_rig = "control_rig"
     geometry = "geometry_grp"
     deformation_rig = "deformation_rig"

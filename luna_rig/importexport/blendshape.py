@@ -66,7 +66,8 @@ class BlendShapeManager(manager.AbstractManager):
         if not geometry:
             Logger.error("{0}: Mapping missing for {1}".format(self, bs_node))
         if not pm.objExists(geometry):
-            Logger.warning("{0}: Geometry {1} for shape {2} no longer exists, skipping...".format(self, geometry, bs_node))
+            Logger.warning("{0}: Geometry {1} for shape {2} no longer exists, skipping...".format(
+                self, geometry, bs_node))
             return False
         # Check if blendshape already exists and create one if not.
         geometry = pm.PyNode(geometry)  # type: luna_rig.nt.Shape
@@ -84,10 +85,10 @@ class BlendShapeManager(manager.AbstractManager):
             return False
 
     @classmethod
-    def export_all(cls, under_group=static.CharacterMembers.geometry.value):
+    def export_all(cls):
         bs_manager = cls()
         export_list = []
-        export_list = deformerFn.list_deformers(cls.DATA_TYPE, under_group=under_group)
+        export_list = deformerFn.list_deformers(cls.DATA_TYPE, bs_manager.character.geometry_grp)
         for shape in export_list:
             bs_manager.export_single(shape)
 

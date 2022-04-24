@@ -30,10 +30,10 @@ class CharacterTests(TestCase):
 
         # Instance members
         self.assertEqual(instance.tag, "character")
-        self.assertEqual(str(instance.control_rig), static.CharacterMembers.control_rig.value)
-        self.assertEqual(str(instance.deformation_rig), static.CharacterMembers.deformation_rig.value)
-        self.assertEqual(str(instance.geometry_grp), static.CharacterMembers.geometry.value)
-        self.assertEqual(str(instance.locators_grp), static.CharacterMembers.locators.value)
+        self.assertEqual(str(instance.control_rig), instance.CONTROL_RIG_GRP_NAME)
+        self.assertEqual(str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME)
+        self.assertEqual(str(instance.geometry_grp), instance.GEOMETRY_GRP_NAME)
+        self.assertEqual(str(instance.locators_grp), instance.LOCATORS_GRP_NAME)
         self.assertTrue(pm.objExists(instance.world_locator))
 
         # Save test scene
@@ -56,10 +56,10 @@ class CharacterTests(TestCase):
         self.assertTrue(pm.hasAttr(instance.pynode, "worldLocator"))
 
         # Main groups
-        self.assertEqual(str(instance.control_rig), static.CharacterMembers.control_rig.value)
-        self.assertEqual(str(instance.deformation_rig), static.CharacterMembers.deformation_rig.value)
-        self.assertEqual(str(instance.geometry_grp), static.CharacterMembers.geometry.value)
-        self.assertEqual(str(instance.locators_grp), static.CharacterMembers.locators.value)
+        self.assertEqual(str(instance.control_rig), instance.CONTROL_RIG_GRP_NAME)
+        self.assertEqual(str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME)
+        self.assertEqual(str(instance.geometry_grp), instance.GEOMETRY_GRP_NAME)
+        self.assertEqual(str(instance.locators_grp), instance.LOCATORS_GRP_NAME)
         self.assertTrue(pm.objExists(instance.world_locator))
 
         # Data struct

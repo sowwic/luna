@@ -11,6 +11,17 @@ import luna_rig.functions.jointFn as jointFn
 
 
 class Character(luna_rig.Component):
+
+    TOP_RIG_NODE_NAME = static.CharacterMembers.top_node.value
+    GEOMETRY_GRP_NAME = static.CharacterMembers.geometry.value
+    DEFORMATION_RIG_GRP_NAME = static.CharacterMembers.deformation_rig.value
+    CONTROL_RIG_GRP_NAME = static.CharacterMembers.control_rig.value
+    LOCATORS_GRP_NAME = static.CharacterMembers.locators.value
+    UTIL_GRP_NAME = static.CharacterMembers.util_group.value
+    WORLD_SPACE_LOCATOR_NAME = static.CharacterMembers.world_space.value
+
+    IGNORE_EXISTING_CONSTRAINTS_ON_SKELETON_ATTACHMENT = False
+
     @property
     def root_control(self):
         return luna_rig.Control(self.pynode.rootCtl.listConnections()[0])
@@ -139,25 +150,25 @@ class Character(luna_rig.Component):
                                                shape="character",
                                                tag="root",
                                                orient_axis="y")
-        root_control.group.rename("rig")
-        control_rig = pm.createNode('transform', n=static.CharacterMembers.control_rig.value,
+        root_control.group.rename(instance.TOP_RIG_NODE_NAME)
+        control_rig = pm.createNode('transform', n=instance.CONTROL_RIG_GRP_NAME,
                                     p=root_control.transform)  # type: luna_rig.nt.Transform
-        deformation_rig = pm.createNode('transform', n=static.CharacterMembers.deformation_rig.value,
+        deformation_rig = pm.createNode('transform', n=instance.DEFORMATION_RIG_GRP_NAME,
                                         p=root_control.transform)  # type: luna_rig.nt.Transform
-        locators_grp = pm.createNode('transform', n=static.CharacterMembers.locators.value,
+        locators_grp = pm.createNode('transform', n=instance.LOCATORS_GRP_NAME,
                                      p=root_control.transform)  # type: luna_rig.nt.Transform
         world_locator = pm.spaceLocator(
-            n=static.CharacterMembers.world_space.value)  # type: luna_rig.nt.Locator
-        util_grp = pm.createNode('transform', n=static.CharacterMembers.util_group.value,
+            n=instance.WORLD_SPACE_LOCATOR_NAME)  # type: luna_rig.nt.Locator
+        util_grp = pm.createNode('transform', n=instance.UTIL_GRP_NAME,
                                  p=root_control.transform)  # type: luna_rig.nt.Transform
         pm.parent(world_locator, locators_grp)
 
         # Handle geometry group
-        if not pm.objExists(static.CharacterMembers.geometry.value):
+        if not pm.objExists(instance.GEOMETRY_GRP_NAME):
             geometry_grp = pm.createNode(
-                'transform', n=static.CharacterMembers.geometry.value, p=root_control.transform)
+                'transform', n=instance.GEOMETRY_GRP_NAME, p=root_control.transform)
         else:
-            geometry_grp = pm.PyNode(static.CharacterMembers.geometry.value)
+            geometry_grp = pm.PyNode(instance.GEOMETRY_GRP_NAME)
             pm.parent(geometry_grp, root_control.transform)
             geometry_grp.inheritsTransform.set(0)
 
@@ -263,12 +274,20 @@ class Character(luna_rig.Component):
         if not time_range:
             time_range = animFn.get_playback_range()
         Logger.info("{0}: Baking to skeleton {1}...".format(self, time_range))
+        if not self.bind_joints:
+            Logger.warning("{} | No bind joints found for baking.".format(self))
+            return
         pm.bakeResults(self.bind_joints, time=time_range, simulation=True)
 
     def bake_and_detach(self, time_range=None):
         self.bake_to_skeleton(time_range=time_range)
         for anim_comp in self.get_meta_children(of_type=luna_rig.AnimComponent):
-            anim_comp.detach_from_sekelton()
+            anim_comp.detach_from_skeleton()
+
+    def disassemble_rig_hierarchy(self):
+        self.geometry_grp.setParent(None)
+        for child in self.deformation_rig.getChildren():
+            child.setParent(None)
 
     def remove(self, time_range=None):
         # Bake root
@@ -278,10 +297,7 @@ class Character(luna_rig.Component):
         # Bake components
         self.bake_and_detach(time_range)
         # Remove rig
-        for child in self.geometry_grp.getChildren():
-            child.setParent(None)
-        for child in self.deformation_rig.getChildren():
-            child.setParent(None)
+        self.disassemble_rig_hierarchy()
         pm.delete(self.root_control.group)
         self._delete_util_nodes()
         pm.delete(self.pynode)
@@ -291,7 +307,7 @@ class Character(luna_rig.Component):
             for connected_node in ctl.transform.listConnections():
                 connected_node.ihi.set(value)
 
-    def add_root_motion(self, follow_object, root_joint=None, children=[]):
+    def add_root_motion(self, follow_object, root_joint=None, children=[], up_axis="y"):
         # Process arguments
         if isinstance(follow_object, luna_rig.Control):
             follow_object = follow_object.transform
@@ -300,7 +316,7 @@ class Character(luna_rig.Component):
         elif not isinstance(root_joint, pm.PyNode):
             root_joint = pm.PyNode(root_joint)  # type: luna_rig.nt.Joint
             root_joint.setParent(self.deformation_rig)
-        pm.pointConstraint(follow_object, root_joint, mo=1, skip="y")
+        pm.pointConstraint(follow_object, root_joint, mo=1, skip=up_axis)
         attrFn.add_meta_attr(root_joint)
         root_joint.metaParent.connect(self.pynode.rootMotionJoint)
         return root_joint
@@ -373,3 +389,94 @@ class Character(luna_rig.Component):
             for target_ctl in target_component.controls:
                 if target_ctl.transform.stripNamespace() == source_ctl.transform.stripNamespace():
                     source_ctl.copy_keyframes(time_range, target_ctl, time_offset=time_offset)
+
+
+class MetaHumanCharacter(Character):
+
+    TOP_RIG_NODE_NAME = "rig"
+    META_HUMAN_RIG = "metahuman_rig"
+    GEOMETRY_GRP_NAME = "export_geo_GRP"
+    HEAD_SKELETON_ROOT = "DHIhead:spine_04"
+    BODY_SKELETON_ROOT = "DHIbody:root"
+    DRIVER_SKELETON_ROOT = "root_drv"
+
+    IGNORE_EXISTING_CONSTRAINTS_ON_SKELETON_ATTACHMENT = True
+
+    @classmethod
+    def create(cls, meta_parent=None, name="meta_human_character", tag="character"):
+        try:
+            metahuman_rig_node = pm.PyNode(cls.TOP_RIG_NODE_NAME)  # type: luna_rig.nt.Transform
+            metahuman_rig_node.rename(cls.META_HUMAN_RIG)
+        except Exception as err:
+            Logger.error("Failed to find metahuman top rig node: {}".format(cls.TOP_RIG_NODE_NAME))
+            raise err
+
+        instance = super(MetaHumanCharacter, cls).create(
+            meta_parent, name, tag)  # type: MetaHumanCharacter
+
+        instance.pynode.addAttr("metahumanRig", at="message")
+        instance.pynode.addAttr("metahumanDriverSkeletonRoot", at="message")
+        instance.pynode.addAttr("metahumanHeadSkeletonRoot", at="message")
+        instance.pynode.addAttr("metahumanBodySkeletonRoot", at="message")
+
+        # Store meta human rig parts on meta node
+        metahuman_driver_skeleton_root = pm.PyNode(
+            instance.DRIVER_SKELETON_ROOT)  # type: luna_rig.nt.Joint
+        metahuman_head_skeleton_root = pm.PyNode(
+            instance.HEAD_SKELETON_ROOT)  # type: luna_rig.nt.Joint
+        metahuman_body_skeleton_root = pm.PyNode(
+            instance.BODY_SKELETON_ROOT)  # type: luna_rig.nt.Joint
+
+        attrFn.add_meta_attr(
+            [metahuman_rig_node, metahuman_driver_skeleton_root, metahuman_body_skeleton_root, metahuman_head_skeleton_root])
+
+        metahuman_rig_node.metaParent.connect(instance.pynode.metahumanRig)
+        metahuman_body_skeleton_root.metaParent.connect(instance.pynode.metahumanBodySkeletonRoot)
+        metahuman_head_skeleton_root.metaParent.connect(instance.pynode.metahumanHeadSkeletonRoot)
+        metahuman_driver_skeleton_root.metaParent.connect(
+            instance.pynode.metahumanDriverSkeletonRoot)
+
+        # Parent metahuman rig parts under ri hierarchy
+        metahuman_head_skeleton_root.setParent(metahuman_rig_node)
+        metahuman_body_skeleton_root.setParent(metahuman_rig_node)
+        metahuman_driver_skeleton_root.setParent(instance.deformation_rig)
+        metahuman_rig_node.setParent(instance.root_control.group)
+
+        return instance
+
+    def metahuman_head_skeleton_root(self):
+        # type: () -> luna_rig.nt.Joint
+        return self.pynode.metahumanHeadSkeletonRoot.get()
+
+    def metahuman_body_skeleton_root(self):
+        # type: () -> luna_rig.nt.Joint
+        return self.pynode.metahumanBodySkeletonRoot.get()
+
+    def metahuman_driver_skeleton_root(self):
+        # type: () -> luna_rig.nt.Joint
+        return self.pynode.metahumanDriverSkeletonRoot.get()
+
+    def metahuman_rig_node(self):
+        # type: () -> luna_rig.nt.Transform
+        return self.pynode.metahumanRig.get()
+
+    def get_size(self, axis="y"):
+        bounding_box = pm.exactWorldBoundingBox(self.META_HUMAN_RIG, ii=True)
+        if axis == "x":
+            return bounding_box[3] - bounding_box[0]
+        elif axis == "y":
+            return bounding_box[4] - bounding_box[1]
+        elif axis == "z":
+            return bounding_box[5] - bounding_box[2]
+
+    def disassemble_rig_hierarchy(self):
+        self.metahuman_rig_node().setParent(None)
+        self.metahuman_body_skeleton_root().setParent(None)
+        self.metahuman_head_skeleton_root().setParent(None)
+        self.metahuman_driver_skeleton_root().setParent(None)
+        super(MetaHumanCharacter, self).disassemble_rig_hierarchy()
+
+    def remove(self, time_range=None):
+        meta_human_node = self.metahuman_rig_node()
+        super(MetaHumanCharacter, self).remove(time_range)
+        meta_human_node.rename(self.__class__.TOP_RIG_NODE_NAME)

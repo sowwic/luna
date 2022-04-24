@@ -266,8 +266,8 @@ class AnimComponent(Component):
 
     @ property
     def character(self):
+        # type: () -> luna_rig.components.Character
         connections = self.pynode.character.listConnections()
-        # type: luna_rig.components.Character
         result = luna_rig.MetaNode(connections[0]) if connections else None
         return result
 
@@ -389,15 +389,29 @@ class AnimComponent(Component):
         """Override: attach to skeleton"""
         Logger.info("{0}: Attaching to skeleton...".format(self))
         for ctl_jnt, bind_jnt in zip(self.ctl_chain, self.bind_joints):
-            if bind_jnt.listConnections(type="parentConstraint"):
+            if not self.character.IGNORE_EXISTING_CONSTRAINTS_ON_SKELETON_ATTACHMENT and bind_jnt.listConnections(type="parentConstraint"):
                 Logger.info("Replacing {0} attachment to {1}".format(bind_jnt, ctl_jnt))
                 pm.delete(bind_jnt.listConnections(type="parentConstraint"))
             pm.parentConstraint(ctl_jnt, bind_jnt, mo=1)
 
-    def detach_from_sekelton(self):
+    def detach_from_skeleton(self):
+        bind_joints_parent_constraints = set()
+        ctl_joints_parent_constraints = set()
+
         for skel_jnt in self.bind_joints:
-            pconstr = skel_jnt.listConnections(type="parentConstraint")
-            pm.delete(pconstr)
+            bind_joints_parent_constraints.update(skel_jnt.listConnections(
+                type="parentConstraint", destination=True))
+
+        for ctl_joint in self.ctl_chain:
+            ctl_joints_parent_constraints.update(
+                ctl_joint.listConnections(type="parentConstraint", source=True))
+
+        common_constraints = bind_joints_parent_constraints.intersection(
+            ctl_joints_parent_constraints)
+        Logger.debug("Deleting constraints: {}".format(common_constraints))
+        for constr_node in common_constraints:
+            pm.delete(constr_node)
+
         Logger.info("{0}: Detached from skeleton.".format(self))
 
     def bake_to_skeleton(self, time_range=None):
@@ -411,7 +425,7 @@ class AnimComponent(Component):
 
     def bake_and_detach(self, time_range=None):
         self.bake_to_skeleton(time_range)
-        self.detach_from_sekelton()
+        self.detach_from_skeleton()
 
     def bake_to_rig(self, time_range):
         """Override: reverse bake to rig"""
@@ -424,7 +438,7 @@ class AnimComponent(Component):
 
     def remove(self):
         """Delete component from scene"""
-        self.detach_from_sekelton()
+        self.detach_from_skeleton()
         for child in self.meta_children:
             child.remove()
         pm.delete(self.root)
@@ -519,8 +533,9 @@ class AnimComponent(Component):
             self.root.setParent(character_component.control_rig)
 
     def scale_controls(self, scale_dict):
-        if self.character:
+        if self.character and self.character.clamped_size > 1.0:
             clamped_size = self.character.clamped_size
+            Logger.debug(self.character.clamped_size)
         else:
             clamped_size = 1.0
 
