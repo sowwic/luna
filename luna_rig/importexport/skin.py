@@ -23,7 +23,8 @@ class SkinManager(AbstractManager):
 
     def __init__(self):
         super(SkinManager, self).__init__()
-        self.file_format = luna.Config.get(luna.RigVars.skin_export_format, default="pickle")  # type: str
+        self.file_format = luna.Config.get(
+            luna.RigVars.skin_export_format, default="pickle")  # type: str
         # Verify format
         if self.file_format not in ["json", "pickle"]:
             Logger.error("{0}: Invalid file format: {1}".format(self, self.file_format))
@@ -51,10 +52,12 @@ class SkinManager(AbstractManager):
         deformer = deformerFn.get_deformer(node, self.DATA_TYPE)
         # Do before export checks
         if not deformer:
-            Logger.warning("{0}: No {1} deformer found in {2} history".format(self, self.DATA_TYPE, node))
+            Logger.warning("{0}: No {1} deformer found in {2} history".format(
+                self, self.DATA_TYPE, node))
             return
         if not deformerFn.is_painted(deformer):
-            Logger.warning("{0}: {1} on {2} has no weights initialized, nothing to export.".format(self, deformer, node))
+            Logger.warning("{0}: {1} on {2} has no weights initialized, nothing to export.".format(
+                self, deformer, node))
             return
         # Export
         new_file = self.get_new_file(node)
@@ -82,14 +85,10 @@ class SkinManager(AbstractManager):
             Logger.exception("{0}: Failed to import weights for: {1}".format(self, geo_name))
 
     @classmethod
-    def export_all(cls, under_group=static.CharacterMembers.geometry.value):
-        """Export all skinCluster weights to skin folder.
-
-        :param under_group: Limit export to nodes that are decendant of this group, defaults to static.CharacterMembers.geometry.value
-        :type under_group: str, pm.PyNode, optional
-        """
+    def export_all(cls):
+        """Export all skinCluster weights under geometry_grp to skin folder."""
         skin_manager = cls()
-        for deformer_node in deformerFn.list_deformers(cls.DATA_TYPE, under_group=under_group):
+        for deformer_node in deformerFn.list_deformers(cls.DATA_TYPE, skin_manager.character.geometry_grp):
             geo_nodes = deformer_node.getGeometry()
             for geo in geo_nodes:
                 skin_manager.export_single(geo.getTransform())
@@ -101,7 +100,8 @@ class SkinManager(AbstractManager):
         Logger.info("{0}: Importing weights...".format(skin_manager))
         for geo_name in skin_manager.versioned_files.keys():
             if not pm.objExists(geo_name):
-                Logger.warning("{0}: Object {1} no longer exists, skipping...".format(skin_manager, geo_name))
+                Logger.warning("{0}: Object {1} no longer exists, skipping...".format(
+                    skin_manager, geo_name))
                 continue
             skin_manager.import_single(geo_name)
 
@@ -263,11 +263,13 @@ class SkinCluster(object):
         if not deformer:
             try:
                 geo_name_parts = nameFn.deconstruct_name(geometry)
-                cluster_name = "{0}_{1}_skin".format(geo_name_parts.side, geo_name_parts.indexed_name)
+                cluster_name = "{0}_{1}_skin".format(
+                    geo_name_parts.side, geo_name_parts.indexed_name)
             except Exception:
                 cluster_name = str(geometry) + "_skin"
             cls.__create_missing_joints(skin_data)
-            deformer = pm.skinCluster(skin_data["weights"].keys(), geometry, tsb=True, nw=2, n=cluster_name)
+            deformer = pm.skinCluster(skin_data["weights"].keys(),
+                                      geometry, tsb=True, nw=2, n=cluster_name)
         skin = SkinCluster(deformer)
         skin.set_data(skin_data)
 

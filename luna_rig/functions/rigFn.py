@@ -24,6 +24,7 @@ def list_controls():
 
 
 def get_build_character():
+    # type: () -> luna_rig.components.Character
     """Gets character component of current build.
 
     :return: Character meta node as Character instance.

@@ -121,6 +121,8 @@ class FKIKSpineComponent(SpineComponent):
                name='spine',
                start_joint=None,
                end_joint=None,
+               up_axis="y",
+               forward_axis="x",
                tag="body"):
         # Create instance and add attrs
         instance = super(FKIKSpineComponent, cls).create(meta_parent=meta_parent, side=side,
@@ -134,7 +136,7 @@ class FKIKSpineComponent(SpineComponent):
         jointFn.validate_rotations(joint_chain)
         for jnt in joint_chain:
             attrFn.add_meta_attr(jnt)
-        # ctl_chain = jointFn.duplicate_chain(original_chain=joint_chain, add_name="ctl", new_parent=instance.group_joints)
+
         ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
                                             new_joint_side=instance.side,
                                             original_chain=joint_chain,
@@ -147,15 +149,15 @@ class FKIKSpineComponent(SpineComponent):
                                              parent=instance.group_noscale)
         attrFn.add_meta_attr(ik_curve)
         pm.rebuildCurve(ik_curve, d=3, kep=1, rpo=1, ch=0, tol=0.01, spans=4)
-        ik_handle = pm.ikHandle(n=nameFn.generate_name([instance.name], side=instance.side, suffix="ikh"),
-                                sj=ctl_chain[0],
-                                ee=ctl_chain[-1],
-                                c=ik_curve,
+        ik_handle = pm.ikHandle(name=nameFn.generate_name([instance.name], side=instance.side, suffix="ikh"),
+                                startJoint=ctl_chain[0],
+                                endEffector=ctl_chain[-1],
+                                curve=ik_curve,
                                 sol="ikSplineSolver",
-                                roc=1,
-                                pcv=0,
-                                ccv=0,
-                                scv=0)[0]
+                                rootOnCurve=1,
+                                parentCurve=0,
+                                createCurve=0,
+                                simplifyCurve=0)[0]
         pm.parent(ik_handle, instance.group_parts)
 
         # Create IK controls
@@ -171,17 +173,19 @@ class FKIKSpineComponent(SpineComponent):
                                                attributes="tr",
                                                color="red",
                                                shape="root",
-                                               orient_axis="y")
+                                               orient_axis=up_axis)
+
         # Hips
         hips_control = luna_rig.Control.create(side=instance.side,
                                                name="{0}_hips".format(instance.indexed_name),
-                                               guide=ctl_locator,
+                                               guide=ctl_chain[0],
                                                delete_guide=False,
                                                parent=root_control,
                                                joint=True,
                                                attributes="tr",
                                                shape="hips",
-                                               orient_axis="y")
+                                               orient_axis=forward_axis)
+
         # Mid
         ctl_locator.translate.set(pm.pointOnCurve(ik_curve, pr=0.5, top=1))
         mid_control = luna_rig.Control.create(side=instance.side,
@@ -192,20 +196,23 @@ class FKIKSpineComponent(SpineComponent):
                                               joint=True,
                                               attributes="tr",
                                               shape="circle",
-                                              orient_axis="y")
+                                              orient_axis=forward_axis)
         mid_control.transform.addAttr("followChest", at="float", dv=0.0, k=1)
         mid_control.transform.addAttr("followHips", at="float", dv=0.0, k=1)
         # Chest
         ctl_locator.translate.set(pm.pointOnCurve(ik_curve, pr=1.0, top=1))
         chest_control = luna_rig.Control.create(side=instance.side,
                                                 name="{0}_chest".format(instance.indexed_name),
-                                                guide=ctl_locator,
+                                                guide=ctl_chain[-1],
                                                 delete_guide=False,
                                                 parent=root_control,
                                                 joint=True,
                                                 attributes="tr",
                                                 shape="chest",
-                                                orient_axis="y")
+                                                orient_axis=forward_axis)
+
+        pm.delete(pm.orientConstraint(chest_control.group, hips_control.group, mid_control.group))
+
         # Connect IK controls
         # type: luna_rig.nt.ParentConstraint
         mid_ctl_constr = pm.parentConstraint(
@@ -237,7 +244,9 @@ class FKIKSpineComponent(SpineComponent):
                                               joint=True,
                                               attributes="tr",
                                               shape="circleCrossed",
-                                              orient_axis="y")
+                                              orient_axis=forward_axis)
+        pm.delete(pm.orientConstraint(hips_control.group, mid_control.group, fk1_control.group))
+
         ctl_locator.translate.set(pm.pointOnCurve(ik_curve, pr=0.75, top=1))
         fk2_control = luna_rig.Control.create(side=instance.side,
                                               name="{0}_fk".format(instance.indexed_name),
@@ -247,7 +256,8 @@ class FKIKSpineComponent(SpineComponent):
                                               joint=True,
                                               attributes="tr",
                                               shape="circleCrossed",
-                                              orient_axis="y")
+                                              orient_axis=forward_axis)
+        pm.delete(pm.orientConstraint(hips_control.group, mid_control.group, fk2_control.group))
         pm.matchTransform(fk2_control.joint, ctl_chain[-1])
         pm.makeIdentity(fk2_control.joint, apply=True)
         pm.parentConstraint(fk2_control.joint, chest_control.group, mo=1)

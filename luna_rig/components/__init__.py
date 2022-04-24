@@ -1,13 +1,19 @@
 # Character/ Anim components
 from .character_component import Character
+from .character_component import MetaHumanCharacter
+
 from .fk_component import FKComponent
 from .fk_component import HeadComponent
+
 from .ik_component import IKComponent
 from .ik_component import IKSplineComponent
+
 from .fkik_component import FKIKComponent
 from .fk_dynamics_component import FKDynamicsComponent
+
 from .spine_component import FKIKSpineComponent
 from .spine_component import RibbonSpineComponent
+
 from .foot_component import FootComponent
 from .twist_component import TwistComponent
 from .hand_component import HandComponent

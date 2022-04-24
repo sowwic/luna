@@ -18,14 +18,20 @@ class FKIKComponentNode(base_component.AnimComponentNode):
         self.out_self.data_type = editor_conf.DataType.FKIK_COMPONENT
 
         self.in_name.set_value('fkik_component')
-        self.in_start_joint = self.add_input(editor_conf.DataType.STRING, label='Start Joint', value=None)
-        self.in_end_joint = self.add_input(editor_conf.DataType.STRING, label='End Joint', value=None)
-        self.in_ik_world_orient = self.add_input(editor_conf.DataType.BOOLEAN, label='IK World Orient', value=False)
-        self.in_default_state = self.add_input(editor_conf.DataType.BOOLEAN, label='Default to IK', value=True)
+        self.in_start_joint = self.add_input(
+            editor_conf.DataType.STRING, label='Start Joint', value=None)
+        self.in_end_joint = self.add_input(
+            editor_conf.DataType.STRING, label='End Joint', value=None)
+        self.in_ik_world_orient = self.add_input(
+            editor_conf.DataType.BOOLEAN, label='IK World Orient', value=False)
+        self.in_default_state = self.add_input(
+            editor_conf.DataType.BOOLEAN, label='Default to IK', value=True)
         self.in_param_locator = self.add_input(editor_conf.DataType.STRING, 'Param Locator')
 
-        self.out_hook_start_jnt = self.add_output(editor_conf.DataType.NUMERIC, label='Hook Start', value=self.COMPONENT_CLASS.Hooks.START_JNT.value)
-        self.out_hook_end_jnt = self.add_output(editor_conf.DataType.NUMERIC, label='Hook End', value=self.COMPONENT_CLASS.Hooks.END_JNT.value)
+        self.out_hook_start_jnt = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook Start', value=self.COMPONENT_CLASS.Hooks.START_JNT.value)
+        self.out_hook_end_jnt = self.add_output(
+            editor_conf.DataType.NUMERIC, label='Hook End', value=self.COMPONENT_CLASS.Hooks.END_JNT.value)
 
     def execute(self):
         self.component_instance = self.COMPONENT_CLASS.create(meta_parent=self.in_meta_parent.value(),
@@ -145,4 +151,10 @@ def register_plugin():
                                       ('Hook End', editor_conf.DataType.NUMERIC)
                                   ]),
                                   nice_name='Get End Hook',
+                                  category='FKIK Component')
+    editor_conf.register_function(FKIKComponentNode.COMPONENT_CLASS.add_fk_orient_switch,
+                                  editor_conf.DataType.FKIK_COMPONENT,
+                                  inputs_dict={
+                                      "FKIK Component": editor_conf.DataType.FKIK_COMPONENT},
+                                  nice_name="Add FK orient switch",
                                   category='FKIK Component')

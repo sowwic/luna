@@ -1,6 +1,19 @@
 luna
 =========================
 
+v 0.2.12
+-------
+* Allow model to be not specified.
+* Fixes to support MetaHuman based character.
+* FKIKSpine orientation fixes.
+* Character: add option to specify up axis for root motion.
+* BipedLeg: add option to specify class used for foot creation.
+* Hand: add option to specify end joints for five finger setup.
+* Add AbstractReverseFootComponent.
+* AnimComponent: improve skeleton detachment logic.
+* Add new inputs to FKIK spine node.
+* FKIKComponent node: add new axis attributes.
+
 v 0.2.11
 -------
 * Decoupled duplicated rig control joints from input skeleton joint names.

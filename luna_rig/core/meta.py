@@ -47,7 +47,8 @@ class MetaNode(object):
                 eval_class = eval(class_string, globals(), locals())
                 result = eval_class.__new__(eval_class, node)
             except Exception:
-                Logger.exception("{0}: Failed to evaluate class string: {1}".format(cls, class_string))
+                Logger.exception(
+                    "{0}: Failed to evaluate class string: {1}".format(cls, class_string))
                 raise
         else:
             result = super(MetaNode, cls)
@@ -189,6 +190,7 @@ class MetaNode(object):
         self.pynode.metaParent.connect(parent.pynode.metaChildren, na=1)
 
     def get_meta_children(self, of_type=None, by_tag=""):
+        # type: (type[MetaNode], str) -> list[MetaNode]
         """Get list of connected meta children
 
         :param of_type: Only list children of specific type, defaults to None
@@ -202,7 +204,8 @@ class MetaNode(object):
         if self.pynode.hasAttr("metaChildren"):
             connections = self.pynode.metaChildren.listConnections()
             if connections:
-                children = [MetaNode(connection_node) for connection_node in connections if pm.hasAttr(connection_node, "metaType")]
+                children = [MetaNode(connection_node) for connection_node in connections if pm.hasAttr(
+                    connection_node, "metaType")]
                 # Type filter
                 if not of_type:
                     result = children
@@ -267,7 +270,8 @@ class MetaNode(object):
     @staticmethod
     def get_connected_metanode(node, of_type=None):
         node = pm.PyNode(node)
-        all_nodes = [MetaNode(network) for network in node.listConnections(type="network") if network.hasAttr("metaType")]
+        all_nodes = [MetaNode(network) for network in node.listConnections(
+            type="network") if network.hasAttr("metaType")]
         if of_type:
             result = [meta_node for meta_node in all_nodes if isinstance(meta_node, of_type)]
         else:
