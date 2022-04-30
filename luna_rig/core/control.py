@@ -45,23 +45,25 @@ class Control(object):
 
     @classmethod
     def create(cls,
-               name="control_obj",
-               side="c",
-               guide=None,
-               parent=None,
-               attributes="tr",
-               delete_guide=False,
-               match_pos=True,
-               match_orient=True,
-               match_pivot=True,
-               color=None,
-               offset_grp=True,
-               joint=False,
-               shape="cube",
-               tag="",
-               component=None,
-               orient_axis="x",
-               scale=1.0):
+               name="control_obj",  # type: str | list[str]
+               side="c",  # type: str
+               guide=None,  # type: str
+               parent=None,  # type: str | Control
+               attributes="tr",  # type: str
+               delete_guide=False,  # type: bool
+               match_pos=True,  # type: bool
+               match_orient=True,  # type: bool
+               match_pivot=True,  # type: bool
+               color=None,  # type: int | static.ColorIndex
+               offset_grp=True,  # type: bool
+               joint=False,  # type: bool
+               shape="cube",  # type: str
+               tag="",  # type: str
+               component=None,  # type: luna_rig.AnimComponent
+               orient_axis="x",  # type: str
+               scale=1.0  # type: float
+               ):
+        # type: (...) -> Control
         """Control creation method
 
         :param name: Control name, defaults to "control_obj"

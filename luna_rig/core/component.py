@@ -535,7 +535,6 @@ class AnimComponent(Component):
     def scale_controls(self, scale_dict):
         if self.character and self.character.clamped_size > 1.0:
             clamped_size = self.character.clamped_size
-            Logger.debug(self.character.clamped_size)
         else:
             clamped_size = 1.0
 
