@@ -31,8 +31,6 @@ class AbstractReverseFootComponent(luna_rig.AnimComponent):
                character=None,  # type: luna_rig.components.Character
                side=None,  # type: str | None
                name="foot",  # type: str
-               start_joint=None,  # type: str | luna_rig.nt.Joint
-               end_joint=None,  # type: str | luna_rig.nt.Joint | None
                roll_axis="ry",  # type: str
                tag="body"  # type: str
                ):
@@ -50,16 +48,6 @@ class AbstractReverseFootComponent(luna_rig.AnimComponent):
         instance.pynode.addAttr("fkControl", at="message")
         instance.pynode.addAttr("rollAxis", dt="string")
         instance.pynode.rollAxis.set(roll_axis)
-
-        joint_chain = jointFn.joint_chain(start_joint=start_joint, end_joint=end_joint)
-        attrFn.add_meta_attr(joint_chain)
-        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
-                                            new_joint_side=instance.side,
-                                            original_chain=joint_chain,
-                                            new_parent=meta_parent.ctl_chain[-1])
-
-        instance._store_bind_joints(joint_chain)
-        instance._store_ctl_chain(ctl_chain)
 
         return instance
 
@@ -83,10 +71,18 @@ class FootComponent(AbstractReverseFootComponent):
                                                     character=character,
                                                     side=side,
                                                     name=name,
-                                                    start_joint=start_joint,
-                                                    end_joint=end_joint,
                                                     roll_axis=roll_axis,
                                                     tag=tag)  # type: FootComponent
+
+        joint_chain = jointFn.joint_chain(start_joint=start_joint, end_joint=end_joint)
+        attrFn.add_meta_attr(joint_chain)
+        ctl_chain = jointFn.duplicate_chain(new_joint_name=[instance.indexed_name, "ctl"],
+                                            new_joint_side=instance.side,
+                                            original_chain=joint_chain,
+                                            new_parent=meta_parent.ctl_chain[-1])
+
+        instance._store_bind_joints(joint_chain)
+        instance._store_ctl_chain(ctl_chain)
 
         # Chains
         foot_locators_grp = pm.PyNode(foot_locators_grp)  # type: luna_rig.nt.Transform
@@ -214,27 +210,143 @@ class FootComponent(AbstractReverseFootComponent):
                 self.fk_control.transform.attr(self.roll_axis).setKey()
 
 
-class AdvancedFootComponent(AbstractReverseFootComponent):
+class MetaHumanFootComponent(AbstractReverseFootComponent):
+
+    ANKLE_JNT_FMT_NAME = "foot_{side}_drv"
+    BALL_JNT_FMT_NAME = "ball_{side}_drv"
+    BIG_TOE_01_JNT_FMT_NAME = "bigtoe_01_{side}_drv"
+    BIG_TOE_02_JNT_FMT_NAME = "bigtoe_02_{side}_drv"
+    INDEX_TOE_01_JNT_FMT_NAME = "indextoe_01_{side}_drv"
+    INDEX_TOE_02_JNT_FMT_NAME = "indextoe_02_{side}_drv"
+    MIDDLE_TOE_01_JNT_FMT_NAME = "middletoe_01_{side}_drv"
+    MIDDLE_TOE_02_JNT_FMT_NAME = "middletoe_02_{side}_drv"
+    RING_TOE_01_JNT_FMT_NAME = "ringtoe_01_{side}_drv"
+    RING_TOE_02_JNT_FMT_NAME = "ringtoe_02_{side}_drv"
+    LITTLE_TOE_01_JNT_FMT_NAME = "littletoe_01_{side}_drv"
+    LITTLE_TOE_02_JNT_FMT_NAME = "littletoe_02_{side}_drv"
 
     @classmethod
     def create(cls,
-               meta_parent=None,
-               character=None,
-               side=None,
-               name="foot",
-               start_joint=None,
-               end_joint=None,
-               rv_chain=None,
-               roll_axis="ry",
-               tag="body"):
+               meta_parent=None,  # type: luna_rig.components.FKIKComponent
+               character=None,  # type: luna_rig.components.Character
+               side=None,  # type: str
+               name="foot",  # type: str
+               roll_ctl_locator=None,  # type: str
+               tag="body"  # type: str
+               ):
+        # type: (...) -> MetaHumanFootComponent
+
+        if side is None:
+            side = meta_parent.side
+
+        if side not in "lr":
+            Logger.error("{0} | Expected side must be 'l' or 'r'. Got {1}".format(
+                cls.as_str(name_only=True), side))
+
         # Create instance and add attrs
-        instance = super(AdvancedFootComponent, cls).create(meta_parent=meta_parent,
-                                                            character=character,
-                                                            side=side,
-                                                            name=name,
-                                                            start_joint=start_joint,
-                                                            end_joint=end_joint,
-                                                            roll_axis=roll_axis,
-                                                            tag=tag)  # type: AdvancedFootComponent
+        instance = super(MetaHumanFootComponent, cls).create(meta_parent=meta_parent,
+                                                             character=character,
+                                                             side=side,
+                                                             name=name,
+                                                             roll_axis="z",
+                                                             tag=tag)  # type: MetaHumanFootComponent
+
+        ankle_bind_joint = pm.PyNode(cls.ANKLE_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        ball_bind_joint = pm.PyNode(cls.BALL_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        big_toe_01_joint = pm.PyNode(cls.BIG_TOE_01_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        big_toe_02_joint = pm.PyNode(cls.BIG_TOE_02_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        index_toe_01_joint = pm.PyNode(cls.INDEX_TOE_01_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        index_toe_02_joint = pm.PyNode(cls.INDEX_TOE_02_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        middle_toe_01_joint = pm.PyNode(
+            cls.MIDDLE_TOE_01_JNT_FMT_NAME.format(side=side))  # type: luna_rig.nt.Joint
+        middle_toe_02_joint = pm.PyNode(
+            cls.MIDDLE_TOE_02_JNT_FMT_NAME.format(side=side))  # type: luna_rig.nt.Joint
+        ring_toe_01_joint = pm.PyNode(cls.RING_TOE_01_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        ring_toe_02_joint = pm.PyNode(cls.RING_TOE_02_JNT_FMT_NAME.format(
+            side=side))  # type: luna_rig.nt.Joint
+        little_toe_01_joint = pm.PyNode(
+            cls.LITTLE_TOE_01_JNT_FMT_NAME.format(side=side))  # type: luna_rig.nt.Joint
+        little_toe_02_joint = pm.PyNode(
+            cls.LITTLE_TOE_02_JNT_FMT_NAME.format(side=side))  # type: luna_rig.nt.Joint
+
+        big_toe_bind_joints = (big_toe_01_joint, big_toe_02_joint)
+        index_toe_bind_joints = (index_toe_01_joint, index_toe_02_joint)
+        middle_toe_bind_joints = (middle_toe_01_joint, middle_toe_02_joint)
+        ring_toe_bind_joints = (ring_toe_01_joint, ring_toe_02_joint)
+        little_toe_bind_joints = (little_toe_01_joint, little_toe_02_joint)
+
+        # Create toe FK controls
+        big_toe_fk_controls = []
+        index_toe_fk_controls = []
+        middle_toe_fk_controls = []
+        ring_toe_fk_controls = []
+        little_toe_fk_controls = []
+
+        toe_fk_helper_map = {
+            "big": [big_toe_bind_joints, big_toe_fk_controls],
+            "index": [index_toe_bind_joints, index_toe_fk_controls],
+            "middle": [middle_toe_bind_joints, middle_toe_fk_controls],
+            "ring": [ring_toe_bind_joints, ring_toe_fk_controls],
+            "little": [little_toe_bind_joints, little_toe_fk_controls],
+        }
+        for toe_name, toe_elements in toe_fk_helper_map.items():
+            next_fk_parent = instance.group_ctls
+            toe_bind_joints, toe_fk_controls = toe_elements
+            for bind_jnt in toe_bind_joints:
+                toe_fk_controls.append(luna_rig.Control.create(name=[instance.indexed_name, "{0}_toe_fk".format(toe_name)],
+                                                               side=instance.side,
+                                                               guide=bind_jnt,
+                                                               delete_guide=False,
+                                                               parent=next_fk_parent,
+                                                               shape="cube",
+                                                               attributes="tr",
+                                                               tag="fk",
+                                                               orient_axis="x",
+                                                               ))
+                next_fk_parent = toe_fk_controls[-1]
+
+        # Create foot IK ctl
+        roll_ctl = luna_rig.Control.create(name=[instance.indexed_name, "roll"],
+                                           side=instance.side,
+                                           guide=roll_ctl_locator,
+                                           delete_guide=True,
+                                           parent=instance.group_ctls,
+                                           attributes=["tx", "tz"],
+                                           shape="arrow_cross",
+                                           tag="ik",
+                                           orient_axis="y")
+
+        # Create control chains
+        foot_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "base_ctl"],
+                                                 new_joint_side=instance.side,
+                                                 original_chain=(ankle_bind_joint, ball_bind_joint),
+                                                 new_parent=instance.group_joints)
+        big_toe_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "big_toe_ctl"],
+                                                    new_joint_side=instance.side,
+                                                    original_chain=big_toe_bind_joints,
+                                                    new_parent=foot_ctl_chain[-1])
+        index_toe_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "index_toe_ctl"],
+                                                      new_joint_side=instance.side,
+                                                      original_chain=index_toe_bind_joints,
+                                                      new_parent=foot_ctl_chain[-1])
+        middle_toe_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "middle_toe_ctl"],
+                                                       new_joint_side=instance.side,
+                                                       original_chain=middle_toe_bind_joints,
+                                                       new_parent=foot_ctl_chain[-1])
+        ring_toe_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "ring_toe_ctl"],
+                                                     new_joint_side=instance.side,
+                                                     original_chain=ring_toe_bind_joints,
+                                                     new_parent=foot_ctl_chain[-1])
+        little_toe_ctl_chain = jointFn.duplicate_chain([instance.indexed_name, "little_toe_ctl"],
+                                                       new_joint_side=instance.side,
+                                                       original_chain=little_toe_bind_joints,
+                                                       new_parent=foot_ctl_chain[-1])
 
         return instance
