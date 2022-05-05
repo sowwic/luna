@@ -154,8 +154,8 @@ class SceneHistory(object):
 
 
 class SceneHistoryWidget(QtWidgets.QListWidget):
-    def __init__(self, main_window):
-        super().__init__()
+    def __init__(self, main_window, parent=None):
+        super(SceneHistoryWidget, self).__init__(parent=parent)
         self.main_window = main_window
         self.tracked_history = None  # type: SceneHistory
 
