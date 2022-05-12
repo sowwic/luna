@@ -71,9 +71,11 @@ class QLGraphicsView(QtWidgets.QGraphicsView):
 
     def update_render_hints(self):
         if self.zoom > self.HIGH_QUALITY_ZOOM:
-            self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing | QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
+            self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.HighQualityAntialiasing |
+                                QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
         else:
-            self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
+            self.setRenderHints(QtGui.QPainter.Antialiasing |
+                                QtGui.QPainter.TextAntialiasing | QtGui.QPainter.SmoothPixmapTransform)
 
     # =========== Qt Events overrides =========== #
 
@@ -235,7 +237,8 @@ class QLGraphicsView(QtWidgets.QGraphicsView):
 
     def update_edge_width(self):
         graphics_edge.QLGraphicsEdge.WIDTH = ((self.zoom - self.zoom_range[0]) / (self.zoom_range[1] - self.zoom_range[0])) * \
-            (graphics_edge.QLGraphicsEdge.MIN_WIDTH - graphics_edge.QLGraphicsEdge.MAX_WIDTH) + graphics_edge.QLGraphicsEdge.MAX_WIDTH
+            (graphics_edge.QLGraphicsEdge.MIN_WIDTH - graphics_edge.QLGraphicsEdge.MAX_WIDTH) + \
+            graphics_edge.QLGraphicsEdge.MAX_WIDTH
 
     def get_item_at_click(self, event):
         """Object at click event position
@@ -280,7 +283,8 @@ class QLGraphicsView(QtWidgets.QGraphicsView):
                 Logger.debug(outsocket)
         elif isinstance(item, graphics_edge.QLGraphicsEdge):
             Logger.debug(item.edge)
-            Logger.debug('  Start: {0}, End:{1}'.format(item.edge.start_socket, item.edge.end_socket))
+            Logger.debug('  Start: {0}, End:{1}'.format(
+                item.edge.start_socket, item.edge.end_socket))
 
         if not item:
             Logger.debug('SCENE:')
