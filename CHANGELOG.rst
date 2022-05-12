@@ -1,6 +1,10 @@
 luna
 =========================
 
+v 0.2.13
+-------
+* History widget hotfifx
+
 v 0.2.12
 -------
 * Allow model to be not specified.
