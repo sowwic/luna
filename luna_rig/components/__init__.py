@@ -13,6 +13,7 @@ from .fk_dynamics_component import FKDynamicsComponent
 
 from .spine_component import FKIKSpineComponent
 from .spine_component import RibbonSpineComponent
+from .quad_spine_component import QuadrupedSpineComponent
 
 from .foot_component import FootComponent
 from .twist_component import TwistComponent

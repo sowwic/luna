@@ -2,12 +2,12 @@ import pymel.core as pm
 import pymel.api as pma
 import luna_rig
 from luna import Logger
-from luna import static
 import luna_rig.functions.apiFn as apiFn
 import luna_rig.functions.curveFn as curveFn
 
 
 def get_surface_data(surface_node):
+    # type: (luna_rig.nt.NurbsSurface) -> dict
     """Get surface data
 
     :param surface_node: Surface to get data from.
@@ -19,7 +19,8 @@ def get_surface_data(surface_node):
     if isinstance(surface_node, luna_rig.nt.Transform):
         surface_node = surface_node.getShape()
     if not isinstance(surface_node, luna_rig.nt.NurbsSurface):
-        Logger.exception("Invalid shape node type, expected NurbsSurface, got {0}".format(surface_node))
+        Logger.exception(
+            "Invalid shape node type, expected NurbsSurface, got {0}".format(surface_node))
         raise RuntimeError("Faield to get surface data")
 
     # MObject
@@ -62,19 +63,22 @@ def get_surface_data(surface_node):
 
 
 def loft_from_points(points, width=1, side_vector=[1, 0, 0], history=False):
+    # type: (list[float], float, list[float], bool) -> luna_rig.nt.NurbsSurface
     move_vector1 = [value * -width for value in side_vector]
     move_vector2 = [value * width for value in side_vector]
     curve1 = curveFn.curve_from_points("curve", degree=1, points=points)
     curve2 = curveFn.curve_from_points("curve", degree=1, points=points)
     pm.move(curve1, move_vector1)
     pm.move(curve2, move_vector2)
-    loft_result = pm.loft(curve1, curve2, ar=1, ch=history, degree=1)[0]  # type: luna_rig.nt.NurbsSurface
+    loft_result = pm.loft(curve1, curve2, ar=1, ch=history, degree=1)[
+        0]  # type: luna_rig.nt.NurbsSurface
     if not history:
         pm.delete([curve1, curve2])
     return loft_result
 
 
 def rebuild_1_to_3(surface, history=False):
+    # type: (luna_rig.nt.NurbsSurface | str, bool) -> luna_rig.nt.NurbsSurface
     if not isinstance(surface, pm.PyNode):
         surface = pm.PyNode(surface)  # type: luna_rig.nt.NurbsSurface
     if surface.numSpansInU() > surface.numSpansInV():
@@ -83,4 +87,5 @@ def rebuild_1_to_3(surface, history=False):
     else:
         degree_v = 3
         degree_u = 1
-    pm.rebuildSurface(surface, du=degree_u, dv=degree_v, su=surface.numSpansInU(), sv=surface.numSpansInV(), ch=history)
+    pm.rebuildSurface(surface, du=degree_u, dv=degree_v, su=surface.numSpansInU(),
+                      sv=surface.numSpansInV(), ch=history)

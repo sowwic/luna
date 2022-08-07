@@ -17,14 +17,14 @@ class WorldVector(enumFn.Enum):
 
 
 # Modified from https://gist.github.com/rondreas/1c6d4e5fc6535649780d5b65fc5a9283
-def mirror_xform(transforms=None, across="yz", behaviour=True, space="world"):
+def mirror_xform(transforms=None, across="yz", behavior=True, space="world"):
     """
     :param transforms: Transforms to mirror, defaults to None
     :type transforms: list or str or pm.PyNode, optional
     :param across: Plane to mirror across, options("YZ", "XY", "XZ"), defaults to 'YZ'
     :type across: str, optional
-    :param behaviour: If behavior should be mirrored, defaults to True
-    :type behaviour: bool, optional
+    :param behavior: If behavior should be mirrored, defaults to True
+    :type behavior: bool, optional
     :param space: Space to mirror across, valid options(transform or "world") , defaults to "world"
     :type space: str, optional
     :raises ValueError: If invalid object passed as transform.
@@ -50,13 +50,13 @@ def mirror_xform(transforms=None, across="yz", behaviour=True, space="world"):
             mtx = pm.xform(transform, q=True, ws=True, m=True)
         else:
             mtx = matrix_to_list(relative_world_matrix(transform, space))
-        mtx = mirror_matrix(mtx, behaviour=behaviour, across=across)
+        mtx = mirror_matrix(mtx, behavior=behavior, across=across)
         stored_matrices[transform] = mtx
     for transform in transforms:
         transform.setMatrix(stored_matrices[transform], ws=(space == "world"))
 
 
-def mirror_matrix(mtx, behaviour=True, across="yz"):
+def mirror_matrix(mtx, behavior=True, across="yz"):
     if not isinstance(mtx, list):
         mtx = matrix_to_list(mtx)
     # Invert rotation columns,
@@ -65,22 +65,22 @@ def mirror_matrix(mtx, behaviour=True, across="yz"):
     rz = [n * -1 for n in mtx[2:11:4]]
     # Invert translation row,
     t = [n * -1 for n in mtx[12:15]]
-    # Set matrix based on given plane, and whether to include behaviour or not.
+    # Set matrix based on given plane, and whether to include behavior or not.
     if across == "xy":
         mtx[14] = t[2]    # set inverse of the Z translation
         # Set inverse of all rotation columns but for the one we've set translate to.
-        if behaviour:
+        if behavior:
             mtx[0:9:4] = rx
             mtx[1:10:4] = ry
     elif across == "yz":
         mtx[12] = t[0]    # set inverse of the X translation
-        if behaviour:
+        if behavior:
             mtx[1:10:4] = ry
             mtx[2:11:4] = rz
     else:
         mtx[13] = t[1]    # set inverse of the Y translation
 
-        if behaviour:
+        if behavior:
             mtx[0:9:4] = rx
             mtx[2:11:4] = rz
 

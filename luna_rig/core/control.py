@@ -562,19 +562,19 @@ class Control(object):
                 break
         return result
 
-    def mirror_shape(self, behaviour=True, flip=False, flip_across="yz"):
+    def mirror_shape(self, behavior=True, flip=False, flip_across="yz"):
         """Mirrors control's shape
         """
-        curveFn.mirror_shape(self.transform, behaviour=behaviour, flip=flip, flip_across="yz")
+        curveFn.mirror_shape(self.transform, behavior=behavior, flip=flip, flip_across="yz")
 
-    def mirror_shape_to_opposite(self, behaviour=True, across="yz", flip=False, flip_across="yz"):
+    def mirror_shape_to_opposite(self, behavior=True, across="yz", flip=False, flip_across="yz"):
         opposite_ctl = self.find_opposite()
         if not opposite_ctl:
             Logger.warning("{0}: No opposite control was found.".format(self))
             return
         old_color = opposite_ctl.color
         ShapeManager.apply_shape(opposite_ctl.transform, self.shape)
-        opposite_ctl.mirror_shape(behaviour=behaviour, flip=flip, flip_across=flip_across)
+        opposite_ctl.mirror_shape(behavior=behavior, flip=flip, flip_across=flip_across)
         opposite_ctl.color = old_color
 
     def add_space(self, target, name, via_matrix=True):
@@ -817,7 +817,7 @@ class Control(object):
         :type across: str, optional
         :param space: Mirror space, any transform or str values: ("world", "character"), defaults to "character"
         :type space: str or luna_rig.nt.Transform, optional
-        :param behavior: Mirror transform behaviour, defaults to True
+        :param behavior: Mirror transform behavior, defaults to True
         :type behavior: bool, optional
         :param direction: Mirror direction, valid values ("source", "destination"), defaults to "source"
         :type direction: str, optional

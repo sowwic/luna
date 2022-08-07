@@ -62,7 +62,7 @@ def flip_shape(transform, across="yz"):
         pm.scale(shape + ".cv[0:1000]", scale_vec.get(across), os=True)
 
 
-def mirror_shape(transform, across="yz", behaviour=True, flip=False, flip_across="yz", space="transform"):
+def mirror_shape(transform, across="yz", behavior=True, flip=False, flip_across="yz", space="transform"):
     """Mirrors control's shape
     """
     if space == "transform":
@@ -71,7 +71,7 @@ def mirror_shape(transform, across="yz", behaviour=True, flip=False, flip_across
     temp_transform = pm.createNode("transform", n="mirror_shape_grp", p=transform)
     for shape in transform.getShapes():
         shape.setParent(temp_transform, r=1)
-    transformFn.mirror_xform(temp_transform, across=across, behaviour=behaviour, space=space)
+    transformFn.mirror_xform(temp_transform, across=across, behavior=behavior, space=space)
     # Flip shape
     if flip:
         flip_shape(temp_transform, across=flip_across)

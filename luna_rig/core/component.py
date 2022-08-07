@@ -1,5 +1,4 @@
 import pymel.core as pm
-from PySide2 import QtCore
 
 import luna_rig
 from luna import Logger
@@ -249,7 +248,7 @@ class AnimComponent(Component):
 
     @ property
     def controls(self):
-        # type: list[luna_rig.nt.Transform]
+        # type: (list[luna_rig.nt.Transform]) -> list[luna_rig.Control]
         connected_nodes = self.pynode.controls.listConnections()
         all_ctls = [luna_rig.Control(node) for node in connected_nodes]
         return all_ctls
@@ -340,6 +339,7 @@ class AnimComponent(Component):
     # ========= Other methods ========== #
 
     def set_outliner_color(self, color):
+        # type: (list[float] | int | str) -> None
         outlinerFn.set_color(self.root, color)
 
     def _store_bind_joints(self, joint_chain):
@@ -370,17 +370,19 @@ class AnimComponent(Component):
         connected_nodes = self.pynode.controls.listConnections()
         all_ctls = [luna_rig.Control(node) for node in connected_nodes]
         if tag:
-            taged_list = [ctl for ctl in all_ctls if ctl.tag == tag]
-            return taged_list
+            tagged_list = [ctl for ctl in all_ctls if ctl.tag == tag]
+            return tagged_list
         return all_ctls
 
     def select_controls(self, tag=None):
+        # type: (str | None) -> None
         """Select all component controls"""
         for ctl in self.list_controls(tag):
             ctl.transform.select(add=1)
 
     def key_controls(self, tag=None):
-        """Override: key all componets controls"""
+        # type: (str | None) -> None
+        """Override: key all components controls"""
         ctls = self.list_controls(tag)
         for each in ctls:
             pm.setKeyframe(each.transform)
@@ -415,6 +417,7 @@ class AnimComponent(Component):
         Logger.info("{0}: Detached from skeleton.".format(self))
 
     def bake_to_skeleton(self, time_range=None):
+        # type: (tuple[int, int]) -> None
         """Override: bake animation to skeleton"""
         if not self.bind_joints:
             return
@@ -447,6 +450,7 @@ class AnimComponent(Component):
         Logger.info("Removed {0}".format(self))
 
     def add_hook(self, node, name):
+        # type: (pm.PyNode | str, str) -> Hook
         """Set given node as attach point
 
         :param node: Dag node
@@ -456,6 +460,7 @@ class AnimComponent(Component):
         return hook
 
     def get_hook(self, index):
+        # type: (int) -> Hook
         """Get component attach point from index
 
         :param index: Index for attach point, defaults to 0
@@ -474,12 +479,14 @@ class AnimComponent(Component):
         return hook
 
     def copy_keyframes(self, time_range, target_component, time_offset=0.0):
+        # type: (tuple[int, int], AnimComponent, float) -> None
         for source_ctl in self.controls:
             for target_ctl in target_component.controls:
                 if target_ctl.transform.stripNamespace() == source_ctl.transform.stripNamespace():
                     source_ctl.copy_keyframes(time_range, target_ctl, time_offset=time_offset)
 
     def attach_to_component(self, other_comp, hook_index=None):
+        # type: (AnimComponent, int) -> None
         """Attach to other AnimComponent
 
         :param other_comp: Component to attach to.
@@ -507,6 +514,7 @@ class AnimComponent(Component):
                 raise
 
     def connect_to_character(self, character_component=None, character_name=None, parent=False):
+        # type: (luna_rig.components.Character, str, bool) -> None
         """Connect component to character
 
         :param character_name: Specific character to connect to, defaults to ""
@@ -533,6 +541,7 @@ class AnimComponent(Component):
             self.root.setParent(character_component.control_rig)
 
     def scale_controls(self, scale_dict):
+        # type: (dict) -> None
         if self.character and self.character.clamped_size > 1.0:
             clamped_size = self.character.clamped_size
             Logger.debug(self.character.clamped_size)

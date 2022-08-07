@@ -14,6 +14,12 @@ import luna_rig.functions.nodeFn as nodeFn
 
 class SpineComponent(luna_rig.AnimComponent):
 
+    class Hooks(enumFn.Enum):
+        ROOT = 0
+        HIPS = 1
+        MID = 2
+        CHEST = 3
+
     @property
     def root_control(self):
         return luna_rig.Control(self.pynode.rootControl.listConnections()[0])
@@ -53,12 +59,6 @@ class SpineComponent(luna_rig.AnimComponent):
 
 
 class FKIKSpineComponent(SpineComponent):
-
-    class Hooks(enumFn.Enum):
-        ROOT = 0
-        HIPS = 1
-        MID = 2
-        CHEST = 3
 
     @property
     def mid_control(self):

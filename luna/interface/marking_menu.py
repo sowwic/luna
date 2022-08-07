@@ -109,11 +109,11 @@ class MarkingMenu(object):
     def __add_pose_actions(cls, root_menu, selection):
         selected_control = luna_rig.Control(selection[-1])
         pm.menuItem(p=root_menu,
-                    l="Mirror pose (Behaviour)",
+                    l="Mirror pose (behavior)",
                     rp="SW",
                     c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=True, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
         pm.menuItem(p=root_menu,
-                    l="Mirror pose (No behaviour)",
+                    l="Mirror pose (No behavior)",
                     rp="S",
                     c=lambda *args: [luna_rig.Control(trs).mirror_pose(behavior=False, direction="source") for trs in selection if luna_rig.Control.is_control(trs)])
         pm.menuItem(p=root_menu, l="Asset bind pose", rp="N",
