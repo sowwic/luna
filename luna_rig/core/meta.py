@@ -96,8 +96,8 @@ class MetaNode(object):
 
     @property
     def meta_type(self):
-        attr_val = self.pynode.metaType.get()  # type: str
-        return attr_val
+        # type: () -> str
+        return self.pynode.metaType.get()  # type: str
 
     @property
     def tag(self):
@@ -126,6 +126,7 @@ class MetaNode(object):
 
     # ========== Getter methods ============ #
     def get_namespace_list(self):
+        # type: () -> list[str]
         return self.namespace_list
 
     def get_name(self):
@@ -161,6 +162,7 @@ class MetaNode(object):
 
     @classmethod
     def create(cls, meta_parent):
+        # type: (MetaNode) -> MetaNode
         """Creates meta node and calls constructor for MetaNode using meta_type.
 
         :param meta_parent: Meta parent node to connect to
@@ -187,6 +189,7 @@ class MetaNode(object):
         return meta_node
 
     def set_meta_parent(self, parent):
+        # type: (MetaNode) -> None
         self.pynode.metaParent.connect(parent.pynode.metaChildren, na=1)
 
     def get_meta_children(self, of_type=None, by_tag=""):
@@ -225,6 +228,7 @@ class MetaNode(object):
         return result
 
     def set_tag(self, tag_str):
+        # type: (str) -> None
         self.pynode.tag.set(tag_str)
 
     def is_animatable(self):
@@ -232,6 +236,7 @@ class MetaNode(object):
 
     @staticmethod
     def list_nodes(of_type=None, by_tag=""):
+        # type: (type, str) -> list[MetaNode]
         """List existing meta nodes
 
         :param of_type: List only specific type, defaults to None
@@ -261,6 +266,7 @@ class MetaNode(object):
 
     @staticmethod
     def scene_types(of_type=None):
+        # type: (type) -> dict[str, type]
         types_dict = {}
         for meta_node in MetaNode.list_nodes(of_type=of_type):
             if meta_node.as_str(name_only=True) not in types_dict.keys():
@@ -269,6 +275,7 @@ class MetaNode(object):
 
     @staticmethod
     def get_connected_metanode(node, of_type=None):
+        # type: (pm.PyNode | str, type) -> list[MetaNode]
         node = pm.PyNode(node)
         all_nodes = [MetaNode(network) for network in node.listConnections(
             type="network") if network.hasAttr("metaType")]

@@ -35,11 +35,13 @@ class Component(luna_rig.MetaNode):
 
     @property
     def util_nodes(self):
+        # type: () -> list[pm.PyNode]
         nodes = self.pynode.utilNodes.listConnections(d=1)  # type: list
         return nodes
 
     @ classmethod
     def create(cls, meta_parent, side="c", name="component", tag=""):
+        # type: (Component, str, str, str) -> Component
         """Creates instance of component
 
         :param meta_parent: Other Component to parent to.
@@ -148,11 +150,11 @@ class AnimComponent(Component):
 
     @ classmethod
     def create(cls,
-               meta_parent=None,
+               meta_parent=None,  # type: AnimComponent
                side="c",
                name="anim_component",
-               hook=None,
-               character=None,
+               hook=None,  # type: int
+               character=None,  # type: luna_rig.components.Character
                tag=""):  # noqa:F821
         """Create AnimComponent hierarchy in the scene and instance.
 
@@ -357,11 +359,13 @@ class AnimComponent(Component):
                 jnt.metaParent.connect(self.pynode.ctlChain, na=1)
 
     def _store_controls(self, ctl_list):
+        # type: (list[luna_rig.Control]) -> None
         for ctl in ctl_list:
             if ctl.transform not in self.pynode.controls.listConnections(d=1):
                 ctl.transform.metaParent.connect(self.pynode.controls, na=1)
 
     def list_controls(self, tag=None):
+        # type: (str | None) -> list[luna_rig.Control]
         """Get list of component controls. Extra attr for tag sorting.
 
         :return: List of all component controls.
