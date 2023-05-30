@@ -35,8 +35,10 @@ class MarkingMenu(object):
 
     @classmethod
     def _delete_old(cls):
-        if pm.popupMenu(cls.NAME, ex=1):
+        try:
             pm.deleteUI(cls.NAME)
+        except Exception:
+            pass
 
     @classmethod
     def __populate(cls, root_menu, parent):
@@ -89,7 +91,8 @@ class MarkingMenu(object):
     def __add_component_actions(cls, root_menu, selected_control):
         if not selected_control.connected_component:
             return
-        pm.menuItem(p=root_menu, l=str(selected_control.connected_component), en=0)
+        pm.menuItem(p=root_menu, l=str(
+            selected_control.connected_component), en=0)
         # Space switching
         if selected_control.spaces:
             spaces_menu = pm.subMenuItem(p=root_menu, l="Spaces")
