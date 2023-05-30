@@ -1,9 +1,13 @@
 luna
 =========================
 
+v 0.2.14
+-------
+* Fix issues with loading plugin in Maya2023 (#36)
+
 v 0.2.13
 -------
-* History widget hotfifx
+* History widget hotfix
 
 v 0.2.12
 -------
