@@ -55,11 +55,13 @@ class MenuUtil:
 
         elif check_box:
             if not var_name:
-                Logger.error("Menuitem: {0}::{1} is not connected to config!".format(parent, label))
+                Logger.error(
+                    "Menuitem: {0}::{1} is not connected to config!".format(parent, label))
                 return
 
             checkBox_value = Config.get(var_name, default_value)
-            checkBox = pm.menuItem(p=parent, l=label, i=icon, cb=checkBox_value, c=partial(Config.set, var_name))
+            checkBox = pm.menuItem(
+                p=parent, l=label, i=icon, cb=checkBox_value, c=partial(Config.set, var_name))
             return checkBox
 
         else:
@@ -82,15 +84,18 @@ class LunaMenu:
 
     @classmethod
     def _delete_old(cls):
-        if pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_ID, exists=1, parent=cls.MAIN_WINDOW):
+        try:
             pm.deleteUI(pm.menu(cls.MAIN_MENU_ID, e=1, deleteAllItems=1))
+        except Exception:
+            pass
 
     @classmethod
     def create(cls):
         # Build main menu
         cls._delete_old()
         Logger.info("Building menu...")
-        pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_LABEL, parent=cls.MAIN_WINDOW, tearOff=1)
+        pm.menu(cls.MAIN_MENU_ID, label=cls.MAIN_MENU_LABEL,
+                parent=cls.MAIN_WINDOW, tearOff=1)
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1, label="Tools")
 
         # Tools
@@ -116,7 +121,8 @@ class LunaMenu:
 
         # Help and config section
         MenuUtil.addMenuItem(cls.MAIN_MENU_ID, divider=1)
-        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration", command=tool_cmds.luna_configer, icon="config.svg")
+        MenuUtil.addMenuItem(cls.MAIN_MENU_ID, label="Configuration",
+                             command=tool_cmds.luna_configer, icon="config.svg")
         cls._add_help_menu()
 
     @classmethod
@@ -126,7 +132,8 @@ class LunaMenu:
         if not found:
             return
 
-        tools_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="External", tear_off=1, icon="")
+        tools_menu = MenuUtil.addSubMenu(
+            cls.MAIN_MENU_ID, label="External", tear_off=1, icon="")
         for tool in found:
             MenuUtil.addMenuItem(tools_menu,
                                  label=register[tool].get("label"),
@@ -137,20 +144,29 @@ class LunaMenu:
 
     @classmethod
     def _add_help_menu(cls):
-        help_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Help", tear_off=1, icon="")
-        MenuUtil.addMenuItem(help_menu, "About", command=help_cmds.show_about_dialog)
-        MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png", command=help_cmds.open_docs, use_maya_icons=1)
+        help_menu = MenuUtil.addSubMenu(
+            cls.MAIN_MENU_ID, label="Help", tear_off=1, icon="")
+        MenuUtil.addMenuItem(help_menu, "About",
+                             command=help_cmds.show_about_dialog)
+        MenuUtil.addMenuItem(help_menu, "Documentation", icon="help.png",
+                             command=help_cmds.open_docs, use_maya_icons=1)
 
     @classmethod
     def _add_dev_menu(cls):
-        dev_menu = MenuUtil.addSubMenu(cls.MAIN_MENU_ID, label="Developer", tear_off=1, icon="")
+        dev_menu = MenuUtil.addSubMenu(
+            cls.MAIN_MENU_ID, label="Developer", tear_off=1, icon="")
         MenuUtil.addMenuItem(dev_menu, label="Testing", divider=1)
-        MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1, default_value=True, var_name=TestVars.buffer_output)
-        MenuUtil.addMenuItem(dev_menu, label="Run all tests", command=devFn.run_unit_tests, icon="checklist.svg")
+        MenuUtil.addMenuItem(dev_menu, label="Buffer output", check_box=1,
+                             default_value=True, var_name=TestVars.buffer_output)
+        MenuUtil.addMenuItem(dev_menu, label="Run all tests",
+                             command=devFn.run_unit_tests, icon="checklist.svg")
         MenuUtil.addMenuItem(dev_menu, label="Unload", divider=1)
-        MenuUtil.addMenuItem(dev_menu, label="Rig modules", command=devFn.unload_rig_modules)
-        MenuUtil.addMenuItem(dev_menu, label="Builder modules", command=devFn.unload_builder_modules)
-        MenuUtil.addMenuItem(dev_menu, label="Configer modules", command=devFn.unload_configer_modules)
+        MenuUtil.addMenuItem(dev_menu, label="Rig modules",
+                             command=devFn.unload_rig_modules)
+        MenuUtil.addMenuItem(dev_menu, label="Builder modules",
+                             command=devFn.unload_builder_modules)
+        MenuUtil.addMenuItem(dev_menu, label="Configer modules",
+                             command=devFn.unload_configer_modules)
 
 
 if __name__ == "__main__":

@@ -33,7 +33,9 @@ class LunaHUD:
                                              event=cls.UPDATE_EVENT)
             Logger.info("Successfully created HUD: {0}".format(cls.HUD_NAME))
         except RuntimeError:
-            Logger.error("HUD position ({0}:{1}) is occupied by another HUD. Use configer to select other block/section.".format(cls.SECTION, cls.BLOCK))
+            Logger.error(
+                "HUD position ({0}:{1}) is occupied by another HUD. "
+                "Use configer to select other block/section.".format(cls.SECTION, cls.BLOCK))
 
         return hud_instance
 
@@ -46,8 +48,10 @@ class LunaHUD:
 
     @classmethod
     def remove(cls):
-        if pm.headsUpDisplay(cls.HUD_NAME, ex=1):
+        try:
             pm.headsUpDisplay(cls.HUD_NAME, rem=1)
+        except Exception:
+            pass
 
     @staticmethod
     def get_hud_text():
