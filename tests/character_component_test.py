@@ -31,13 +31,17 @@ class CharacterTests(TestCase):
         # Instance members
         self.assertEqual(instance.tag, "character")
         self.assertEqual(str(instance.control_rig), instance.CONTROL_RIG_GRP_NAME)
-        self.assertEqual(str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME)
+        self.assertEqual(
+            str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME
+        )
         self.assertEqual(str(instance.geometry_grp), instance.GEOMETRY_GRP_NAME)
         self.assertEqual(str(instance.locators_grp), instance.LOCATORS_GRP_NAME)
         self.assertTrue(pm.objExists(instance.world_locator))
 
         # Save test scene
-        pm.renameFile(self.get_temp_filename("character_component_test_create_default.ma"))
+        pm.renameFile(
+            self.get_temp_filename("character_component_test_create_default.ma")
+        )
         pm.saveFile(f=1)
 
     def test_intance_from_meta(self):
@@ -57,7 +61,9 @@ class CharacterTests(TestCase):
 
         # Main groups
         self.assertEqual(str(instance.control_rig), instance.CONTROL_RIG_GRP_NAME)
-        self.assertEqual(str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME)
+        self.assertEqual(
+            str(instance.deformation_rig), instance.DEFORMATION_RIG_GRP_NAME
+        )
         self.assertEqual(str(instance.geometry_grp), instance.GEOMETRY_GRP_NAME)
         self.assertEqual(str(instance.locators_grp), instance.LOCATORS_GRP_NAME)
         self.assertTrue(pm.objExists(instance.world_locator))
@@ -68,7 +74,9 @@ class CharacterTests(TestCase):
         self.assertEqual(instance.tag, "character")
 
         # Save test scene
-        pm.renameFile(self.get_temp_filename("character_component_test_instance_from_meta.ma"))
+        pm.renameFile(
+            self.get_temp_filename("character_component_test_instance_from_meta.ma")
+        )
         pm.saveFile(f=1)
 
 

@@ -1,0 +1,65 @@
+[project]
+name = "luna"
+version = "0.2.14"
+description = "Description"
+authors = [
+    {name = "Dima Shevchenko",email = "47799401+sowwic@users.noreply.github.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["uv_build>=0.10.6"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["luna", "luna_builder", "luna_configer", "luna_rig"]
+source-include = [
+    "src/plugins/**",
+    "src/resources/**",
+]
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.15.0,<0.16.0)",
+    "maya-stubs (>=0.4.2,<0.5.0)",
+    "pytest ",
+    "pytest-cov",
+    "pytest-mock ",
+    "mkdocs",
+    "mkdocs-material ",
+    "mkdocstrings[python]",
+    "mkdocs-autorefs",
+    "mkdocs-autoapi",
+    "ruff",
+    "debugpy",
+]
+
+[tool.ruff]
+src = ["src"]
+
+show-fixes = true
+line-length = 89
+lint.select = [
+    "E",
+    "F",
+    "UP",
+]
+lint.ignore = [
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=json_config --cov-report=term-missing"
+log_cli = true
+log_cli_level = "ERROR"
+
+[tool.ty.rules]
+unresolved-attribute="ignore"
+invalid-argument-type="ignore"
+invalid-assignment="ignore"
+invalid-return-type="ignore"
+invalid-method-override="ignore"

@@ -24,7 +24,9 @@ class ProjectTests(TestCase):
         creation_path = ProjectTests.get_temp_dirname("testProject")
         test_project = luna.workspace.Project.create(creation_path)
         self.assertTrue(luna.workspace.Project.is_project(test_project.path))
-        self.assertFalse(luna.workspace.Project.is_project(test_project.path + "/newFolder"))
+        self.assertFalse(
+            luna.workspace.Project.is_project(test_project.path + "/newFolder")
+        )
 
     def test_set_project(self):
         creation_path = ProjectTests.get_temp_dirname("testProject")

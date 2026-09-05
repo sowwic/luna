@@ -12,19 +12,19 @@ CHANGELOG_FILE = os.path.join(ROOT_DIR, "CHANGELOG.rst")
 
 
 def get_version_str_from_changelog():
-    with open(CHANGELOG_FILE, "r") as versions_file:
+    with open(CHANGELOG_FILE) as versions_file:
         data = versions_file.read().rstrip()
     version = re.search(r'v\s*([\d.]+)', data).group(1) or "0.0.0"
-    print("Latest version from changelog: {}".format(version))
+    print(f"Latest version from changelog: {version}")
     return version
 
 
 def onMayaDroppedPythonFile(*args):
     """Dropped file maya callback entry point."""
-    install_templates_dir = os.path.join(ROOT_DIR, "res", "templates", "install_files")
+    install_templates_dir = os.path.join(ROOT_DIR, "resources", "templates", "install_files")
     template_mod_file = os.path.join(install_templates_dir, 'luna.mod')
 
-    with open(template_mod_file, 'r') as fp:
+    with open(template_mod_file) as fp:
         mod_content = fp.read()
 
     # Fill in template file
@@ -44,5 +44,5 @@ def onMayaDroppedPythonFile(*args):
     chosen_mod_path = os.path.join(chosen_dir, 'luna.mod')
     with open(chosen_mod_path, 'w+') as fp:
         fp.write(mod_content)
-    print("Placed luna mod file at {}".format(chosen_mod_path))
+    print(f"Placed luna mod file at {chosen_mod_path}")
     print("Please restart Maya and enable luna_plugin.py from plugin manager.")

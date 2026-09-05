@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+# -----------------------------
+# Configuration
+# -----------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load .env if exists (MAYAPY should be defined there)
+set -a
+[ -f "$SCRIPT_DIR/.env" ] && source "$SCRIPT_DIR/.env"
+set +a
+
+if [ -z "${MAYAPY:-}" ]; then
+    echo "MAYAPY not set. Define it in .env"
+    exit 1
+fi
+
+echo "Using mayapy: $MAYAPY"
+# -----------------------------
+#  Build packages
+# -----------------------------
+BUILD_DIR="$SCRIPT_DIR/build/maya_pytest"
+MODULE_ROOT="$BUILD_DIR/maya_module"
+MODULES_DIR="$BUILD_DIR/modules"
+VERSION="$(tr -d '\r\n' < "$SCRIPT_DIR/VERSION")"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$MODULE_ROOT/python" "$MODULE_ROOT/plugins" \
+         "$MODULE_ROOT/resources" "$MODULES_DIR"
+
+echo "Installing Luna and test dependencies as a Maya module"
+uv pip install \
+  --python "$MAYAPY" \
+  --target "$MODULE_ROOT/python" \
+  --group dev \
+  "$SCRIPT_DIR"
+
+[ ! -d "$SCRIPT_DIR/src/plugins" ] || \
+  cp -R "$SCRIPT_DIR/src/plugins/." "$MODULE_ROOT/plugins/"
+
+[ ! -d "$SCRIPT_DIR/src/resources" ] || \
+  cp -R "$SCRIPT_DIR/src/resources/." "$MODULE_ROOT/resources/"
+
+printf '+ luna %s %s\nscripts: python\nplugins: plugins\nPYTHONPATH *:=python' \
+  "$VERSION" "$MODULE_ROOT" > "$MODULES_DIR/luna.mod"
+
+unset PYTHONPATH
+export MAYA_MODULE_PATH="$MODULES_DIR${MAYA_MODULE_PATH:+:$MAYA_MODULE_PATH}"
+
+"$MAYAPY" -c '
+import sys
+import maya.standalone
+
+maya.standalone.initialize(name="python")
+try:
+    import maya.cmds
+    import pytest
+    import os
+
+    luna_module_path = maya.cmds.moduleInfo(path=True, moduleName="luna")
+    print(f"Running tests for luna module at: {luna_module_path})")
+    raise SystemExit(pytest.main(["-vvv", *sys.argv[1:]]))
+finally:
+    maya.standalone.uninitialize()
+' "$SCRIPT_DIR/tests" "$@"

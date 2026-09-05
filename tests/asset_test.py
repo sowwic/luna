@@ -18,14 +18,18 @@ class AssetTests(TestCase):
         creation_path = AssetTests.get_temp_dirname("testProject")
         test_project = Project.create(creation_path, silent=True)
         test_asset = Asset(test_project, "testAsset", typ=asset_type)
-        dummy_model_path = os.path.join(directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma")
+        dummy_model_path = os.path.join(
+            directories.LUNA_ROOT_PATH, "tests", "util_files", "mannequin_model.ma"
+        )
         test_asset.set_data("model", dummy_model_path)
 
         # Base Assertions
         self.assertTrue(os.path.isdir(test_asset.path))  # Asset folder created
         self.assertTrue(os.path.isfile(test_asset.meta_path))  # Meta data file created
         self.assertEqual(test_asset.name, "testAsset")  # Asset name is stored
-        self.assertTrue(os.path.isdir(os.path.join(test_project.path, asset_type + "s")))  # Asset category folder is created
+        self.assertTrue(
+            os.path.isdir(os.path.join(test_project.path, asset_type + "s"))
+        )  # Asset category folder is created
         # Check asset folders creations
         self.assertTrue(os.path.isdir(test_asset.controls))
         self.assertTrue(os.path.isdir(test_asset.skeleton))
@@ -50,8 +54,18 @@ class AssetTests(TestCase):
         self.assertTrue(os.path.isdir(test_asset.data.psd))
 
         # Template files creation
-        self.assertTrue(os.path.isfile(os.path.join(test_asset.skeleton, "{0}_skeleton.0000.ma".format(test_asset.name))))
-        self.assertTrue(os.path.isfile(os.path.join(test_asset.rig, "{0}_rig.0000.ma".format(test_asset.name))))
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    test_asset.skeleton, "{0}_skeleton.0000.ma".format(test_asset.name)
+                )
+            )
+        )
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(test_asset.rig, "{0}_rig.0000.ma".format(test_asset.name))
+            )
+        )
 
 
 if __name__ == "__main__":
