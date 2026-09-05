@@ -1,6 +1,6 @@
 import os
-import pymel.core as pm
-import pymel.api as pma
+from maya import cmds
+from maya.api import OpenMaya
 
 import luna
 import luna_rig  # noqa: F401
@@ -18,18 +18,18 @@ REGISTERED_CALLBACKS = []
 
 
 def load_additional_plugins():
-    if pm.about(win64=True):
+    if cmds.about(win64=True):
         system_dir = "win64"
-    elif pm.about(li=True):
+    elif cmds.about(linux=True):
         system_dir = "linux"
-    elif pm.about(macOS=True):
+    elif cmds.about(macOS=True):
         system_dir = "macOS"
     else:
         luna.Logger.error(
-            "Unable to load plugins for system: {0}".format(pm.about(os=True))
+            f"Unable to load plugins for system: {cmds.about(operatingSystem=True)}"
         )
         return
-    maya_version = pm.about(version=True)
+    maya_version = cmds.about(version=True)
     plugins_dir = os.path.join(directories.PLUGINS_DIR_PATH, maya_version, system_dir)
     if not os.path.isdir(plugins_dir):
         return
@@ -37,23 +37,23 @@ def load_additional_plugins():
         if not file_name.endswith(".mll"):
             continue
         full_path = os.path.join(plugins_dir, file_name)
-        if pm.pluginInfo(file_name, q=True, loaded=True):
+        if cmds.pluginInfo(file_name, query=True, loaded=True):
             continue
         try:
-            pm.loadPlugin(full_path)
-            luna.Logger.info("Loaded plugin: {0}".format(file_name))
+            cmds.loadPlugin(full_path)
+            luna.Logger.info(f"Loaded plugin: {file_name}")
         except Exception:
-            luna.Logger.exception("Failed to load plugin: {0}".format(file_name))
+            luna.Logger.exception(f"Failed to load plugin: {file_name}")
 
 
 def initialize_callbacks():
-    if luna.Config.get(luna.LunaVars.callback_licence, True):
+    if luna.Config.get(luna.LunaVars.callback_license, True):
         try:
-            callback_id = callbacks.remove_licence_popup_callback()
+            callback_id = callbacks.remove_license_popup_callback()
             REGISTERED_CALLBACKS.append(callback_id)
-            luna.Logger.info("Added file save licence callback")
+            luna.Logger.info("Added file save license callback")
         except RuntimeError:
-            luna.Logger.exception("Failed to add file save licence callback!")
+            luna.Logger.exception("Failed to add file save license callback!")
             raise
 
 
@@ -68,8 +68,8 @@ def initializePlugin(mobject):
 
     # Init logging
     luna.Logger.write_to_rotating_file(directories.LOG_FILE, level=40)
-    luna.Logger.info("Logging to file: {0}".format(directories.LOG_FILE))
-    luna.Logger.info("Current logging level: {0}".format(luna.Logger.get_level(name=1)))
+    luna.Logger.info(f"Logging to file: {directories.LOG_FILE}")
+    luna.Logger.info(f"Current logging level: {luna.Logger.get_level(name=1)}")
     load_additional_plugins()
     editor_conf.load_plugins()
     # Command port
@@ -77,18 +77,18 @@ def initializePlugin(mobject):
 
     # Init core
     try:
-        pma.MFnPlugin(mobject, vendor, version)
+        OpenMaya.MFnPlugin(mobject, vendor, version)
         LunaMenu.create()
         LunaHUD.create()
         marking_menu.MarkingMenu.create()
         initialize_callbacks()
     except Exception:
-        luna.Logger.exception("Failed to inialize luna plugin")
+        luna.Logger.exception("Failed to initialize luna plugin")
         raise
 
 
 def uninitializePlugin(mobject):
-    pma.MFnPlugin(mobject)
+    OpenMaya.MFnPlugin(mobject)
     try:
         luna.workspace.Project.exit()
 
@@ -106,7 +106,7 @@ def uninitializePlugin(mobject):
 
         # Callbacks
         for callback_id in REGISTERED_CALLBACKS:
-            pma.MMessage.removeCallback(callback_id)
+            OpenMaya.MMessage.removeCallback(callback_id)
         luna.Logger.info("Removed callbacks")
 
         # Python modules
