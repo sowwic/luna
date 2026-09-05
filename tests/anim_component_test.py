@@ -1,15 +1,17 @@
-import pymel.core as pm
 import unittest
-from luna.test import TestCase
+
+from maya import cmds
+
 import luna_rig
+from luna.test import TestCase
 
 
 class AnimComponentTests(TestCase):
     def setUp(self):
-        pm.newFile(f=1)
+        cmds.file(newFile=True, force=True)
 
     def tearDown(self):
-        pm.newFile(f=1)
+        cmds.file(newFile=True, force=True)
 
     def test_create_default(self):
         test_character = luna_rig.components.Character.create(name="test_character")
@@ -19,34 +21,34 @@ class AnimComponentTests(TestCase):
         # Metanode
         self.assertEqual(
             str(new_component.pynode),
-            "{0}_{1}_00_meta".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_meta",
         )
         self.assertEqual(
             new_component.pynode.metaType.get(), luna_rig.AnimComponent.as_str()
         )
         self.assertEqual(
             str(new_component.root),
-            "{0}_{1}_00_comp".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_comp",
         )
         self.assertEqual(
             str(new_component.group_ctls),
-            "{0}_{1}_00_ctls".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_ctls",
         )
         self.assertEqual(
             str(new_component.group_joints),
-            "{0}_{1}_00_jnts".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_jnts",
         )
         self.assertEqual(
             str(new_component.group_parts),
-            "{0}_{1}_00_parts".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_parts",
         )
         self.assertEqual(
             str(new_component.group_noscale),
-            "{0}_{1}_00_noscale".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_noscale",
         )
         self.assertEqual(
             str(new_component.group_out),
-            "{0}_{1}_00_out".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_out",
         )
         self.assertEqual(new_component.tag, "")
 
@@ -54,52 +56,53 @@ class AnimComponentTests(TestCase):
         self.assertEqual(new_component.character, test_character)
 
         # Meta parent attrs on hierarchy
-        self.assertTrue(pm.hasAttr(new_component.root, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_ctls, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_joints, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_parts, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_out, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_noscale, "metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.root}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_ctrls}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_joints}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_parts}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_out}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_noscale}.metaParent"))
 
         # Attributes on meta node
-        self.assertTrue(pm.hasAttr(new_component.pynode, "rootGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "ctlsGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "jointsGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "partsGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "noScaleGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "outGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "outHooks"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "inHook"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "bindJoints"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "ctlChain"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "controls"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.rootGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.jointsGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.partsGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.noScaleGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.outGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.outHooks"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.inHook"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.bindJoints"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.ctlChain"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.control"))
 
         # Connections to metanode
         self.assertTrue(
-            pm.isConnected(new_component.root.metaParent, new_component.pynode.rootGroup)
+            cmds.isConnected(
+                new_component.root.metaParent, new_component.pynode.rootGroup
+            )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_ctls.metaParent, new_component.pynode.ctlsGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_joints.metaParent, new_component.pynode.jointsGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_parts.metaParent, new_component.pynode.partsGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_out.metaParent, new_component.pynode.outGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_noscale.metaParent, new_component.pynode.noScaleGroup
             )
         )
@@ -109,8 +112,8 @@ class AnimComponentTests(TestCase):
         self.assertEqual(new_component.side, "c")
 
         # Save test scene
-        pm.renameFile(self.get_temp_filename("anim_component_test_create_default.ma"))
-        pm.saveFile(f=1)
+        cmds.file(rename=self.get_temp_filename("anim_component_test_create_default.ma"))
+        cmds.file(save=True, force=True)
 
     def test_create_with_meta_parent(self):
         test_character = luna_rig.components.Character.create(name="test_character")
@@ -120,17 +123,19 @@ class AnimComponentTests(TestCase):
         )
 
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 component2.pynode.metaParent, component1.pynode.metaChildren[0]
             )
         )
         self.assertEqual(component2.meta_parent, component1)
 
         # Save test scene
-        pm.renameFile(
-            self.get_temp_filename("anim_component_test_create_with_meta_parent.ma")
+        cmds.file(
+            rename=self.get_temp_filename(
+                "anim_component_test_create_with_meta_parent.ma"
+            )
         )
-        pm.saveFile(f=1)
+        cmds.file(save=True, force=True)
 
     def test_attach_to_component(self):
         test_character = luna_rig.components.Character.create(name="test_character")
@@ -140,7 +145,7 @@ class AnimComponentTests(TestCase):
 
         # Assertions
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 component2.pynode.metaParent, component1.pynode.metaChildren[0]
             )
         )
@@ -148,10 +153,11 @@ class AnimComponentTests(TestCase):
         self.assertIsNone(component2.in_hook)
 
         # Save test scene
-        pm.renameFile(
-            self.get_temp_filename("anim_component_test_attach_to_component.ma")
+        cmds.file(
+            rename=self.get_temp_filename("anim_component_test_attach_to_component.ma"),
+            force=True,
         )
-        pm.saveFile(f=1)
+        cmds.saveFile(f=1)
 
     def test_get_meta_children(self):
         test_character = luna_rig.components.Character.create(name="test_character")
@@ -176,8 +182,11 @@ class AnimComponentTests(TestCase):
         )
 
         # Save test scene
-        pm.renameFile(self.get_temp_filename("anim_component_test_get_meta_children.ma"))
-        pm.saveFile(f=1)
+        cmds.file(
+            rename=self.get_temp_filename("anim_component_test_get_meta_children.ma"),
+            force=True,
+        )
+        cmds.file(save=True, force=True)
 
     def test_instance_from_meta(self):
         test_character = luna_rig.components.Character.create(name="test_character")
@@ -192,68 +201,71 @@ class AnimComponentTests(TestCase):
         # Metanode
         self.assertEqual(
             str(new_component.pynode),
-            "{0}_{1}_00_meta".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_meta",
         )
         self.assertEqual(
             new_component.pynode.metaType.get(), luna_rig.AnimComponent.as_str()
         )
         self.assertEqual(
             str(new_component.root),
-            "{0}_{1}_00_comp".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_comp",
         )
         self.assertEqual(
             str(new_component.group_ctls),
-            "{0}_{1}_00_ctls".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_ctls",
         )
         self.assertEqual(
             str(new_component.group_joints),
-            "{0}_{1}_00_jnts".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_jnts",
         )
         self.assertEqual(
             str(new_component.group_parts),
-            "{0}_{1}_00_parts".format(new_component.side, new_component.name),
+            f"{new_component.side}_{new_component.name}_00_parts",
         )
 
         # Character connections
         self.assertEqual(new_component.character, test_character)
 
         # Meta parent attrs on hierarchy
-        self.assertTrue(pm.hasAttr(new_component.root, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_ctls, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_joints, "metaParent"))
-        self.assertTrue(pm.hasAttr(new_component.group_parts, "metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.root}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_ctls}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_joints}.metaParent"))
+        self.assertTrue(cmds.objExists(f"{new_component.group_parts}.metaParent"))
 
         # Attributes on meta node
-        self.assertTrue(pm.hasAttr(new_component.pynode, "rootGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "ctlsGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "jointsGroup"))
-        self.assertTrue(pm.hasAttr(new_component.pynode, "partsGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.rootGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.ctlsGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.jointsGroup"))
+        self.assertTrue(cmds.objExists(f"{new_component.pynode}.partsGroup"))
 
         # Connections to metanode
         self.assertTrue(
-            pm.isConnected(new_component.root.metaParent, new_component.pynode.rootGroup)
+            cmds.isConnected(
+                new_component.root.metaParent, new_component.pynode.rootGroup
+            )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_ctls.metaParent, new_component.pynode.ctlsGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_joints.metaParent, new_component.pynode.jointsGroup
             )
         )
         self.assertTrue(
-            pm.isConnected(
+            cmds.isConnected(
                 new_component.group_parts.metaParent, new_component.pynode.partsGroup
             )
         )
 
         # Save test scene
-        pm.renameFile(
-            self.get_temp_filename("anim_component_test_instance_from_meta.ma")
+        cmds.file(
+            rename=self.get_temp_filename("anim_component_test_instance_from_meta.ma"),
+            force=True,
         )
-        pm.saveFile(f=1)
+        cmds.file(save=True, force=True)
 
 
 if __name__ == "__main__":
