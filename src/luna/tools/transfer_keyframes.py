@@ -10,10 +10,10 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
 
     def closeEvent(self, event):
         TransferKeyframesDialog.GEOMETRY = self.saveGeometry()
-        super(TransferKeyframesDialog, self).closeEvent(event)
+        super().closeEvent(event)
 
     def __init__(self, parent=pysideFn.maya_main_window()):
-        super(TransferKeyframesDialog, self).__init__(parent)
+        super().__init__(parent)
         self.setWindowTitle("Transfer keyframes")
         self.setProperty("saveWindowPref", True)
         # Init ui
@@ -129,15 +129,13 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
         source_component = self.source_component_wgt.list.currentItem().data(1)
         if not pm.objExists(source_component.pynode):
             self.problems_log.append(
-                "Node {0} no longer exists. Update components list.".format(
-                    source_component.pynode
-                )
+                f"Node {source_component.pynode} no longer exists. Update components list."
             )
             self.transfer_button.setEnabled(False)
             return
-        if not source_component.is_animatable():
+        if not source_component.IS_ANIMATABLE:
             self.problems_log.append(
-                "Not animatable source component selected {0}".format(source_component)
+                f"Not animatable source component selected {source_component}"
             )
             return
 
@@ -149,9 +147,7 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
             target_component = selected_target.data(1)
             if not target_component.is_animatable():
                 self.problems_log.append(
-                    "Not animatable target component selected {0}".format(
-                        source_component
-                    )
+                    f"Not animatable target component selected {source_component}"
                 )
                 return
             target_controls_names += [
@@ -161,7 +157,7 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
         for source_name in source_controls_names:
             if source_name not in target_controls_names:
                 self.problems_log.append(
-                    "{0}: Missing control {1}".format(target_component, source_name)
+                    f"{target_component}: Missing control {source_name}"
                 )
 
     def update_transfer_button(self):
@@ -172,8 +168,8 @@ class TransferKeyframesDialog(QtWidgets.QDialog):
             and target_item
             and all(
                 [
-                    source_item.data(1).is_animatable(),
-                    target_item.data(1).is_animatable(),
+                    source_item.data(1).IS_ANIMATABLE,
+                    target_item.data(1).IS_ANIMATABLE,
                 ]
             )
         ):

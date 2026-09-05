@@ -7,6 +7,3 @@ from luna_rig.core.control import Control
 
 # Components lib
 import luna_rig.components as components
-
-# Util
-import pymel.core.nodetypes as nt

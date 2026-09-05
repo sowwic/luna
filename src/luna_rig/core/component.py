@@ -1,5 +1,4 @@
 import pymel.core as pm
-from PySide2 import QtCore
 
 import luna_rig
 from luna import Logger
@@ -19,7 +18,7 @@ class Component(luna_rig.MetaNode):
         return object.__new__(cls)
 
     def __init__(self, node):
-        super(Component, self).__init__(node)
+        super().__init__(node)
 
     @property
     def settings(self):
@@ -52,12 +51,12 @@ class Component(luna_rig.MetaNode):
         :rtype: Component
         """
         Logger.info(
-            "Building {0}({1}_{2})...".format(cls.as_str(name_only=True), side, name)
+            f"Building {cls.as_str(name_only=True)}({side}_{name})..."
         )
-        Logger.info("Meta parent: {0}".format(meta_parent))
+        Logger.info(f"Meta parent: {meta_parent}")
         cls.load_required_plugins()
         # Create instance, add attribs
-        instance = super(Component, cls).create(meta_parent)  # type: Component
+        instance = super().create(meta_parent)  # type: Component
         instance.pynode.rename(nameFn.generate_name(name, side, suffix="meta"))
         instance.pynode.addAttr("settings", at="message", multi=1, im=0)
         instance.pynode.addAttr("utilNodes", at="message", multi=1, im=0)
@@ -69,9 +68,7 @@ class Component(luna_rig.MetaNode):
     def verify_parent_type(cls, parent, valid_types):
         if not isinstance(parent, valid_types):
             Logger.exception(
-                "{0}: Invalid meta parent type - {1}. Valid types: {2}".format(
-                    cls.as_str(name_only=True), parent, valid_types
-                )
+                f"{cls.as_str(name_only=True)}: Invalid meta parent type - {parent}. Valid types: {valid_types}"
             )
             raise TypeError
 
@@ -81,16 +78,12 @@ class Component(luna_rig.MetaNode):
             if not pm.pluginInfo(plugin_name, q=True, loaded=True):
                 try:
                     Logger.info(
-                        "Loading plugin {0} required by {1}".format(
-                            plugin_name, cls.as_str(name_only=True)
-                        )
+                        f"Loading plugin {plugin_name} required by {cls.as_str(name_only=True)}"
                     )
                     pm.loadPlugin(plugin_name, quiet=True)
                 except Exception:
                     Logger.exception(
-                        "Failed to load plugin {0} required by {1}".format(
-                            plugin_name, cls
-                        )
+                        f"Failed to load plugin {plugin_name} required by {cls}"
                     )
                     raise
 
@@ -110,7 +103,7 @@ class Component(luna_rig.MetaNode):
             other_comp = luna_rig.MetaNode(other_comp)
         if other_comp.pynode not in self.pynode.metaParent.listConnections():
             self.set_meta_parent(other_comp)
-            Logger.info("Meta parent set: {0} ->> {1}".format(self, other_comp))
+            Logger.info(f"Meta parent set: {self} ->> {other_comp}")
 
     def _store_settings(self, attr):
         """Store given attribute as component setting
@@ -136,11 +129,11 @@ class Component(luna_rig.MetaNode):
             if pm.objExists(source_attr):
                 pm.deleteAttr(source_attr)
                 Logger.info(
-                    "{0}: Deleted settings attribute - {1}".format(self, source_attr)
+                    f"{self}: Deleted settings attribute - {source_attr}"
                 )
             else:
                 Logger.error(
-                    "{0}: Settings attr doesn't exist - {1}".format(self, source_attr)
+                    f"{self}: Settings attr doesn't exist - {source_attr}"
                 )
 
     def _delete_util_nodes(self):
@@ -151,18 +144,19 @@ class Component(luna_rig.MetaNode):
                         util_node.childAtIndex(0).setParent(util_node.getParent())
                     except RuntimeError:
                         Logger.warning(
-                            "Failed to parent {0} children ({1}) to {2}".format(
-                                util_node, util_node.getChildren(), util_node.getParent()
-                            )
+                            f"Failed to parent {util_node} children ({util_node.getChildren()}) to {util_node.getParent()}"
                         )
             pm.delete(util_node)
-            Logger.debug("{0}: Deleted util node {1}".format(self, util_node))
+            Logger.debug(f"{self}: Deleted util node {util_node}")
 
     def copy_keyframes(self, time_range, target_component, time_offset=0.0):
         pass
 
 
 class AnimComponent(Component):
+
+    IS_ANIMATABLE = True
+
     @classmethod
     def create(
         cls,
@@ -188,7 +182,7 @@ class AnimComponent(Component):
         """
         if not side:
             side = meta_parent.side
-        instance = super(AnimComponent, cls).create(meta_parent, side, name, tag=tag)  # type: AnimComponent
+        instance = super().create(meta_parent, side, name, tag=tag)  # type: AnimComponent
         # Create hierarchy
         root_grp = pm.group(
             n=nameFn.generate_name(instance.name, instance.side, suffix="comp"), em=1
@@ -420,13 +414,13 @@ class AnimComponent(Component):
 
     def attach_to_skeleton(self):
         """Override: attach to skeleton"""
-        Logger.info("{0}: Attaching to skeleton...".format(self))
+        Logger.info(f"{self}: Attaching to skeleton...")
         for ctl_jnt, bind_jnt in zip(self.ctl_chain, self.bind_joints):
             if (
                 not self.character.IGNORE_EXISTING_CONSTRAINTS_ON_SKELETON_ATTACHMENT
                 and bind_jnt.listConnections(type="parentConstraint")
             ):
-                Logger.info("Replacing {0} attachment to {1}".format(bind_jnt, ctl_jnt))
+                Logger.info(f"Replacing {bind_jnt} attachment to {ctl_jnt}")
                 pm.delete(bind_jnt.listConnections(type="parentConstraint"))
             pm.parentConstraint(ctl_jnt, bind_jnt, mo=1)
 
@@ -447,11 +441,11 @@ class AnimComponent(Component):
         common_constraints = bind_joints_parent_constraints.intersection(
             ctl_joints_parent_constraints
         )
-        Logger.debug("Deleting constraints: {}".format(common_constraints))
+        Logger.debug(f"Deleting constraints: {common_constraints}")
         for constr_node in common_constraints:
             pm.delete(constr_node)
 
-        Logger.info("{0}: Detached from skeleton.".format(self))
+        Logger.info(f"{self}: Detached from skeleton.")
 
     def bake_to_skeleton(self, time_range=None):
         """Override: bake animation to skeleton"""
@@ -460,7 +454,7 @@ class AnimComponent(Component):
         if not time_range:
             time_range = animFn.get_playback_range()
         pm.bakeResults(self.bind_joints, time=time_range, simulation=True)
-        Logger.info("{0}: Baked to skeleton.".format(self))
+        Logger.info(f"{self}: Baked to skeleton.")
 
     def bake_and_detach(self, time_range=None):
         self.bake_to_skeleton(time_range)
@@ -483,7 +477,7 @@ class AnimComponent(Component):
         pm.delete(self.root)
         self._delete_util_nodes()
         pm.delete(self.pynode)
-        Logger.info("Removed {0}".format(self))
+        Logger.info(f"Removed {self}")
 
     def add_hook(self, node, name):
         """Set given node as attach point
@@ -535,7 +529,7 @@ class AnimComponent(Component):
         """
         if not other_comp:
             return
-        super(AnimComponent, self).attach_to_component(other_comp)
+        super().attach_to_component(other_comp)
         if isinstance(hook_index, float):
             hook_index = int(hook_index)
 
@@ -547,9 +541,7 @@ class AnimComponent(Component):
                 hook.add_output(self)
             except Exception:
                 Logger.error(
-                    "Failed to connect {0} to {1} at point {2}".format(
-                        self, other_comp, hook_index
-                    )
+                    f"Failed to connect {self} to {other_comp} at point {hook_index}"
                 )
                 raise
 
@@ -576,7 +568,7 @@ class AnimComponent(Component):
                 character_component = rigFn.get_build_character()  # type: luna_rig.components.Character
         if not isinstance(character_component, luna_rig.components.Character):
             raise RuntimeError(
-                "{0} is not a valid Character".format(character_component)
+                f"{character_component} is not a valid Character"
             )
 
         # Connect
@@ -598,13 +590,13 @@ class AnimComponent(Component):
             ctl.scale(clamped_size, factor=factor)
 
 
-class Hook(object):
+class Hook:
     def __repr__(self):
-        return "Hook({0})".format(self.transform)
+        return f"Hook({self.transform})"
 
     def __eq__(self, other):
         if not isinstance(other, Hook):
-            raise TypeError("Can't compare Hook and {0}".format(type(other)))
+            raise TypeError(f"Can't compare Hook and {type(other)}")
         return self.transform == other.transform
 
     def __init__(self, node):
@@ -612,7 +604,7 @@ class Hook(object):
 
     def add_output(self, anim_component):
         self.transform.children.connect(anim_component.pynode.inHook)
-        Logger.info("{0} ->> {1}".format(self, anim_component))
+        Logger.info(f"{self} ->> {anim_component}")
 
     @classmethod
     def create(cls, anim_component, object_node, name):

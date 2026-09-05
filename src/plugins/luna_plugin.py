@@ -18,6 +18,10 @@ REGISTERED_CALLBACKS = []
 
 
 def load_additional_plugins():
+    """
+    Load additional plugins from luna/plugins folder based
+    on current system and maya version
+    """
     if cmds.about(win64=True):
         system_dir = "win64"
     elif cmds.about(linux=True):

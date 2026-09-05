@@ -1,72 +1,87 @@
 """Based on 2015 GDC talk by David Hunt & Forrest Sderlind https://www.youtube.com/watch?v=U_4u0kbf-JE"""
 
-import pymel.core as pm
-import luna_rig
+from maya import cmds
+
 from luna import Logger
-from luna_rig.functions import nameFn
+from ..functions import nameFn
 
 
-class MetaNode(object):
+class MetaNode:
+    IS_ANIMATABLE = False
+    META_TYPE_ATTR = "metaType"
+    META_PARENT_ATTR = "metaParent"
+    META_CHILDREN_ATTR = "metaChildren"
+    TAG_ATTR = "tag"
+
     @classmethod
-    def as_str(cls, name_only=False):
+    def as_str(cls, name_only=False) -> str:
         """Get a string representation of class path.
 
-        :return: Class string e.g luna_rig.components.fk_component.FKComponent
-        :rtype: str
+        Args:
+            name_only (bool, optional): class name only as result. Defaults to False.
+
+        Returns:
+            str: string representation
         """
-        meta_module = cls.__module__
         meta_name = cls.__name__
         if name_only:
             return meta_name
+
+        meta_module = cls.__module__
         meta_type_str = ".".join([meta_module, meta_name])
         return meta_type_str
 
-    def __repr__(self):
-        return "{0} ({1})".format(self.as_str(name_only=True), self.pynode.name())
+    def __repr__(self) -> str:
+        return f"{self.as_str(name_only=True)} ({self.pynode_short_name})"
 
     def __eq__(self, other):
-        if not hasattr(other, "pynode"):
+        if not isinstance(other, self.__class__):
             return False
         return self.pynode == other.pynode
 
-    def __new__(cls, node=None):
-        """Initialize class stored in metaType attribute and return a intance of it.
+    def __new__(cls, node=None) -> "MetaNode":
+        """Initialize class stored in metaType attribute and return a instance of it.
 
-        :param node: Network node, defaults to None
-        :type node: str or PyNode, optional
-        :return: Evaluated meta class
-        :rtype: Meta rig node class instance
+        Args:
+            node (str | None): node path
+
+        Returns:
+            MetaNode: initialized class from metaType string
         """
         import luna_rig  # noqa: F401
 
         result = None
         if node:
-            node = pm.PyNode(node)
-            class_string = node.metaType.get()
+            class_string: str = cmds.getAttr(node, cls.META_TYPE_ATTR)
             try:
                 eval_class = eval(class_string, globals(), locals())
                 result = eval_class.__new__(eval_class, node)
             except Exception:
                 Logger.exception(
-                    "{0}: Failed to evaluate class string: {1}".format(cls, class_string)
+                    f"{cls}: Failed to evaluate class string: {class_string}"
                 )
                 raise
         else:
-            result = super(MetaNode, cls)
+            result = super()
 
         return result
 
-    def __init__(self, node):
-        """Stores created network node as instance field
+    def __init__(self, node: str):
+        """Store given network node as instance.
 
-        :param node: Network node
-        :type node: str or PyNode
-        :raises TypeError: If node has no metaType attribute
+        Args:
+            node (str): meta network node path.
+
+        Raises:
+            TypeError: provided node is not a valid metanode
         """
-        node = pm.PyNode(node)
         if not self.is_metanode(node):
-            raise TypeError("{0} is not a valid meta rig node".format(str(node)))
-        self.pynode = node  # type: luna_rig.nt.Network
+            raise TypeError(f"{str(node)} is not a valid meta rig node")
+        self.pynode: str = node
+
+    @property
+    def pynode_short_name(self) -> str:
+        return self.pynode.split("|")[-1]
 
     @property
     def namespace_list(self):
@@ -96,27 +111,42 @@ class MetaNode(object):
         return nameFn.deconstruct_name(self.pynode).suffix
 
     @property
+    def meta_parent_attr(self) -> str:
+        return f"{self.pynode}.{self.META_PARENT_ATTR}"
+
+    @property
+    def meta_children_attr(self) -> str:
+        return f"{self.pynode}.{self.META_CHILDREN_ATTR}"
+
+    @property
+    def tag_attr(self) -> str:
+        return f"{self.pynode}.{self.TAG_ATTR}"
+
+    @property
+    def has_tag_attr(self) -> bool:
+        return cmds.objExists(self.tag_attr)
+
+    @property
     def meta_type(self):
-        attr_val = self.pynode.metaType.get()  # type: str
-        return attr_val
+        return cmds.getAttr(self.META_TYPE_ATTR)
 
     @property
     def tag(self):
-        if self.pynode.hasAttr("tag"):
-            return self.pynode.tag.get()
+        if self.has_tag_attr:
+            return cmds.getAttr(self.tag_attr)
         else:
-            Logger.warning("{0}: Missing tag attribute".format(self))
+            Logger.warning(f"{self}: Missing tag attribute")
             return ""
 
     @property
-    def meta_parent(self):
+    def meta_parent(self) -> "MetaNode":
         """Get instance of meta parent
 
         :return: Meta parent node instance.
         :rtype: MetaNode
         """
         result = None
-        connections = self.pynode.metaParent.listConnections()
+        connections = cmds.listConnections(self.meta_parent_attr) or []
         if connections:
             result = MetaNode(connections[0])
         return result
@@ -129,22 +159,22 @@ class MetaNode(object):
     def get_namespace_list(self):
         return self.namespace_list
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
-    def get_side(self):
+    def get_side(self) -> str:
         return self.side
 
-    def get_index(self):
+    def get_index(self) -> str:
         return self.index
 
-    def get_indexed_name(self):
+    def get_indexed_name(self) -> str:
         return self.indexed_name
 
-    def get_suffix(self):
+    def get_suffix(self) -> str:
         return self.suffix
 
-    def get_meta_type(self):
+    def get_meta_type(self) -> str:
         return self.meta_type
 
     def get_tag(self):
@@ -155,10 +185,9 @@ class MetaNode(object):
 
     # ========= Other Methods ==========#
 
-    @classmethod
-    def is_metanode(cls, node):
-        node = pm.PyNode(node)
-        return node.hasAttr("metaType")
+    @staticmethod
+    def is_metanode(node: str):
+        return cmds.objExists(f"{node}.{MetaNode.META_TYPE_ATTR}")
 
     @classmethod
     def create(cls, meta_parent):
@@ -174,21 +203,31 @@ class MetaNode(object):
                 meta_parent = MetaNode(meta_parent)
 
         # Create node
-        node = pm.createNode("network")  # type: luna_rig.nt.Network
+        node: str = cmds.createNode("network")
 
         # Add attributes
-        node.addAttr("metaType", dt="string")
-        node.addAttr("tag", dt="string")
-        node.addAttr("metaChildren", at="message", multi=1, im=0)
-        node.addAttr("metaParent", at="message")
-        node.metaType.set(cls.as_str())
+        cmds.addAttr(node, longName=cls.META_TYPE_ATTR, dataType="string")
+        cmds.addAttr(node, longName="tag", dataType="string")
+        cmds.addAttr(
+            node,
+            longName="metaChildren",
+            attributeType="message",
+            multi=True,
+            indexMatters=False,
+        )
+        cmds.addAttr(
+            node, longName="metaParent", attributeType="message", indexMatters=False
+        )
+        cmds.setAttr(node, cls.META_TYPE_ATTR, cls.as_str(), type="string")
         meta_node = MetaNode(node)
         if meta_parent:
             meta_node.set_meta_parent(meta_parent)
         return meta_node
 
-    def set_meta_parent(self, parent):
-        self.pynode.metaParent.connect(parent.pynode.metaChildren, na=1)
+    def set_meta_parent(self, parent: "MetaNode"):
+        cmds.connectAttr(
+            self.meta_parent_attr, parent.meta_children_attr, nextAvailable=True
+        )
 
     def get_meta_children(self, of_type=None, by_tag=""):
         # type: (type[MetaNode], str) -> list[MetaNode]
@@ -201,42 +240,31 @@ class MetaNode(object):
         :return: List of meta children instances
         :rtype: list[MetaNode]
         """
-        result = []
-        if self.pynode.hasAttr("metaChildren"):
-            connections = self.pynode.metaChildren.listConnections()
-            if connections:
-                children = [
-                    MetaNode(connection_node)
-                    for connection_node in connections
-                    if pm.hasAttr(connection_node, "metaType")
-                ]
-                # Type filter
-                if not of_type:
-                    result = children
-                else:
-                    if not isinstance(of_type, type):
-                        of_type = type(of_type)
+        connections = cmds.listConnections(self.meta_children_attr)
+        if not connections:
+            return []
 
-                    if isinstance(of_type, str):
-                        result = [
-                            child for child in children if of_type in child.as_str()
-                        ]
-                    else:
-                        result = [
-                            child for child in children if isinstance(child, of_type)
-                        ]
-                # Tag filter
-                if by_tag:
-                    result = [child for child in result if child.tag == by_tag]
-        else:
-            Logger.warning("{0}: Missing metaChildren attribute.")
+        result = [
+            MetaNode(connection_node)
+            for connection_node in connections
+            if self.is_metanode(connection_node)
+        ]
+        # Type filter
+        if of_type:
+            if isinstance(of_type, str):
+                result = [child for child in result if of_type in child.as_str()]
+
+            elif isinstance(of_type, MetaNode):
+                of_type = type(of_type)
+                result = [child for child in result if isinstance(child, of_type)]
+
+        # Tag filter
+        if by_tag:
+            result = [child for child in result if child.tag == by_tag]
         return result
 
     def set_tag(self, tag_str):
-        self.pynode.tag.set(tag_str)
-
-    def is_animatable(self):
-        return isinstance(self, (luna_rig.AnimComponent, luna_rig.components.Character))
+        cmds.setAttr(self.tag_attr, tag_str)
 
     @staticmethod
     def list_nodes(of_type=None, by_tag=""):
@@ -251,7 +279,9 @@ class MetaNode(object):
         """
         result = []
         all_nodes = [
-            MetaNode(node) for node in pm.ls(typ="network") if node.hasAttr("metaType")
+            MetaNode(node)
+            for node in cmds.ls(type="network", long=True)
+            if MetaNode.is_metanode(node)
         ]
         if of_type:
             if not isinstance(of_type, type):
@@ -279,11 +309,10 @@ class MetaNode(object):
 
     @staticmethod
     def get_connected_metanode(node, of_type=None):
-        node = pm.PyNode(node)
         all_nodes = [
             MetaNode(network)
-            for network in node.listConnections(type="network")
-            if network.hasAttr("metaType")
+            for network in cmds.listConnections(node, type="network", fullNodeName=True)
+            if MetaNode.is_metanode(node)
         ]
         if of_type:
             result = [

@@ -11,6 +11,8 @@ import luna_rig.functions.jointFn as jointFn
 
 
 class Character(luna_rig.Component):
+    IS_ANIMATABLE = True
+    
     TOP_RIG_NODE_NAME = static.CharacterMembers.top_node.value
     GEOMETRY_GRP_NAME = static.CharacterMembers.geometry.value
     DEFORMATION_RIG_GRP_NAME = static.CharacterMembers.deformation_rig.value
@@ -129,7 +131,7 @@ class Character(luna_rig.Component):
         :rtype: Character
         """
         # Add message attrs to meta node
-        instance = super(Character, cls).create(
+        instance = super().create(
             meta_parent, name=name, side="char", tag=tag
         )  # type: Character
         instance.pynode.addAttr("characterName", dt="string")
@@ -267,7 +269,7 @@ class Character(luna_rig.Component):
         for each in ctls:
             each.write_bind_pose()
             counter += 1
-        Logger.info("Written {0} bind poses.".format(counter))
+        Logger.info(f"Written {counter} bind poses.")
 
     def to_bind_pose(self):
         for ctl in self.list_controls():
@@ -275,7 +277,7 @@ class Character(luna_rig.Component):
 
     def get_nucleus(self):
         node = None
-        nucleus_name = "{0}_nucl".format(self.name)
+        nucleus_name = f"{self.name}_nucl"
         nucleus_name = ":".join(self.namespace_list + [nucleus_name])
         if pm.objExists(nucleus_name):
             node = pm.PyNode(nucleus_name)  # type: luna_rig.nt.Nucleus
@@ -284,9 +286,9 @@ class Character(luna_rig.Component):
     def bake_to_skeleton(self, time_range=None):
         if not time_range:
             time_range = animFn.get_playback_range()
-        Logger.info("{0}: Baking to skeleton {1}...".format(self, time_range))
+        Logger.info(f"{self}: Baking to skeleton {time_range}...")
         if not self.bind_joints:
-            Logger.warning("{} | No bind joints found for baking.".format(self))
+            Logger.warning(f"{self} | No bind joints found for baking.")
             return
         pm.bakeResults(self.bind_joints, time=time_range, simulation=True)
 
@@ -303,7 +305,7 @@ class Character(luna_rig.Component):
     def remove(self, time_range=None):
         # Bake root
         if self.root_motion:
-            Logger.info("{0}: Baking root motion...".format(self))
+            Logger.info(f"{self}: Baking root motion...")
             pm.bakeResults(self.root_motion, time=time_range, simulation=True)
         # Bake components
         self.bake_and_detach(time_range)
@@ -428,11 +430,11 @@ class MetaHumanCharacter(Character):
             metahuman_rig_node.rename(cls.META_HUMAN_RIG)
         except Exception as err:
             Logger.error(
-                "Failed to find metahuman top rig node: {}".format(cls.TOP_RIG_NODE_NAME)
+                f"Failed to find metahuman top rig node: {cls.TOP_RIG_NODE_NAME}"
             )
             raise err
 
-        instance = super(MetaHumanCharacter, cls).create(meta_parent, name, tag)  # type: MetaHumanCharacter
+        instance = super().create(meta_parent, name, tag)  # type: MetaHumanCharacter
 
         instance.pynode.addAttr("metahumanRig", at="message")
         instance.pynode.addAttr("metahumanDriverSkeletonRoot", at="message")
@@ -502,9 +504,9 @@ class MetaHumanCharacter(Character):
         self.metahuman_body_skeleton_root().setParent(None)
         self.metahuman_head_skeleton_root().setParent(None)
         self.metahuman_driver_skeleton_root().setParent(None)
-        super(MetaHumanCharacter, self).disassemble_rig_hierarchy()
+        super().disassemble_rig_hierarchy()
 
     def remove(self, time_range=None):
         meta_human_node = self.metahuman_rig_node()
-        super(MetaHumanCharacter, self).remove(time_range)
+        super().remove(time_range)
         meta_human_node.rename(self.__class__.TOP_RIG_NODE_NAME)

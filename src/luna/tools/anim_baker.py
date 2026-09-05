@@ -1,6 +1,5 @@
 import pymel.core as pm
 from PySide2 import QtWidgets
-from PySide2 import QtCore
 
 
 import luna_rig
@@ -15,10 +14,10 @@ class AnimBakerDialog(QtWidgets.QDialog):
 
     def closeEvent(self, event):
         AnimBakerDialog.GEOMETRY = self.saveGeometry()
-        super(AnimBakerDialog, self).closeEvent(event)
+        super().closeEvent(event)
 
     def __init__(self, parent=pysisdeFn.maya_main_window()):
-        super(AnimBakerDialog, self).__init__(parent)
+        super().__init__(parent)
         self.setWindowTitle("Animation baker")
         self.setProperty("saveWindowPref", True)
         self.resize(400, 500)
@@ -66,7 +65,7 @@ class AnimBakerDialog(QtWidgets.QDialog):
 
 class SkeletonBakerWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        super(SkeletonBakerWidget, self).__init__(parent)
+        super().__init__(parent)
         self.create_widgets()
         self.create_layouts()
         self.create_connections()
@@ -111,11 +110,9 @@ class SkeletonBakerWidget(QtWidgets.QWidget):
         components = []
         if self.components_wgt.list.selectedItems():
             for item in self.components_wgt.list.selectedItems():
-                if not item.data(1).is_animatable():
+                if not item.data(1).IS_ANIMATABLE:
                     Logger.warning(
-                        "Non bakeable component selected {0}, skipping...".format(
-                            item.data(1)
-                        )
+                        f"Non bakeable component selected {item.data(1)}, skipping..."
                     )
                 else:
                     components.append(item.data(1))
@@ -123,7 +120,7 @@ class SkeletonBakerWidget(QtWidgets.QWidget):
             components = [
                 item.data(1)
                 for item in pysisdeFn.qlist_all_items(self.components_wgt.list)
-                if item.data(1).is_animatable()
+                if item.data(1).IS_ANIMATABLE
             ]
         return components
 
@@ -157,12 +154,12 @@ class SkeletonBakerWidget(QtWidgets.QWidget):
         char_name = character.name
         time_range = self.range_widget.get_range()
         character.remove(time_range=time_range)
-        Logger.info("{0} rig successfully removed.".format(char_name))
+        Logger.info(f"{char_name} rig successfully removed.")
 
 
 class FKIKBakerWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        super(FKIKBakerWidget, self).__init__(parent)
+        super().__init__(parent)
         self.create_widgets()
         self.create_layouts()
         self.create_connections()
@@ -220,7 +217,7 @@ class FKIKBakerWidget(QtWidgets.QWidget):
 
 class SpaceBakerWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        super(SpaceBakerWidget, self).__init__(parent)
+        super().__init__(parent)
         self.custom_space_item_text = "Custom..."
         self.create_widgets()
         self.create_layouts()
@@ -273,7 +270,7 @@ class SpaceBakerWidget(QtWidgets.QWidget):
             return
         ctl_transform = selection[-1]
         if not luna_rig.Control.is_control(ctl_transform):
-            pm.warning("Object {0} is not a control".format(ctl_transform))
+            pm.warning(f"Object {ctl_transform} is not a control")
             return
         self.control_field.line_edit.setText(str(ctl_transform))
         self.update_spaces_box()
@@ -284,7 +281,7 @@ class SpaceBakerWidget(QtWidgets.QWidget):
             control_instance = luna_rig.Control(self.control_field.text())
         except Exception:
             Logger.exception(
-                "Failed to update {0} spaces".format(self.control_field.text())
+                f"Failed to update {self.control_field.text()} spaces"
             )
             return
         for space_name, space_index in control_instance.spaces:
@@ -307,9 +304,7 @@ class SpaceBakerWidget(QtWidgets.QWidget):
             ctl_instance = luna_rig.Control(self.control_field.text())
         except Exception:
             Logger.exception(
-                "Failed to create control instance from {0}".format(
-                    self.control_field.text()
-                )
+                f"Failed to create control instance from {self.control_field.text()}"
             )
             raise RuntimeError("Invalid control object")
 
@@ -317,7 +312,7 @@ class SpaceBakerWidget(QtWidgets.QWidget):
         if self.spaces_combobox.currentText() == self.custom_space_item_text:
             custom_object = self.custom_space_object_field.text()
             if not custom_object or not pm.objExists(custom_object):
-                pm.displayError("Invalid custom space object: {0}".format(custom_object))
+                pm.displayError(f"Invalid custom space object: {custom_object}")
                 return
             ctl_instance.bake_custom_space(
                 custom_object, time_range=self.range_widget.get_range(), step=step
